@@ -13,7 +13,8 @@ buildscript {
         classpath 'org.gretty:gretty:3.1.0'
         classpath 'com.android.tools.build:gradle:8.1.2'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.20'
-        
+        classpath 'com.google.gms:google-services:4.4.1'
+
 
     }
 }
@@ -52,6 +53,7 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+
         
     }
 }
