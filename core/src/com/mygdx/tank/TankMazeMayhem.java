@@ -8,11 +8,17 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class TankMazeMayhem extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
+	FireBaseInterface _FBIC;
+
+	TankMazeMayhem() {
+		
+	}
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
+		_FBIC
 	}
 
 	@Override
