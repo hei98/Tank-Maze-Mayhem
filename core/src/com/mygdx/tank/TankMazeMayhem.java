@@ -4,21 +4,21 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.sun.tools.javac.util.DefinedBy;
 
 public class TankMazeMayhem extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
-	FireBaseInterface _FBIC;
+	FirebaseAPI api;
 
-	TankMazeMayhem() {
-		
+	public TankMazeMayhem(FirebaseAPI api) {
+		this.api = api;
 	}
-	
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
-		_FBIC
 	}
 
 	@Override
