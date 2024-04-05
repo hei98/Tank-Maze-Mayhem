@@ -1,37 +1,32 @@
 package com.mygdx.tank;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.sun.tools.javac.util.DefinedBy;
+import com.badlogic.gdx.Gdx;
 
 public class TankMazeMayhem extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	FirebaseAPI api;
+    private FirebaseAPI api;
+    private GameModel model;
+    private GameView view;
+    private GameController controller;
 
 	public TankMazeMayhem(FirebaseAPI api) {
 		this.api = api;
 	}
 
 	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+	public void create() {
+		model = new GameModel();
+		view = new GameView(model);
+		controller = new GameController(model);
+
 	}
 
 	@Override
-	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		img.dispose();
+	public void render() {
+		float deltaTime = Gdx.graphics.getDeltaTime();
+		controller.update(deltaTime);
+		model.update(deltaTime);
+		view.render();
 	}
 }
+
