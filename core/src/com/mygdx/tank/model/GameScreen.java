@@ -1,4 +1,4 @@
 package com.mygdx.tank.model;
 
-public class GameMap {
+public class GameScreen {
 }
