@@ -4,9 +4,14 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 
 public class TankMazeMayhem extends ApplicationAdapter {
-	private GameModel model;
-	private GameView view;
-	private GameController controller;
+    private FirebaseAPI api;
+    private GameModel model;
+    private GameView view;
+    private GameController controller;
+
+	public TankMazeMayhem(FirebaseAPI api) {
+		this.api = api;
+	}
 
 	@Override
 	public void create() {

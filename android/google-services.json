@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "166013328783",
+    "firebase_url": "https://tank-maze-mayhem-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tank-maze-mayhem",
+    "storage_bucket": "tank-maze-mayhem.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166013328783:android:f8b526d9def17556877ffa",
+        "android_client_info": {
+          "package_name": "com.mygdx.tank"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFhLvq1qk7eI2hFoHDS4mMLww3litXJH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
