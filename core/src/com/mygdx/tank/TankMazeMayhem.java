@@ -4,12 +4,25 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.Gdx;
 
 public class TankMazeMayhem extends Game {
-	SpriteBatch batch;
+    private FirebaseAPI api;
+    private GameModel model;
+    private GameView view;
+    private GameController controller;
+    SpriteBatch batch;
+
+	public TankMazeMayhem(FirebaseAPI api) {
+		this.api = api;
+	}
 
 	@Override
 	public void create() {
+		model = new GameModel();
+		view = new GameView(model);
+		controller = new GameController(model);
+
 		batch = new SpriteBatch();
 		// Set the initial screen to the main menu
 		setScreen(new MainMenuScreen(this));
@@ -17,6 +30,11 @@ public class TankMazeMayhem extends Game {
 
 	@Override
 	public void render() {
+		float deltaTime = Gdx.graphics.getDeltaTime();
+		controller.update(deltaTime);
+		model.update(deltaTime);
+		view.render();
+
 		super.render(); // Delegates rendering to the current screen
 	}
 
@@ -30,9 +48,9 @@ public class TankMazeMayhem extends Game {
 		buttonStyle.font = getFont(); // Ensure to define getFont() method as mentioned earlier
 		return buttonStyle;
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose () {
 		batch.dispose();
 	}
 }
