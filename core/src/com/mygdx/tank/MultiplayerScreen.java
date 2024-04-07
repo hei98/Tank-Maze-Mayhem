@@ -79,7 +79,7 @@ public class MultiplayerScreen implements Screen {
 
     @Override
     public void dispose() {
-        stage.dispose();
+        view.dispose();
     }
 
     // Other methods from the Screen interface

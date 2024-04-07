@@ -33,7 +33,9 @@ public class GameController {
         }
 
         if (inputDetected) {
-            model.movePlayerTank(deltaX, deltaY);
+            if (!model.isCollisionWithWalls(model.getPlayerTank(), deltaX, deltaY)) {
+                model.movePlayerTank(deltaX, deltaY);
+            }
         } else {
             model.movePlayerTank(0, 0);
         }
