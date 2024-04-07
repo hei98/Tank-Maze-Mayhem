@@ -42,6 +42,7 @@ public class MultiplayerScreen implements Screen {
         backButton.setPosition(100, 100);
 
         Gdx.input.setInputProcessor(stage);
+        view.create();
     }
 
     @Override
@@ -58,7 +59,7 @@ public class MultiplayerScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+        view.resize(width, height);
     }
 
     @Override
