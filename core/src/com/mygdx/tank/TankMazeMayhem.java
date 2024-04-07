@@ -1,13 +1,17 @@
 package com.mygdx.tank;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.Gdx;
 
-public class TankMazeMayhem extends ApplicationAdapter {
+public class TankMazeMayhem extends Game {
     private FirebaseAPI api;
     private GameModel model;
     private GameView view;
     private GameController controller;
+    SpriteBatch batch;
 
 	public TankMazeMayhem(FirebaseAPI api) {
 		this.api = api;
@@ -15,18 +19,29 @@ public class TankMazeMayhem extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-		model = new GameModel();
-		view = new GameView(model);
-		controller = new GameController(model);
-
+		batch = new SpriteBatch();
+		// Set the initial screen to the main menu
+		setScreen(new MainMenuScreen(this));
 	}
 
 	@Override
 	public void render() {
-		float deltaTime = Gdx.graphics.getDeltaTime();
-		controller.update(deltaTime);
-		model.update(deltaTime);
-		view.render();
+		super.render(); // Delegates rendering to the current screen
+	}
+
+	public BitmapFont getFont() {
+		// Load and return the font you want to use for buttons
+		return new BitmapFont(); // Example, replace this with your actual font loading code
+	}
+
+	public TextButton.TextButtonStyle getButtonStyle() {
+		TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+		buttonStyle.font = getFont(); // Ensure to define getFont() method as mentioned earlier
+		return buttonStyle;
+	}
+	
+	@Override
+	public void dispose () {
+		batch.dispose();
 	}
 }
-
