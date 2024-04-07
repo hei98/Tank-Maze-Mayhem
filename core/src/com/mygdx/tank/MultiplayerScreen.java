@@ -6,17 +6,21 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MultiplayerScreen implements Screen {
 
-    private TankMazeMayhem game;
+    private final TankMazeMayhem game;
     private Stage stage;
 
     public MultiplayerScreen(TankMazeMayhem game) {
         this.game = game;
     }
+
+    private GameView view;
+    private GameModel model;
+    private GameController controller;
+
 
     @Override
     public void show() {
@@ -30,6 +34,10 @@ public class MultiplayerScreen implements Screen {
             }
         });
 
+        model = new GameModel();
+        controller = new GameController(model);
+        view = new GameView(model);
+
         stage.addActor(backButton);
         backButton.setPosition(100, 100);
 
@@ -42,6 +50,10 @@ public class MultiplayerScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        controller.update(deltaTime);
+        model.update(deltaTime);
+        view.render();
     }
 
     @Override
@@ -68,4 +80,6 @@ public class MultiplayerScreen implements Screen {
     public void dispose() {
         stage.dispose();
     }
+
+    // Other methods from the Screen interface
 }

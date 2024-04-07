@@ -19,10 +19,6 @@ public class TankMazeMayhem extends Game {
 
 	@Override
 	public void create() {
-		model = new GameModel();
-		view = new GameView(model);
-		controller = new GameController(model);
-
 		batch = new SpriteBatch();
 		// Set the initial screen to the main menu
 		setScreen(new MainMenuScreen(this));
@@ -30,11 +26,6 @@ public class TankMazeMayhem extends Game {
 
 	@Override
 	public void render() {
-		float deltaTime = Gdx.graphics.getDeltaTime();
-		controller.update(deltaTime);
-		model.update(deltaTime);
-		view.render();
-
 		super.render(); // Delegates rendering to the current screen
 	}
 

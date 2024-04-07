@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MainMenuScreen implements Screen {
-    private TankMazeMayhem game;
+    private final TankMazeMayhem game;
     private Stage stage;
     private SpriteBatch batch;
 
@@ -28,18 +28,11 @@ public class MainMenuScreen implements Screen {
         TextButtonStyle buttonStyle = new TextButtonStyle();
         buttonStyle.font = game.getFont(); // You need to define your font
         TextButton leaderboardButton = new TextButton("Leaderboard", buttonStyle);
-        TextButton singleplayerButton = new TextButton("Singleplayer", buttonStyle);
         TextButton multiplayerButton = new TextButton("Multiplayer", buttonStyle);
         TextButton settingsButton = new TextButton("Settings", buttonStyle);
 
 
         // Add click listeners to buttons
-        singleplayerButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SingleplayerScreen(game));
-            }
-        });
         multiplayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -56,19 +49,16 @@ public class MainMenuScreen implements Screen {
         leaderboardButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Replace with the appropriate action to show the leaderboard
-                //game.setScreen(new LeaderboardScreen(game));
+                game.setScreen(new LeaderboardScreen(game));
             }
         });
 
         // Add buttons to the stage
-        stage.addActor(singleplayerButton);
         stage.addActor(multiplayerButton);
         stage.addActor(settingsButton);
         stage.addActor(leaderboardButton);
 
         // Set button positions
-        singleplayerButton.setPosition(100, 400);
         multiplayerButton.setPosition(100, 300);
         settingsButton.setPosition(100, 200);
         leaderboardButton.setPosition(100,100);
