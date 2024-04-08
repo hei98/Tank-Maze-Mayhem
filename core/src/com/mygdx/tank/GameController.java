@@ -15,6 +15,10 @@ public class GameController {
         float deltaY = 0.0f;
         boolean inputDetected = false;
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            model.shootFromTank();
+        }
+
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             deltaY = 1.0f;
             inputDetected = true;

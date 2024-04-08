@@ -17,11 +17,9 @@ public class MovementSystem {
             if (position != null && speed != null) {
                 position.x += speed.speedX * deltaTime;
                 position.y += speed.speedY * deltaTime;
-
-                speed.speedX = 0.0f;
-                speed.speedY = 0.0f;
             }
         }
     }
+
 }
 

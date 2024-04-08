@@ -46,11 +46,12 @@ public class GameView {
         renderer.render();
 
         spriteBatch.begin();
-        Entity playerTank = model.getPlayerTank();
-        SpriteComponent spriteComponent = playerTank.getComponent(SpriteComponent.class);
-        PositionComponent positionComponent = playerTank.getComponent(PositionComponent.class);
-        if (spriteComponent != null && positionComponent != null) {
-            spriteBatch.draw(spriteComponent.getSprite(), positionComponent.x, positionComponent.y);
+        for (Entity entity : model.getEntities()) {
+            SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
+            PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
+            if (spriteComponent != null && positionComponent != null) {
+                spriteBatch.draw(spriteComponent.getSprite(), positionComponent.x, positionComponent.y);
+            }
         }
         spriteBatch.end();
     }

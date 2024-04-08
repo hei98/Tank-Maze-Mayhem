@@ -6,7 +6,9 @@ import java.util.ArrayList;
 public class GameModel {
     private List<Entity> entities = new ArrayList<>();
     private MovementSystem movementSystem;
+    private ShootingSystem shootingSystem;
     private Entity playerTank;
+
 
     public GameModel() {
         playerTank = new Entity();
@@ -17,14 +19,18 @@ public class GameModel {
         entities.add(playerTank);
 
         movementSystem = new MovementSystem(entities);
+        shootingSystem = new ShootingSystem(this);
 
     }
 
     public void update(float deltaTime) {
+
         movementSystem.update(deltaTime);
+        //shootingSystem.update(deltaTime);
     }
 
     public Entity getPlayerTank() {
+
         return playerTank;
     }
 
@@ -34,6 +40,16 @@ public class GameModel {
             speed.speedX = deltaX * speed.speed;
             speed.speedY = deltaY * speed.speed;
         }
+    }
+    public void shootFromTank() {
+        PositionComponent tankPosition = playerTank.getComponent(PositionComponent.class);
+        shootingSystem.shoot(tankPosition.x, tankPosition.y, 1.0f, 0.0f); // Example direction
+    }
+    public void addEntity(Entity entity) {
+        entities.add(entity);
+    }
+    public List<Entity> getEntities() {
+        return entities;
     }
 }
 
