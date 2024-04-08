@@ -37,6 +37,7 @@ public class TankMazeMayhem extends ApplicationAdapter {
 		camera.update();
 
 		renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+		resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 	@Override
 	public void render () {
@@ -55,11 +56,37 @@ public class TankMazeMayhem extends ApplicationAdapter {
 
 	@Override
 	public void resize(int width, int height) {
-		// Update the camera's viewport size
-		camera.viewportWidth = width * unitScale;
-		camera.viewportHeight = height * unitScale;
+		// Calculate the aspect ratio of the screen
+		float screenAspect = (float) width / (float) height;
+
+		// Map width and height in tiles
+		int mapWidthInTiles = 40;
+		int mapHeightInTiles = 20;
+
+		// Tile size in pixels
+		float tileSize = 20f;
+
+		// Convert the map size to world units (assuming 1 unit = 1 tile)
+		float mapWidthInUnits = mapWidthInTiles;
+		float mapHeightInUnits = mapHeightInTiles;
+
+		// Calculate the scale needed to fit the map on screen
+		float scale = Math.max(mapWidthInUnits / screenAspect, mapHeightInUnits);
+
+		// Apply the scale to get the viewport dimensions that fit the map to the screen
+		camera.viewportWidth = scale * screenAspect;
+		camera.viewportHeight = scale;
+
+		// Update the camera position to center the map
+		camera.position.set(mapWidthInUnits / 2, mapHeightInUnits / 2, 0);
+
+		// Update the camera to apply changes
 		camera.update();
+
+		// Update the renderer's view
+		renderer.setView(camera);
 	}
+
 	@Override
 	public void dispose () {
 		batch.dispose();
