@@ -18,7 +18,8 @@ public class GameModel {
         playerTank = new Entity();
         playerTank.addComponent(new PositionComponent(0.0f, 0.0f));
         playerTank.addComponent(new SpeedComponent(200.0f));
-        playerTank.addComponent(new SpriteComponent("tank_blue_2.png"));
+        playerTank.addComponent(new SpriteComponent("tank_blue4.png"));
+        playerTank.addComponent(new SpriteDirectionComponent(0f));
 
         entities.add(playerTank);
 
@@ -41,6 +42,30 @@ public class GameModel {
             speed.speedX = deltaX * speed.speed;
             speed.speedY = deltaY * speed.speed;
         }
+    }
+
+    public void rotatePlayerTank(boolean lookRight, boolean lookLeft, boolean lookUp, boolean lookDown) {
+        SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
+        float angle = 0;
+        if (lookRight && lookUp) {
+            angle = 315;
+        } else if (lookRight && lookDown) {
+            angle = 225;
+        } else if (lookLeft && lookUp) {
+            angle = 45;
+        } else if (lookLeft && lookDown) {
+            angle = 135;
+        } else if (lookRight) {
+            angle = 270;
+        } else if (lookLeft) {
+            angle = 90;
+        } else if (lookUp) {
+            angle = 0;
+        } else if (lookDown) {
+            angle = 180;
+        }
+
+        spriteDirectionComponent.angle = angle;
     }
 
     public boolean isCollisionWithWalls(Entity entity, float deltaX, float deltaY) {
