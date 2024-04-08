@@ -41,9 +41,9 @@ public class GameController {
         }
 
         if (inputDetected) {
+            model.rotatePlayerTank(lookRight, lookLeft, lookUp, lookDown);
             if (!model.isCollisionWithWalls(model.getPlayerTank(), deltaX, deltaY)) {
                 model.movePlayerTank(deltaX, deltaY);
-                model.rotatePlayerTank(lookRight, lookLeft, lookUp, lookDown);
             }
         } else {
             model.movePlayerTank(0, 0);
