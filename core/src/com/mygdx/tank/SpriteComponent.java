@@ -8,6 +8,7 @@ public class SpriteComponent implements Component {
 
     public SpriteComponent(String path) {
         this.sprite = new Sprite(new Texture(path));
+        this.sprite.setOrigin(sprite.getWidth() / 2, (sprite.getHeight() - sprite.getHeight() / 3) / 2);
     }
 
     public Sprite getSprite() {

@@ -1,6 +1,7 @@
 package com.mygdx.tank;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.Gdx;
@@ -49,8 +50,12 @@ public class GameView {
         for (Entity entity : model.getEntities()) {
             SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
             PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
+            SpriteDirectionComponent spriteDirectionComponent = entity.getComponent(SpriteDirectionComponent.class);
             if (spriteComponent != null && positionComponent != null) {
-                spriteBatch.draw(spriteComponent.getSprite(), positionComponent.x, positionComponent.y);
+                Sprite sprite = spriteComponent.getSprite();
+                sprite.setPosition(positionComponent.x, positionComponent.y);
+                sprite.setRotation(spriteDirectionComponent.angle);
+                sprite.draw(spriteBatch);
             }
         }
         spriteBatch.end();
