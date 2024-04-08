@@ -31,7 +31,7 @@ public class TankMazeMayhem extends ApplicationAdapter {
 		int mapHeightInPixels = 400;
 
 
-		// Initialize the camera with the screen's width and height
+		// Initializing the camera with the screen's width and height
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, mapWidthInPixels * unitScale, mapHeightInPixels * unitScale);
 		camera.update();
@@ -73,17 +73,17 @@ public class TankMazeMayhem extends ApplicationAdapter {
 		// Calculate the scale needed to fit the map on screen
 		float scale = Math.max(mapWidthInUnits / screenAspect, mapHeightInUnits);
 
-		// Apply the scale to get the viewport dimensions that fit the map to the screen
+		// Applying the scale to get the viewport dimensions that fit the map to the screen
 		camera.viewportWidth = scale * screenAspect;
 		camera.viewportHeight = scale;
 
-		// Update the camera position to center the map
+		// Updating the camera position to center the map
 		camera.position.set(mapWidthInUnits / 2, mapHeightInUnits / 2, 0);
 
 		// Update the camera to apply changes
 		camera.update();
 
-		// Update the renderer's view
+		// Updating the renderer's view
 		renderer.setView(camera);
 	}
 
