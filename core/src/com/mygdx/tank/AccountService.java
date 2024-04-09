@@ -1,3 +1,4 @@
+package com.mygdx.tank;
 
 public interface AccountService {
     User getCurrentUser();
