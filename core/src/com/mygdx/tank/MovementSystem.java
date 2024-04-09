@@ -4,9 +4,11 @@ import java.util.List;
 
 public class MovementSystem {
     private List<Entity> entities;
+    private CollisionSystem collisionSystem;
 
-    public MovementSystem(List<Entity> entities) {
+    public MovementSystem(List<Entity> entities, CollisionSystem collisionSystem) {
         this.entities = entities;
+        this.collisionSystem = collisionSystem;
     }
 
     public void update(float deltaTime) {
@@ -15,11 +17,16 @@ public class MovementSystem {
             SpeedComponent speed = entity.getComponent(SpeedComponent.class);
 
             if (position != null && speed != null) {
-                position.x += speed.speedX * deltaTime;
-                position.y += speed.speedY * deltaTime;
+                float proposedDeltaX = speed.speedX * deltaTime;
+                float proposedDeltaY = speed.speedY * deltaTime;
 
-                speed.speedX = 0.0f;
-                speed.speedY = 0.0f;
+                if (!collisionSystem.isCollisionWithWalls(entity, proposedDeltaX, proposedDeltaY)) {
+                    // No collision apply movement
+                    position.x += proposedDeltaX;
+                    position.y += proposedDeltaY;
+                } else {
+                    collisionSystem.handleCollision(entity, proposedDeltaX, proposedDeltaY);
+                }
             }
         }
     }
