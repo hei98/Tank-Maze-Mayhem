@@ -52,7 +52,7 @@ public class MainMenuScreen implements Screen {
         multiplayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MultiplayerScreen(game));
+                game.setScreen(new LobbyScreen(game));
             }
         });
         settingsButton.addListener(new ClickListener() {

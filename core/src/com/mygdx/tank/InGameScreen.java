@@ -8,12 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class MultiplayerScreen implements Screen {
+public class InGameScreen implements Screen {
 
     private final TankMazeMayhem game;
     private Stage stage;
 
-    public MultiplayerScreen(TankMazeMayhem game) {
+    public InGameScreen(TankMazeMayhem game) {
         this.game = game;
     }
 
