@@ -24,7 +24,8 @@ public class GameModel {
 
         entities.add(playerTank);
 
-        movementSystem = new MovementSystem(entities);
+        // movementSystem = new MovementSystem(entities);
+        movementSystem = new MovementSystem(entities, this);
         shootingSystem = new ShootingSystem(this);
         map = new TmxMapLoader().load("MazeMayhemMapNew.tmx");
 
