@@ -12,27 +12,33 @@ public class GameModel {
     private List<Entity> entities = new ArrayList<>();
     private MovementSystem movementSystem;
     private ShootingSystem shootingSystem;
+    private CollisionSystem collisionSystem;
     private Entity playerTank;
     private TiledMap map;
 
     public GameModel() {
-        playerTank = new Entity();
-        playerTank.addComponent(new PositionComponent(0.0f, 0.0f));
-        playerTank.addComponent(new SpeedComponent(200.0f));
-        playerTank.addComponent(new SpriteComponent("tank_blue4.png"));
-        playerTank.addComponent(new SpriteDirectionComponent(0f));
-
-        entities.add(playerTank);
-
-        // movementSystem = new MovementSystem(entities);
-        movementSystem = new MovementSystem(entities, this);
-        shootingSystem = new ShootingSystem(this);
         map = new TmxMapLoader().load("MazeMayhemMapNew.tmx");
+        collisionSystem = new CollisionSystem(map, entities);
 
+        movementSystem = new MovementSystem(entities, collisionSystem);
+        shootingSystem = new ShootingSystem(this);
+        playerTank = createPlayerTank();
     }
 
+    private Entity createPlayerTank() {
+        Entity tank = new Entity();
+        tank.addComponent(new PositionComponent(0.0f, 0.0f));
+        tank.addComponent(new SpeedComponent(200.0f));
+        tank.addComponent(new SpriteComponent("tank_blue4.png"));
+        tank.addComponent(new SpriteDirectionComponent(0f));
+        tank.addComponent(new TypeComponent(TypeComponent.EntityType.TANK));
+        entities.add(tank);
+        return tank;
+
+    }
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
+        collisionSystem.update(deltaTime);
         //shootingSystem.update(deltaTime);
     }
 
@@ -72,45 +78,6 @@ public class GameModel {
         spriteDirectionComponent.angle = angle;
     }
 
-    public boolean isCollisionWithWalls(Entity entity, float deltaX, float deltaY) {
-        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Rutelag 1");
-
-        // Get the sprite component and position component of the entity
-        SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
-        PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
-
-        if (spriteComponent == null || positionComponent == null) {
-            // If the entity doesn't have necessary components, consider it not colliding
-            return false;
-        }
-
-        // Calculate the bounding box of the entity's sprite after applying the movement
-        Rectangle nextBoundingBox = new Rectangle(
-                positionComponent.x + deltaX,
-                positionComponent.y + deltaY,
-                spriteComponent.getSprite().getWidth(),
-                spriteComponent.getSprite().getHeight()
-        );
-
-        // Iterate over each tile within the bounding box and check for collision with walls
-        for (float y = nextBoundingBox.y; y < nextBoundingBox.y + nextBoundingBox.height; y += collisionLayer.getTileHeight()) {
-            for (float x = nextBoundingBox.x; x < nextBoundingBox.x + nextBoundingBox.width; x += collisionLayer.getTileWidth()) {
-                // Convert player coordinates to tile coordinates
-                int tileX = (int) (x / collisionLayer.getTileWidth());
-                int tileY = (int) (y / collisionLayer.getTileHeight());
-
-                // Check if the tile at the current position is blocked
-                TiledMapTileLayer.Cell cell = collisionLayer.getCell(tileX, tileY);
-                if (cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey("blocked")) {
-                    // Collision detected with a wall
-                    return true;
-                }
-            }
-        }
-
-        // No collision detected with any wall
-        return false;
-    }
     public void shootFromTank() {
         PositionComponent tankPosition = playerTank.getComponent(PositionComponent.class);
         shootingSystem.shoot(tankPosition.x, tankPosition.y, 1.0f, 0.0f); // Example direction

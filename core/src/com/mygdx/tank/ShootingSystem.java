@@ -13,6 +13,8 @@ public class ShootingSystem {
         bullet.addComponent(new PositionComponent(startX, startY));
         bullet.addComponent(new SpeedComponent(1.0f, directionX * 300.0f, directionY * 300.0f));
         bullet.addComponent(new SpriteComponent("hvitbullet.png"));
+        bullet.addComponent(new BounceComponent());
+        bullet.addComponent(new TypeComponent(TypeComponent.EntityType.BULLET));
         model.addEntity(bullet);
     }
 }

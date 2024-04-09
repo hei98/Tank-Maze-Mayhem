@@ -14,47 +14,42 @@ public class GameController {
         float deltaX = 0.0f;
         float deltaY = 0.0f;
         boolean inputDetected = false;
-        boolean lookLeft = false;
-        boolean lookRight = false;
-        boolean lookUp = false;
-        boolean lookDown = false;
+
+        boolean lookLeft = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+        boolean lookRight = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+        boolean lookUp = Gdx.input.isKeyPressed(Input.Keys.UP);
+        boolean lookDown = Gdx.input.isKeyPressed(Input.Keys.DOWN);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             model.shootFromTank();
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        if (lookUp) {
             deltaY = 1.0f;
             inputDetected = true;
-            lookUp = true;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (lookDown) {
             deltaY = -1.0f;
             inputDetected = true;
-            lookDown = true;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if (lookLeft) {
             deltaX = -1.0f;
             inputDetected = true;
-            lookLeft = true;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        if (lookRight) {
             deltaX = 1.0f;
             inputDetected = true;
-            lookRight = true;
         }
 
         if (inputDetected) {
             model.rotatePlayerTank(lookRight, lookLeft, lookUp, lookDown);
-            if (!model.isCollisionWithWalls(model.getPlayerTank(), deltaX, deltaY)) {
-                model.movePlayerTank(deltaX, deltaY);
-            }
-        } else {
+            model.movePlayerTank(deltaX, deltaY);
+        }
+
+        else {
             model.movePlayerTank(0, 0);
-            lookRight = false;
-            lookLeft = false;
-            lookUp = false;
-            lookDown = false;
+
         }
     }
 }
+
