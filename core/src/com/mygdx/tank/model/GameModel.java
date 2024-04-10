@@ -1,9 +1,18 @@
-package com.mygdx.tank;
+package com.mygdx.tank.model;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.components.PositionComponent;
+import com.mygdx.tank.model.components.SpeedComponent;
+import com.mygdx.tank.model.components.SpriteComponent;
+import com.mygdx.tank.model.components.SpriteDirectionComponent;
+import com.mygdx.tank.model.components.TypeComponent;
+import com.mygdx.tank.model.systems.CollisionSystem;
+import com.mygdx.tank.model.systems.MovementSystem;
+import com.mygdx.tank.model.systems.ShootingSystem;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -17,7 +26,12 @@ public class GameModel {
     private TiledMap map;
 
     public GameModel() {
-        map = new TmxMapLoader().load("MazeMayhemMapNew.tmx");
+        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
+            map = new TmxMapLoader().load("TiledMap/Map.tmx");
+        } else {
+            map = new TmxMapLoader().load("TiledMap/Map2.tmx");
+        }
+
         collisionSystem = new CollisionSystem(map, entities);
 
         movementSystem = new MovementSystem(entities, collisionSystem);
@@ -29,7 +43,12 @@ public class GameModel {
         Entity tank = new Entity();
         tank.addComponent(new PositionComponent(0.0f, 0.0f));
         tank.addComponent(new SpeedComponent(200.0f));
-        tank.addComponent(new SpriteComponent("tank_blue4.png"));
+        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
+            tank.addComponent(new SpriteComponent("images/tank_blue4.png"));
+        } else {
+            tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
+        }
+
         tank.addComponent(new SpriteDirectionComponent(0f));
         tank.addComponent(new TypeComponent(TypeComponent.EntityType.TANK));
         entities.add(tank);

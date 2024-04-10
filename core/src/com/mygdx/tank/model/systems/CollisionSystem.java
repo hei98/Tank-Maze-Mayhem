@@ -1,8 +1,14 @@
-package com.mygdx.tank;
+package com.mygdx.tank.model.systems;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.components.BounceComponent;
+import com.mygdx.tank.model.components.PositionComponent;
+import com.mygdx.tank.model.components.SpeedComponent;
+import com.mygdx.tank.model.components.SpriteComponent;
+import com.mygdx.tank.model.components.TypeComponent;
 
 public class CollisionSystem {
     private TiledMap map;
@@ -49,7 +55,7 @@ public class CollisionSystem {
                 spriteComponent.getSprite().getHeight()
         );
 
-        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Rutelag 1");
+        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Walls");
         for (int y = (int) nextBoundingBox.y; y < nextBoundingBox.y + nextBoundingBox.height; y++) {
             for (int x = (int) nextBoundingBox.x; x < nextBoundingBox.x + nextBoundingBox.width; x++) {
                 int tileX = Math.floorDiv(x, (int) collisionLayer.getTileWidth());

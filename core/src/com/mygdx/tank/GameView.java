@@ -1,14 +1,19 @@
 package com.mygdx.tank;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.GameModel;
+import com.mygdx.tank.model.components.PositionComponent;
+import com.mygdx.tank.model.components.SpriteComponent;
+import com.mygdx.tank.model.components.SpriteDirectionComponent;
 
 public class GameView {
     private GameModel model;
@@ -16,7 +21,7 @@ public class GameView {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
-    private float unitScale = 1/ 20f;
+    private float mapWidthInPixels, mapHeightInPixels;
 
     public GameView(GameModel model) {
         this.model = model;
@@ -24,18 +29,22 @@ public class GameView {
     }
 
     public void create() {
-        map = new TmxMapLoader().load("MazeMayhemMapNew.tmx");
-
-        int mapWidthInPixels = 800;
-        int mapHeightInPixels = 400;
-
+        if (Gdx.app.getType() == ApplicationType.Desktop) {
+            mapWidthInPixels = 800;
+            mapHeightInPixels = 480;
+            map = new TmxMapLoader().load("TiledMap/Map.tmx");
+        } else {
+            mapWidthInPixels = 2220;
+            mapHeightInPixels = 1080;
+            map = new TmxMapLoader().load("TiledMap/Map2.tmx");
+        }
 
         // Initialize the camera with the screen's width and height
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, mapWidthInPixels * unitScale, mapHeightInPixels * unitScale);
+        camera.setToOrtho(false, mapWidthInPixels, mapHeightInPixels);
         camera.update();
 
-        renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+        renderer = new OrthogonalTiledMapRenderer(map, 1);
     }
 
     public void render() {
@@ -80,25 +89,14 @@ public class GameView {
             }
         }
 
-// End batch processing
+        // End batch processing
         spriteBatch.end();
 
     }
 
     public void resize(int width, int height) {
         // Calculate the aspect ratio of the screen
-        float aspectRatio = (float) width / (float) height;
-        int mapWidthInPixels = 800;
-        int mapHeightInPixels = 400;
 
-        // Set the camera's viewport width to match the screen width
-        camera.viewportWidth = aspectRatio * mapHeightInPixels * unitScale;
-
-        // Set the camera's viewport height to match the screen height
-        camera.viewportHeight = mapHeightInPixels * unitScale;
-
-        // Update the camera
-        camera.update();
     }
     public void dispose() {
         spriteBatch.dispose();
