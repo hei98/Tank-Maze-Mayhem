@@ -9,11 +9,17 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.SpriteDirectionComponent;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 public class GameView {
     private GameModel model;
@@ -22,9 +28,14 @@ public class GameView {
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private float mapWidthInPixels, mapHeightInPixels;
+    private float knobPercentX, knobPercentY;
+    private Touchpad touchpad;
+    private Stage stage;
+    private GameController controller;
 
-    public GameView(GameModel model) {
+    public GameView(GameModel model, GameController controller) {
         this.model = model;
+        this.controller = controller;
         spriteBatch = new SpriteBatch();
     }
 
@@ -39,12 +50,35 @@ public class GameView {
             map = new TmxMapLoader().load("TiledMap/Map2.tmx");
         }
 
+        stage = new Stage();
+
         // Initialize the camera with the screen's width and height
         camera = new OrthographicCamera();
         camera.setToOrtho(false, mapWidthInPixels, mapHeightInPixels);
         camera.update();
 
         renderer = new OrthogonalTiledMapRenderer(map, 1);
+
+        Skin touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+        knobPercentX = 0.0f;
+        knobPercentY = 0.0f;
+
+        touchpad = new Touchpad(5, touchpadSkin);
+        if (Gdx.app.getType() == ApplicationType.Desktop) {
+            touchpad.setBounds(30, 30, 150, 150);
+        } else {
+            touchpad.setBounds(100, 100, 300, 300);
+        }
+        touchpad.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                knobPercentX = touchpad.getKnobPercentX();
+                knobPercentY = touchpad.getKnobPercentY();
+            }
+
+        });
+        stage.addActor(touchpad);
+        Gdx.input.setInputProcessor(stage);
     }
 
     public void render() {
@@ -54,6 +88,8 @@ public class GameView {
         camera.update();
         renderer.setView(camera);
         renderer.render();
+
+        controller.handleTouchpadInput(knobPercentX, knobPercentY);
 
         // Start batch processing
         spriteBatch.begin();
@@ -92,6 +128,8 @@ public class GameView {
         // End batch processing
         spriteBatch.end();
 
+        stage.act();
+        stage.draw();
     }
 
     public void resize(int width, int height) {
@@ -102,5 +140,6 @@ public class GameView {
         spriteBatch.dispose();
         map.dispose();
         renderer.dispose();
+        stage.dispose();
     }
 }

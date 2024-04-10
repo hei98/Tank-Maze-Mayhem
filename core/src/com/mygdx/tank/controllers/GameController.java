@@ -12,45 +12,15 @@ public class GameController {
     }
 
     public void update(float deltaTime) {
-        float deltaX = 0.0f;
-        float deltaY = 0.0f;
-        boolean inputDetected = false;
-
-        boolean lookLeft = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean lookRight = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        boolean lookUp = Gdx.input.isKeyPressed(Input.Keys.UP);
-        boolean lookDown = Gdx.input.isKeyPressed(Input.Keys.DOWN);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             model.shootFromTank();
         }
+    }
 
-        if (lookUp) {
-            deltaY = 1.0f;
-            inputDetected = true;
-        }
-        if (lookDown) {
-            deltaY = -1.0f;
-            inputDetected = true;
-        }
-        if (lookLeft) {
-            deltaX = -1.0f;
-            inputDetected = true;
-        }
-        if (lookRight) {
-            deltaX = 1.0f;
-            inputDetected = true;
-        }
-
-        if (inputDetected) {
-            model.rotatePlayerTank(lookRight, lookLeft, lookUp, lookDown);
-            model.movePlayerTank(deltaX, deltaY);
-        }
-
-        else {
-            model.movePlayerTank(0, 0);
-
-        }
+    public void handleTouchpadInput(float knobPercentX, float knobPercentY) {
+        model.movePlayerTank(knobPercentX, knobPercentY);
+        model.rotatePlayerTank(knobPercentX, knobPercentY);
     }
 }
 
