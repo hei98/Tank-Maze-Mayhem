@@ -1,14 +1,10 @@
 package com.mygdx.tank.model.systems;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
-import com.mygdx.tank.model.components.BounceComponent;
-import com.mygdx.tank.model.components.CollisionSide;
-import com.mygdx.tank.model.components.CollisionSideComponent;
-import com.mygdx.tank.model.components.PositionComponent;
-import com.mygdx.tank.model.components.SpeedComponent;
-import com.mygdx.tank.model.components.SpriteComponent;
-import com.mygdx.tank.model.components.TypeComponent;
+import com.mygdx.tank.model.BulletFactory;
+import com.mygdx.tank.model.components.*;
 
 public class ShootingSystem {
     private GameModel model;
@@ -17,15 +13,23 @@ public class ShootingSystem {
         this.model = model;
     }
 
-    public void shoot(float startX, float startY, float directionX, float directionY) {
-        System.out.println("Shooting bullet");
-        Entity bullet = new Entity();
-        bullet.addComponent(new PositionComponent(startX, startY));
-        bullet.addComponent(new SpeedComponent(1.0f, directionX * 300.0f, directionY * 300.0f));
-        bullet.addComponent(new SpriteComponent("images/hvitbullet.png"));
-        bullet.addComponent(new BounceComponent());
-        bullet.addComponent(new CollisionSideComponent(CollisionSide.NONE));
-        bullet.addComponent(new TypeComponent(TypeComponent.EntityType.BULLET));
+    public void shootFromTank() {
+        Entity playerTank = this.model.getPlayerTank();
+        if (playerTank == null) return;
+
+        PositionComponent tankPosition = playerTank.getComponent(PositionComponent.class);
+        SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
+
+        if (tankPosition == null || spriteDirectionComponent == null) return;
+
+        float knobAngle = spriteDirectionComponent.angle + 90;
+        if (knobAngle > 360) knobAngle -= 360;
+
+        float knobAngleRad = knobAngle * MathUtils.degreesToRadians;
+        float directionX = MathUtils.cos(knobAngleRad);
+        float directionY = MathUtils.sin(knobAngleRad);
+
+        Entity bullet = BulletFactory.createBullet(tankPosition.x, tankPosition.y, directionX, directionY);
         model.addEntity(bullet);
     }
 }
