@@ -74,23 +74,34 @@ public class GameModel {
         }
     }
 
-    public void rotatePlayerTank(float knobPercentageX, float knobPercentageY) {
+    public void rotatePlayerTank(float knobPercentX, float knobPercentY) {
         SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
 
-        float knobAngleRad = (float) Math.atan2(knobPercentageY, knobPercentageX);
+        float knobAngleRad = (float) Math.atan2(knobPercentY, knobPercentX);
         float knobAngleDeg = knobAngleRad * MathUtils.radiansToDegrees - 90;
         if (knobAngleDeg < 0) {
             knobAngleDeg += 360f;
         }
 
-        if (knobPercentageX != 0 && knobPercentageY != 0) {
+        if (knobPercentX != 0 && knobPercentY != 0) {
             spriteDirectionComponent.angle = knobAngleDeg;
         }
     }
 
     public void shootFromTank() {
         PositionComponent tankPosition = playerTank.getComponent(PositionComponent.class);
-        shootingSystem.shoot(tankPosition.x, tankPosition.y, 1.0f, 0.0f); // Example direction
+        SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
+
+        float knobAngle = spriteDirectionComponent.angle + 90;
+        if (knobAngle > 360) {
+            knobAngle -= 360;
+        }
+
+        float knobAngleRad = knobAngle * MathUtils.degreesToRadians;
+        float knobPercentageX = MathUtils.cos(knobAngleRad);
+        float knobPercentageY = MathUtils.sin(knobAngleRad);
+
+        shootingSystem.shoot(tankPosition.x, tankPosition.y, knobPercentageX, knobPercentageY);
     }
     public void addEntity(Entity entity) {
         entities.add(entity);

@@ -11,16 +11,13 @@ public class GameController {
         this.model = model;
     }
 
-    public void update(float deltaTime) {
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            model.shootFromTank();
-        }
-    }
-
     public void handleTouchpadInput(float knobPercentX, float knobPercentY) {
         model.movePlayerTank(knobPercentX, knobPercentY);
         model.rotatePlayerTank(knobPercentX, knobPercentY);
+    }
+
+    public void handleFireButton() {
+        model.shootFromTank();
     }
 }
 
