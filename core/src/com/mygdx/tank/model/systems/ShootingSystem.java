@@ -3,7 +3,7 @@ package com.mygdx.tank.model.systems;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
-import com.mygdx.tank.model.BulletFactory; // Ensure this import is correct
+import com.mygdx.tank.model.BulletFactory;
 import com.mygdx.tank.model.components.*;
 
 public class ShootingSystem {

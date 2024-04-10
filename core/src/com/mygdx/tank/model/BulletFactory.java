@@ -7,9 +7,10 @@ public class BulletFactory {
     public static Entity createBullet(float startX, float startY, float directionX, float directionY) {
         Entity bullet = new Entity();
         bullet.addComponent(new PositionComponent(startX, startY));
-        bullet.addComponent(new SpeedComponent(300, directionX, directionY));
+        bullet.addComponent(new SpeedComponent(1.0f, directionX * 300.0f, directionY * 300.0f));
         bullet.addComponent(new SpriteComponent("images/hvitbullet.png"));
-        bullet.addComponent(new BounceComponent()); // Assuming 3 bounces before destruction
+        bullet.addComponent(new BounceComponent());
+        bullet.addComponent(new CollisionSideComponent(CollisionSide.NONE));
         bullet.addComponent(new TypeComponent(TypeComponent.EntityType.BULLET));
         return bullet;
     }
