@@ -29,13 +29,13 @@ public class GameModel {
     private EntityFactory bulletFactory;
 
     public GameModel() {
-        this.entities = new ArrayList<>();
+        entities = new ArrayList<>();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
-        this.map = new TmxMapLoader().load(mapPath);
-        this.collisionSystem = new CollisionSystem(map, entities);
-        this.movementSystem = new MovementSystem(entities, collisionSystem);
-        this.shootingSystem = new ShootingSystem(this);
-        this.playerTank = tankFactory.createEntity();
+        map = new TmxMapLoader().load(mapPath);
+        collisionSystem = new CollisionSystem(map, entities);
+        movementSystem = new MovementSystem(entities, collisionSystem);
+        shootingSystem = new ShootingSystem(this);
+        playerTank = tankFactory.createEntity();
         entities.add(playerTank);
     }
 
