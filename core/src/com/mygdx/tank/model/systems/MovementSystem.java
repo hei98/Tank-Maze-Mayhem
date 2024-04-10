@@ -1,4 +1,8 @@
-package com.mygdx.tank;
+package com.mygdx.tank.model.systems;
+
+import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.components.PositionComponent;
+import com.mygdx.tank.model.components.SpeedComponent;
 
 import java.util.List;
 

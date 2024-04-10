@@ -1,7 +1,8 @@
-package com.mygdx.tank;
+package com.mygdx.tank.controllers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.mygdx.tank.model.GameModel;
 
 public class GameController {
     private GameModel model;

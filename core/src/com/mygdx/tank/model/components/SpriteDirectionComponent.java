@@ -1,4 +1,4 @@
-package com.mygdx.tank;
+package com.mygdx.tank.model.components;
 
 public class SpriteDirectionComponent implements Component {
     public float angle;
