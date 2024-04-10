@@ -43,16 +43,19 @@ public class CollisionSystem {
     public boolean isCollisionWithWalls(Entity entity, float deltaX, float deltaY) {
         SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
         PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
+        TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
 
         if (spriteComponent == null || positionComponent == null) {
             return false;
         }
 
+        float heightModifier = (typeComponent != null && typeComponent.type == TypeComponent.EntityType.TANK) ? -spriteComponent.getSprite().getHeight() / 3 : 0;
+
         Rectangle nextBoundingBox = new Rectangle(
                 positionComponent.x + deltaX,
                 positionComponent.y + deltaY,
                 spriteComponent.getSprite().getWidth(),
-                spriteComponent.getSprite().getHeight()
+                spriteComponent.getSprite().getHeight() + heightModifier
         );
 
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Walls");
