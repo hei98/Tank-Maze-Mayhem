@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
@@ -73,28 +74,18 @@ public class GameModel {
         }
     }
 
-    public void rotatePlayerTank(boolean lookRight, boolean lookLeft, boolean lookUp, boolean lookDown) {
+    public void rotatePlayerTank(float knobPercentageX, float knobPercentageY) {
         SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
-        float angle = 0;
-        if (lookRight && lookUp) {
-            angle = 315;
-        } else if (lookRight && lookDown) {
-            angle = 225;
-        } else if (lookLeft && lookUp) {
-            angle = 45;
-        } else if (lookLeft && lookDown) {
-            angle = 135;
-        } else if (lookRight) {
-            angle = 270;
-        } else if (lookLeft) {
-            angle = 90;
-        } else if (lookUp) {
-            angle = 0;
-        } else if (lookDown) {
-            angle = 180;
+
+        float knobAngleRad = (float) Math.atan2(knobPercentageY, knobPercentageX);
+        float knobAngleDeg = knobAngleRad * MathUtils.radiansToDegrees - 90;
+        if (knobAngleDeg < 0) {
+            knobAngleDeg += 360f;
         }
 
-        spriteDirectionComponent.angle = angle;
+        if (knobPercentageX != 0 && knobPercentageY != 0) {
+            spriteDirectionComponent.angle = knobAngleDeg;
+        }
     }
 
     public void shootFromTank() {

@@ -40,7 +40,7 @@ public class MultiplayerScreen implements Screen {
 
         model = new GameModel();
         controller = new GameController(model);
-        view = new GameView(model);
+        view = new GameView(model, controller);
 
         stage.addActor(backButton);
         backButton.setPosition(100, 100);
@@ -56,8 +56,8 @@ public class MultiplayerScreen implements Screen {
         stage.act();
         stage.draw();
         float deltaTime = Gdx.graphics.getDeltaTime();
-        controller.update(deltaTime);
         model.update(deltaTime);
+        controller.update(deltaTime);
         view.render();
     }
 
