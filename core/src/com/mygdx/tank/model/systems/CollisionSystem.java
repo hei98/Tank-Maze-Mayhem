@@ -5,10 +5,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.components.BounceComponent;
+import com.mygdx.tank.model.components.CollisionSideComponent;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
+import com.mygdx.tank.model.components.CollisionSide;
 
 public class CollisionSystem {
     private TiledMap map;
@@ -65,6 +67,15 @@ public class CollisionSystem {
                 int tileY = Math.floorDiv(y, (int) collisionLayer.getTileHeight());
                 TiledMapTileLayer.Cell cell = collisionLayer.getCell(tileX, tileY);
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey("blocked")) {
+                    if (typeComponent != null && typeComponent.type == TypeComponent.EntityType.BULLET) {
+                        // if the entity is a bullet, find out which side it hit the wall on
+                        Rectangle tileBoundingBox = new Rectangle(tileX * collisionLayer.getTileWidth(), tileY * collisionLayer.getTileHeight(), collisionLayer.getTileWidth(), collisionLayer.getTileHeight());
+                        CollisionSide side = getCollisionSide(nextBoundingBox, tileBoundingBox);
+                        CollisionSideComponent collisionSideComponent = entity.getComponent(CollisionSideComponent.class);
+
+                        // update the collisionSideComponent with the side the bullet collided with
+                        collisionSideComponent.side = side;
+                    }
                     return true; // Collision detected
                 }
             }
@@ -86,10 +97,17 @@ public class CollisionSystem {
 
                 case BULLET:
                     BounceComponent bounce = entity.getComponent(BounceComponent.class);
+                    CollisionSideComponent collisionSideComponent = entity.getComponent(CollisionSideComponent.class);
                     if (bounce != null && bounce.bounces < bounce.maxBounces) {
+                        // change direction of bullet depending on which side it hit the wall
+                        if (collisionSideComponent.side != CollisionSide.NONE) {
+                            if (collisionSideComponent.side == CollisionSide.RIGHT || collisionSideComponent.side == CollisionSide.LEFT) {
+                                speed.speedX *= -1;
+                            } else if (collisionSideComponent.side == CollisionSide.TOP || collisionSideComponent.side == CollisionSide.BOTTOM) {
+                                speed.speedY *= -1;
+                            }
+                        }
 
-                        speed.speedX *= -1;
-                        speed.speedY *= -1;
                         bounce.bounces++;
 
                         entity.getComponent(PositionComponent.class).x -= deltaX;
@@ -101,5 +119,38 @@ public class CollisionSystem {
                     break;
             }
         }
+    }
+
+    // method to find out which side the bullet collided with on a wall
+    public CollisionSide getCollisionSide(Rectangle bulletBoundingBox, Rectangle tileBoundingBox) {
+        float bulletCenterX = bulletBoundingBox.x + bulletBoundingBox.width / 2;
+        float bulletCenterY = bulletBoundingBox.y + bulletBoundingBox.height / 2;
+        float tileCenterX = tileBoundingBox.x + tileBoundingBox.width / 2;
+        float tileCenterY = tileBoundingBox.y + tileBoundingBox.height / 2;
+        float dx = bulletCenterX - tileCenterX;
+        float dy = bulletCenterY - tileCenterY;
+        float width = (bulletBoundingBox.width + tileBoundingBox.width) / 2;
+        float height = (bulletBoundingBox.height + tileBoundingBox.height) / 2;
+
+        float crossWidth = width * dy;
+        float crossHeight = height * dx;
+
+        if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
+            if (crossWidth > crossHeight) {
+                if (crossWidth > -crossHeight) {
+                    return CollisionSide.BOTTOM;
+                } else {
+                    return CollisionSide.LEFT;
+                }
+            } else {
+                if (crossWidth > -crossHeight) {
+                    return CollisionSide.RIGHT;
+                } else {
+                    return CollisionSide.TOP;
+                }
+            }
+        }
+
+        return null;
     }
 }
