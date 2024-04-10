@@ -17,7 +17,7 @@ public class GameController {
     }
 
     public void handleFireButton() {
-        model.shootFromTank();
+        model.handleShootAction();
     }
 }
 

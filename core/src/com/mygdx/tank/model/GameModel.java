@@ -19,43 +19,26 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class GameModel {
-    private List<Entity> entities = new ArrayList<>();
+    private List<Entity> entities;
     private MovementSystem movementSystem;
     private ShootingSystem shootingSystem;
     private CollisionSystem collisionSystem;
     private Entity playerTank;
     private TiledMap map;
+    private EntityFactory tankFactory = new TankFactory();
+    private EntityFactory bulletFactory;
 
     public GameModel() {
-        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
-            map = new TmxMapLoader().load("TiledMap/Map.tmx");
-        } else {
-            map = new TmxMapLoader().load("TiledMap/Map2.tmx");
-        }
-
-        collisionSystem = new CollisionSystem(map, entities);
-
-        movementSystem = new MovementSystem(entities, collisionSystem);
-        shootingSystem = new ShootingSystem(this);
-        playerTank = createPlayerTank();
+        this.entities = new ArrayList<>();
+        String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
+        this.map = new TmxMapLoader().load(mapPath);
+        this.collisionSystem = new CollisionSystem(map, entities);
+        this.movementSystem = new MovementSystem(entities, collisionSystem);
+        this.shootingSystem = new ShootingSystem(this);
+        this.playerTank = tankFactory.createEntity();
+        entities.add(playerTank);
     }
 
-    private Entity createPlayerTank() {
-        Entity tank = new Entity();
-        tank.addComponent(new PositionComponent(0.0f, 0.0f));
-        tank.addComponent(new SpeedComponent(200.0f));
-        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
-            tank.addComponent(new SpriteComponent("images/tank_blue4.png"));
-        } else {
-            tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
-        }
-
-        tank.addComponent(new SpriteDirectionComponent(0f));
-        tank.addComponent(new TypeComponent(TypeComponent.EntityType.TANK));
-        entities.add(tank);
-        return tank;
-
-    }
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
@@ -73,6 +56,9 @@ public class GameModel {
             speed.speedY = deltaY * speed.speed;
         }
     }
+    public void handleShootAction() {
+        shootingSystem.shootFromTank();
+    }
 
     public void rotatePlayerTank(float knobPercentX, float knobPercentY) {
         SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
@@ -88,21 +74,6 @@ public class GameModel {
         }
     }
 
-    public void shootFromTank() {
-        PositionComponent tankPosition = playerTank.getComponent(PositionComponent.class);
-        SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
-
-        float knobAngle = spriteDirectionComponent.angle + 90;
-        if (knobAngle > 360) {
-            knobAngle -= 360;
-        }
-
-        float knobAngleRad = knobAngle * MathUtils.degreesToRadians;
-        float knobPercentageX = MathUtils.cos(knobAngleRad);
-        float knobPercentageY = MathUtils.sin(knobAngleRad);
-
-        shootingSystem.shoot(tankPosition.x, tankPosition.y, knobPercentageX, knobPercentageY);
-    }
     public void addEntity(Entity entity) {
         entities.add(entity);
     }
