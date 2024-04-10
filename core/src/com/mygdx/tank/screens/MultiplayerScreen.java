@@ -57,7 +57,6 @@ public class MultiplayerScreen implements Screen {
         stage.draw();
         float deltaTime = Gdx.graphics.getDeltaTime();
         model.update(deltaTime);
-        controller.update(deltaTime);
         view.render();
     }
 

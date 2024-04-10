@@ -2,6 +2,7 @@ package com.mygdx.tank;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Gdx;
@@ -10,9 +11,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
@@ -69,6 +74,29 @@ public class GameView {
         } else {
             touchpad.setBounds(100, 100, 300, 300);
         }
+
+        Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
+
+        // Create a skin for the circular button
+        Skin skin = new Skin();
+        skin.add("circleButton", buttonTexture);
+
+        // Define the style for the circular button
+        ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+        buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+
+        // Create the circular button
+        ImageButton circularButton = new ImageButton(buttonStyle);
+
+        // Set the position and size of the circular button
+        if (Gdx.app.getType() == ApplicationType.Desktop) {
+            circularButton.setPosition(Gdx.graphics.getWidth() - 150, 40);
+            circularButton.setSize(100, 100);
+        } else {
+            circularButton.setPosition(Gdx.graphics.getWidth() - 300, 120);
+            circularButton.setSize(250, 250);
+        }
+
         touchpad.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -77,7 +105,16 @@ public class GameView {
             }
 
         });
+
+        circularButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Handle button click event here
+                controller.handleFireButton();
+            }
+        });
         stage.addActor(touchpad);
+        stage.addActor(circularButton);
         Gdx.input.setInputProcessor(stage);
     }
 
