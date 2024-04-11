@@ -5,6 +5,8 @@ import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.BulletFactory;
 import com.mygdx.tank.model.components.*;
+import com.mygdx.tank.model.components.bullet.ShootingCooldownComponent;
+import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 
 public class ShootingSystem {
     private GameModel model;

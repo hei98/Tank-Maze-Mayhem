@@ -1,4 +1,4 @@
-package com.mygdx.tank.model.components;
+package com.mygdx.tank.model.components.bullet;
 
 public enum CollisionSide {
     TOP,

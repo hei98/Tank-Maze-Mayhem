@@ -5,14 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
-import com.mygdx.tank.model.Entity;
-import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
-import com.mygdx.tank.model.components.SpriteComponent;
-import com.mygdx.tank.model.components.SpriteDirectionComponent;
-import com.mygdx.tank.model.components.TypeComponent;
+import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.mygdx.tank.model.systems.CollisionSystem;
 import com.mygdx.tank.model.systems.MovementSystem;
+import com.mygdx.tank.model.systems.PowerupSpawnSystem;
 import com.mygdx.tank.model.systems.ShootingSystem;
 
 import java.util.List;
@@ -23,6 +20,7 @@ public class GameModel {
     private MovementSystem movementSystem;
     private ShootingSystem shootingSystem;
     private CollisionSystem collisionSystem;
+    private PowerupSpawnSystem powerupSpawnSystem;
     private Entity playerTank;
     private TiledMap map;
     private EntityFactory tankFactory = new TankFactory();
@@ -35,6 +33,7 @@ public class GameModel {
         collisionSystem = new CollisionSystem(map, entities);
         movementSystem = new MovementSystem(entities, collisionSystem);
         shootingSystem = new ShootingSystem(this);
+        powerupSpawnSystem = new PowerupSpawnSystem(this);
         playerTank = tankFactory.createEntity();
         entities.add(playerTank);
     }
@@ -43,6 +42,7 @@ public class GameModel {
         movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
         shootingSystem.update(deltaTime);
+        powerupSpawnSystem.update(deltaTime);
     }
 
     public Entity getPlayerTank() {

@@ -1,7 +1,9 @@
 package com.mygdx.tank.model;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.tank.model.components.*;
+import com.mygdx.tank.model.components.bullet.BounceComponent;
+import com.mygdx.tank.model.components.bullet.CollisionSide;
+import com.mygdx.tank.model.components.bullet.CollisionSideComponent;
 
 public class BulletFactory {
     public static Entity createBullet(float startX, float startY, float directionX, float directionY) {
