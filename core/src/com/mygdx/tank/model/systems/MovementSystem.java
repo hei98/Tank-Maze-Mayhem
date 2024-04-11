@@ -29,7 +29,7 @@ public class MovementSystem {
                     position.x += proposedDeltaX;
                     position.y += proposedDeltaY;
                 } else {
-                    collisionSystem.handleCollision(entity, proposedDeltaX, proposedDeltaY);
+                    collisionSystem.handleWallCollision(entity, proposedDeltaX, proposedDeltaY);
                 }
             }
         }

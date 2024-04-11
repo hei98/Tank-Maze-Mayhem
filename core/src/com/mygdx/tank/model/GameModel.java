@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.tank.model.components.SpeedComponent;
+import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.mygdx.tank.model.systems.CollisionSystem;
 import com.mygdx.tank.model.systems.MovementSystem;
@@ -24,7 +25,6 @@ public class GameModel {
     private Entity playerTank;
     private TiledMap map;
     private EntityFactory tankFactory = new TankFactory();
-    private EntityFactory bulletFactory;
 
     public GameModel() {
         entities = new ArrayList<>();
@@ -41,8 +41,27 @@ public class GameModel {
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
+        removeMarkedEntities();
         shootingSystem.update(deltaTime);
         powerupSpawnSystem.update(deltaTime);
+    }
+
+    public void removeMarkedEntities() {
+        List<Entity> toKeep = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (!entity.isMarkedForRemoval()) {
+                toKeep.add(entity);
+            }
+            else{
+                TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
+                if (typeComponent.type == TypeComponent.EntityType.POWERUP) {
+                    powerupSpawnSystem.spawnedPowerup = false;
+                }
+                System.out.println("Removing entity: " + entity);
+            }
+        }
+        entities.clear();
+        entities.addAll(toKeep);
     }
 
     public Entity getPlayerTank() {

@@ -7,6 +7,7 @@ import java.util.Map;
 public class Entity {
     private static int nextId = 1;
     private int id;
+    private boolean markedForRemoval = false;
     private Map<Class<? extends Component>, Component> components;
 
     public Entity() {
@@ -16,6 +17,14 @@ public class Entity {
 
     public int getId() {
         return id;
+    }
+
+    public void markForRemoval(boolean mark) {
+        this.markedForRemoval = mark;
+    }
+
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
     }
 
     public <T extends Component> void addComponent(T component) {
