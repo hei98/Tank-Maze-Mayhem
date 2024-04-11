@@ -1,4 +1,10 @@
 package com.mygdx.tank.model.systems;
+
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import java.util.List;
+import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.components.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -23,21 +29,61 @@ public class CollisionSystem {
 
     public void update(float deltaTime) {
         for (Entity entity : entities) {
-            PositionComponent position = entity.getComponent(PositionComponent.class);
             SpeedComponent speed = entity.getComponent(SpeedComponent.class);
-            TypeComponent type = entity.getComponent(TypeComponent.class);
-
-            if (position != null && speed != null && type != null) {
+            if (speed != null) {
                 float deltaX = speed.speedX * deltaTime;
                 float deltaY = speed.speedY * deltaTime;
-
                 if (isCollisionWithWalls(entity, deltaX, deltaY)) {
-                    handleCollision(entity, deltaX, deltaY);
-                } else {
-                    // If no collision, update position
-                    position.x += deltaX;
-                    position.y += deltaY;
+                    handleWallCollision(entity, deltaX, deltaY);
                 }
+            }
+        }
+        processEntityCollisions();
+    }
+    private Rectangle getBoundingBox(Entity entity) {
+        PositionComponent position = entity.getComponent(PositionComponent.class);
+        SpriteComponent sprite = entity.getComponent(SpriteComponent.class);
+        return new Rectangle(position.x, position.y, sprite.getSprite().getWidth(), sprite.getSprite().getHeight());
+    }
+    private boolean doEntitiesOverlap(Entity e1, Entity e2) {
+        Rectangle r1 = getBoundingBox(e1);
+        Rectangle r2 = getBoundingBox(e2);
+        return r1.overlaps(r2);
+    }
+    private void processEntityCollisions() {
+        for (int i = 0; i < entities.size(); i++) {
+            for (int j = i + 1; j < entities.size(); j++) {
+                Entity e1 = entities.get(i);
+                Entity e2 = entities.get(j);
+                if (doEntitiesOverlap(e1, e2)) {
+                    handleEntityCollision(e1, e2);
+                }
+            }
+        }
+    }
+
+    private void handleEntityCollision(Entity e1, Entity e2) {
+        TypeComponent type1 = e1.getComponent(TypeComponent.class);
+        TypeComponent type2 = e2.getComponent(TypeComponent.class);
+
+        if (type1.type == TypeComponent.EntityType.BULLET && type2.type == TypeComponent.EntityType.TANK) {
+            markBulletForRemovalAndDamageTank(e1, e2);
+            System.out.println("Entities collided: " + e1 + " with " + e2);
+        } else if (type2.type == TypeComponent.EntityType.BULLET && type1.type == TypeComponent.EntityType.TANK) {
+            markBulletForRemovalAndDamageTank(e2, e1);
+            System.out.println("Entities collided: " + e1 + " with " + e2);
+        }
+    }
+
+
+    private void markBulletForRemovalAndDamageTank(Entity bullet, Entity tank) {
+        bullet.markForRemoval(true);
+
+        HealthComponent health = tank.getComponent(HealthComponent.class);
+        if (health != null) {
+            health.takeDamage();
+            if (!health.isAlive()) {
+                tank.markForRemoval(true);
             }
         }
     }
@@ -83,8 +129,7 @@ public class CollisionSystem {
         return false; // No collision detected
     }
 
-    public void handleCollision(Entity entity, float deltaX, float deltaY) {
-        // Determine the type of the entity
+    public void handleWallCollision(Entity entity, float deltaX, float deltaY) {
         TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
         SpeedComponent speed = entity.getComponent(SpeedComponent.class);
 
@@ -155,3 +200,4 @@ public class CollisionSystem {
         return null;
     }
 }
+

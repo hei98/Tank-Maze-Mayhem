@@ -19,8 +19,9 @@ public class ShootingSystem {
 
         PositionComponent tankPosition = playerTank.getComponent(PositionComponent.class);
         SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
+        SpriteComponent tankSprite = playerTank.getComponent(SpriteComponent.class);
 
-        if (tankPosition == null || spriteDirectionComponent == null) return;
+        if (tankPosition == null || spriteDirectionComponent == null || tankSprite == null) return;
 
         float knobAngle = spriteDirectionComponent.angle + 90;
         if (knobAngle > 360) knobAngle -= 360;
@@ -29,7 +30,12 @@ public class ShootingSystem {
         float directionX = MathUtils.cos(knobAngleRad);
         float directionY = MathUtils.sin(knobAngleRad);
 
-        Entity bullet = BulletFactory.createBullet(tankPosition.x, tankPosition.y, directionX, directionY);
+        // Calculate the offset based on the dimensions of the tank sprite and the direction of fire
+        float bulletSpawnOffset = Math.max(tankSprite.getSprite().getWidth(), tankSprite.getSprite().getHeight()) / 2 + 30; // +5 ensures it spawns outside
+        float bulletStartX = tankPosition.x + directionX * bulletSpawnOffset;
+        float bulletStartY = tankPosition.y + directionY * bulletSpawnOffset;
+
+        Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY);
         model.addEntity(bullet);
     }
 }

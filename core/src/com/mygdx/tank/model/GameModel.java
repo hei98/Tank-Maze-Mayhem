@@ -52,6 +52,9 @@ public class GameModel {
             if (!entity.isMarkedForRemoval()) {
                 toKeep.add(entity);
             }
+            else{
+                System.out.println("Removing entity: " + entity);
+            }
         }
         entities.clear();
         entities.addAll(toKeep);
