@@ -2,8 +2,9 @@ package com.mygdx.tank.model;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.components.*;
+import com.mygdx.tank.model.components.bullet.ShootingCooldownComponent;
+import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 
 public class TankFactory implements EntityFactory {
     public Entity createEntity() {

@@ -4,13 +4,13 @@ import java.util.List;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.tank.model.Entity;
-import com.mygdx.tank.model.components.BounceComponent;
-import com.mygdx.tank.model.components.CollisionSideComponent;
+import com.mygdx.tank.model.components.bullet.BounceComponent;
+import com.mygdx.tank.model.components.bullet.CollisionSideComponent;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
-import com.mygdx.tank.model.components.CollisionSide;
+import com.mygdx.tank.model.components.bullet.CollisionSide;
 
 public class CollisionSystem {
     private TiledMap map;
