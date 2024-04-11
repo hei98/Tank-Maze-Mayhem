@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -19,15 +20,18 @@ import org.w3c.dom.Text;
 
 public class MainMenuScreen implements Screen {
     private final TankMazeMayhem game;
+    private final AccountService accountService;
     private Stage stage;
     private SpriteBatch batch;
     private Texture background;
     private Skin buttonSkin;
     private TextButton multiplayerButton, leaderboardButton, loginButton;
     private ImageButton settingsButton;
+    private Label accountLabel;
 
-    public MainMenuScreen(TankMazeMayhem game) {
+    public MainMenuScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
+        this.accountService = accountService;
     }
 
     @Override
@@ -35,6 +39,8 @@ public class MainMenuScreen implements Screen {
         batch = new SpriteBatch();
         stage = new Stage();
         background = new Texture("Backgrounds/main-menu.JPG");
+
+
 
         //Load the skin and atlas for the buttons
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -52,25 +58,25 @@ public class MainMenuScreen implements Screen {
         multiplayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MultiplayerScreen(game));
+                game.setScreen(new MultiplayerScreen(game, accountService));
             }
         });
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game));
+                game.setScreen(new SettingsScreen(game, accountService));
             }
         });
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LeaderboardScreen(game));
+                game.setScreen(new SignInScreen(game, accountService));
             }
         });
         leaderboardButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LeaderboardScreen(game));
+                game.setScreen(new LeaderboardScreen(game, accountService));
             }
         });
 

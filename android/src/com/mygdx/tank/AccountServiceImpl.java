@@ -1,7 +1,11 @@
+package com.mygdx.tank;
 
+import com.badlogic.gdx.Gdx;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mygdx.tank.AccountService;
+import com.mygdx.tank.User;
 
 public class AccountServiceImpl implements AccountService {
 
@@ -26,6 +30,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void signIn(String email, String password) throws Exception {
+        Gdx.app.log("InfoTag", "AccountServiceImpl called");
         Tasks.await(firebaseAuth.signInWithEmailAndPassword(email, password));
     }
 

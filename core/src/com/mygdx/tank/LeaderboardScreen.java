@@ -11,10 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class LeaderboardScreen implements Screen {
 
     private TankMazeMayhem game;
+    private AccountService accountService;
     private Stage stage;
 
-    public LeaderboardScreen(TankMazeMayhem game) {
+    public LeaderboardScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
+        this.accountService = accountService;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class LeaderboardScreen implements Screen {
             backButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    game.setScreen(new MainMenuScreen(game));
+                    game.setScreen(new MainMenuScreen(game, accountService));
                 }
             });
 

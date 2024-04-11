@@ -1,4 +1,6 @@
+package com.mygdx.tank;
 
+import com.badlogic.gdx.Gdx;
 
 public class SignInController{
     private final AccountService accountService;
@@ -12,19 +14,16 @@ public class SignInController{
 
     public void updateEmail(String newEmail) {
         this.email = newEmail;
+        Gdx.app.log("email updated", email);
     }
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
 
-    public void onSignInClick() {
-        try {
-            accountService.signIn(email, password);
-            //Navigate to main menu
-        } catch (Exception e) {
-            // Handle sign-in failure (error message?)
-        }
+    public void onSignInClick() throws Exception {
+        Gdx.app.log("InfoTag", "controller involved.");
+        accountService.signIn(email, password);
     }
 
     public void onSignUpClick() {

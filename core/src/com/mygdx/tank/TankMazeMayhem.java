@@ -8,20 +8,22 @@ import com.badlogic.gdx.Gdx;
 
 public class TankMazeMayhem extends Game {
     private FirebaseAPI api;
+	private AccountService accountService;
     private GameModel model;
     private GameView view;
     private GameController controller;
     SpriteBatch batch;
 
-	public TankMazeMayhem(FirebaseAPI api) {
+	public TankMazeMayhem(FirebaseAPI api, AccountService accountService) {
 		this.api = api;
+		this.accountService = accountService;
 	}
 
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
 		// Set the initial screen to the main menu
-		setScreen(new MainMenuScreen(this));
+		setScreen(new MainMenuScreen(this, accountService));
 	}
 
 	@Override

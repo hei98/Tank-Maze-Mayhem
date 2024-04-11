@@ -1,4 +1,4 @@
-
+package com.mygdx.tank;
 
 public class SignUpController {
     private final AccountService accountService;
@@ -22,15 +22,8 @@ public class SignUpController {
         this.confirmPassword = newConfirmPassword;
     }
 
-    public void onSignUpClick() {
-        try {
-            if (!password.equals(confirmPassword)) {
-                throw new Exception("Passwords do not match");
-            }
+    public void onSignUpClick() throws Exception {
             accountService.signUp(email, password);
-            //Navigate to main menu
-        } catch (Exception e) {
-            // Handle sign-up failure (error?)
-        }
+            accountService.signIn(email, password);
     }
 }
