@@ -42,7 +42,7 @@ public class GameModel {
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
-        //shootingSystem.update(deltaTime);
+        shootingSystem.update(deltaTime);
     }
 
     public Entity getPlayerTank() {

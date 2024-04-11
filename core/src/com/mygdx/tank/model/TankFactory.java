@@ -17,6 +17,7 @@ public class TankFactory implements EntityFactory {
         }
         tank.addComponent(new SpriteDirectionComponent(0f));
         tank.addComponent(new TypeComponent(TypeComponent.EntityType.TANK));
+        tank.addComponent(new ShootingCooldownComponent(1.5f));
         return tank;
     }
 }
