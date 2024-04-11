@@ -73,6 +73,10 @@ public class CollisionSystem {
         } else if (type2.type == TypeComponent.EntityType.BULLET && type1.type == TypeComponent.EntityType.TANK) {
             markBulletForRemovalAndDamageTank(e2, e1);
             System.out.println("Entities collided: " + e1 + " with " + e2);
+        } else if (type1.type == TypeComponent.EntityType.POWERUP && type2.type == TypeComponent.EntityType.TANK) {
+            e1.markForRemoval(true);
+        } else if (type2.type == TypeComponent.EntityType.POWERUP && type1.type == TypeComponent.EntityType.TANK) {
+            e2.markForRemoval(true);
         }
     }
 
