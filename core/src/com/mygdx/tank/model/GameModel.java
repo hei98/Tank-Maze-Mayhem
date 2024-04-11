@@ -42,8 +42,20 @@ public class GameModel {
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
+        removeMarkedEntities();
         //shootingSystem.update(deltaTime);
     }
+
+    public void removeMarkedEntities() {
+        List<Entity> toKeep = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (!entity.isMarkedForRemoval()) {
+                toKeep.add(entity);
+            }
+        }
+        entities.clear();
+        entities.addAll(toKeep);
+            }
 
     public Entity getPlayerTank() {
         return playerTank;

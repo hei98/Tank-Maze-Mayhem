@@ -114,6 +114,7 @@ public class CollisionSystem {
                         entity.getComponent(PositionComponent.class).y -= deltaY;
                     }
                     else {
+                        entity.markForRemoval(true);
 
                     }
                     break;
