@@ -23,7 +23,7 @@ import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
-import com.mygdx.tank.model.components.SpriteDirectionComponent;
+import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 public class GameView {
