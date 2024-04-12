@@ -1,5 +1,7 @@
 package com.mygdx.tank.model.systems;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
@@ -33,9 +35,10 @@ public class ShootingSystem {
             float directionX = MathUtils.cos(knobAngleRad);
             float directionY = MathUtils.sin(knobAngleRad);
 
-            float bulletSpawnOffset = Math.max(tankSprite.getSprite().getWidth(), tankSprite.getSprite().getHeight()) / 2 + 30; // +5 ensures it spawns outside
-            float bulletStartX = tankPosition.x + directionX * bulletSpawnOffset;
-            float bulletStartY = tankPosition.y + directionY * bulletSpawnOffset;
+            float bulletSpawnOffset = Math.max(tankSprite.getSprite().getWidth(), tankSprite.getSprite().getHeight()) / 2 + (Gdx.app.getType() == Application.ApplicationType.Desktop ? 30 : 60); // +5 ensures it spawns outside
+            float offsetAdjustment = Gdx.app.getType() == Application.ApplicationType.Desktop ? 10 : 30;
+            float bulletStartX = tankPosition.x + (knobAngle >= 270 ? offsetAdjustment : 0) + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionX * bulletSpawnOffset;
+            float bulletStartY = tankPosition.y + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionY * bulletSpawnOffset;
 
             Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY);
             model.addEntity(bullet);
