@@ -24,7 +24,6 @@ public class PowerupSpawnSystem {
             Entity powerUp = powerupFactory.createEntity();
             model.addEntity(powerUp);
             spawnedPowerup = true;
-            timer = 10.0f;
         } else if (timer > 0) {
             if (timer - deltaTime < 0) {
                 timer = 0.0f;

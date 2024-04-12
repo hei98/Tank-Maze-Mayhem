@@ -72,7 +72,7 @@ public class GameView {
         if (Gdx.app.getType() == ApplicationType.Desktop) {
             touchpad.setBounds(30, 30, 150, 150);
         } else {
-            touchpad.setBounds(100, 100, 300, 300);
+            touchpad.setBounds(100, 100, 250, 250);
         }
 
         Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
