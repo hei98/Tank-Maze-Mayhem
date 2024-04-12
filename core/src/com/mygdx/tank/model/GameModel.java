@@ -56,6 +56,7 @@ public class GameModel {
                 TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
                 if (typeComponent.type == TypeComponent.EntityType.POWERUP) {
                     powerupSpawnSystem.spawnedPowerup = false;
+                    powerupSpawnSystem.timer = 10.0f;
                 }
                 System.out.println("Removing entity: " + entity);
             }
