@@ -5,7 +5,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -13,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 
 public class SignInScreen implements Screen {
     private final TankMazeMayhem game;
@@ -40,14 +44,22 @@ public class SignInScreen implements Screen {
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
         background = new Texture("Backgrounds/main-menu.JPG");
 
+        //errorLabel
+        Texture errorBackground = new Texture("Backgrounds/orange.png");
+        TextureRegionDrawable errorBackgroundDrawable = new TextureRegionDrawable(new TextureRegion(errorBackground));
+        Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+        labelStyle.background = errorBackgroundDrawable;
+        errorLabel = new Label("", labelStyle);
+        errorLabel.setWrap(true);
+        errorLabel.setAlignment(Align.center);
+
+
         //Create textfields and buttons
         emailTextField = new TextField("", skin);
         passwordTextField = new TextField("", skin);
         signInButton = new TextButton("Sign In", skin);
         signUpButton = new TextButton("Sign Up", skin);
         backButton = new TextButton("Back", skin);
-        errorLabel = new Label("", skin);
-        errorLabel.setColor(Color.RED);
 
         setButtonLayout();
 
@@ -66,13 +78,13 @@ public class SignInScreen implements Screen {
                 String password = passwordTextField.getText();
                 signInController.updateEmail(email);
                 signInController.updatePassword(password);
+                errorLabel.setText("");
                 try {
                     signInController.onSignInClick();
-                    errorLabel.setText("");
                     game.setScreen(new MainMenuScreen(game, accountService));
                 } catch (Exception e) {
                     errorLabel.setText("Login failed: " + e.getLocalizedMessage()); // Display the error message
-                    Gdx.app.error("ErrorTag", e.getMessage());
+                    Gdx.app.error("InfoTag", e.getMessage());
                 }
 
             }
@@ -115,8 +127,9 @@ public class SignInScreen implements Screen {
         signInButton.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.4f, buttonWidth, buttonHeight);
         signUpButton.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.3f, buttonWidth, buttonHeight);
         backButton.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.1f, buttonWidth, buttonHeight);
-        errorLabel.setBounds(0, screenHeight/2, buttonWidth, buttonHeight );
+        errorLabel.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.2f, buttonWidth, buttonHeight/3 );
     }
+
 
     @Override
     public void render(float delta) {

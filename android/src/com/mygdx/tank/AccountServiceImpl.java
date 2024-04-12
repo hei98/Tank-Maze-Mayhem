@@ -23,6 +23,11 @@ public class AccountServiceImpl implements AccountService {
         return currentUser != null ? currentUser.getUid() : "";
     }
 
+    public String getCurrentUserEmail() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        return currentUser != null ? currentUser.getEmail() : null;
+    }
+
     @Override
     public boolean hasUser() {
         return firebaseAuth.getCurrentUser() != null;
@@ -51,4 +56,5 @@ public class AccountServiceImpl implements AccountService {
             Tasks.await(user.delete());
         }
     }
+
 }

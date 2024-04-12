@@ -2,6 +2,7 @@ package com.mygdx.tank;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -28,6 +29,7 @@ public class MainMenuScreen implements Screen {
     private TextButton multiplayerButton, leaderboardButton, loginButton;
     private ImageButton settingsButton;
     private Label accountLabel;
+    private BitmapFont font;
 
     public MainMenuScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
@@ -40,6 +42,13 @@ public class MainMenuScreen implements Screen {
         stage = new Stage();
         background = new Texture("Backgrounds/main-menu.JPG");
 
+        //Display the username if logged in
+        font = new BitmapFont();
+        accountLabel = new Label("", new Label.LabelStyle(font, Color.WHITE));
+        accountLabel.setPosition(10, Gdx.graphics.getHeight() - 20);
+        stage.addActor(accountLabel);
+        updateAccountLabel();
+
 
 
         //Load the skin and atlas for the buttons
@@ -48,8 +57,15 @@ public class MainMenuScreen implements Screen {
         //Create the buttons with the new style
         multiplayerButton = new TextButton("Multiplayer", buttonSkin, "menu");
         leaderboardButton = new TextButton("Leaderboard", buttonSkin, "default");
-        loginButton = new TextButton("Create User/Login", buttonSkin, "default");
         settingsButton = new ImageButton(buttonSkin, "settings");
+
+        // login/logout according to user status
+        if (accountService.hasUser()){
+            loginButton = new TextButton("Log out", buttonSkin, "default");
+        }
+        else{
+            loginButton = new TextButton("Create User/Login", buttonSkin, "default");
+        }
 
         setButtonLayout();
 
@@ -70,7 +86,13 @@ public class MainMenuScreen implements Screen {
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SignInScreen(game, accountService));
+                if (accountService.hasUser()){
+                    accountService.signOut();
+                    game.setScreen( new MainMenuScreen(game, accountService));
+                }
+                else{
+                    game.setScreen(new SignInScreen(game, accountService));
+                }
             }
         });
         leaderboardButton.addListener(new ClickListener() {
@@ -99,6 +121,15 @@ public class MainMenuScreen implements Screen {
         leaderboardButton.setBounds(centerX, 200, buttonWidth, buttonHeight);
         loginButton.setBounds(centerX, 100, buttonWidth, buttonHeight);
         settingsButton.setBounds(Gdx.graphics.getWidth() - settingsButton.getWidth() - 10, Gdx.graphics.getHeight() - settingsButton.getHeight() - 10, 50, 50);
+    }
+    //Check if user logged in, and display ID
+    private void updateAccountLabel() {
+        if (accountService.hasUser()) {
+            String user = accountService.getCurrentUserEmail();
+            accountLabel.setText("User email: " + user);
+        } else {
+            accountLabel.setText("Not logged in");
+        }
     }
 
     @Override

@@ -22,11 +22,32 @@ public class SignInController{
     }
 
     public void onSignInClick() throws Exception {
-        Gdx.app.log("InfoTag", "controller involved.");
-        accountService.signIn(email, password);
+        try {
+            Gdx.app.log("InfoTag", "controller sign in called.");
+            accountService.signIn(email, password);
+        }
+        catch(Exception e){
+            String error = e.getMessage();
+            if (error.contains("auth credential")){
+                Gdx.app.log("InfoTag", e.getMessage());
+                throw new Exception("Wrong email/password");
+            }
+            else if(error.contains("email")){
+                Gdx.app.log("InfoTag", e.getMessage());
+                throw new Exception("Invalid Email");
+            }
+            else if(error.contains("user")){
+                Gdx.app.log("InfoTag", e.getMessage());
+                throw new Exception("User does not exist");
+            }
+            else if(error.contains("String")){
+                throw new Exception("You didn't write anything, silly");
+            }
+            else{
+                throw new Exception(e.getMessage());
+            }
+
+        }
     }
 
-    public void onSignUpClick() {
-        //Navigation to sign-up
-    }
 }
