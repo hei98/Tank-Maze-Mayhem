@@ -35,7 +35,7 @@ public class ShootingSystem {
             float directionX = MathUtils.cos(knobAngleRad);
             float directionY = MathUtils.sin(knobAngleRad);
 
-            float bulletSpawnOffset = Math.max(tankSprite.getSprite().getWidth(), tankSprite.getSprite().getHeight()) / 2 + (Gdx.app.getType() == Application.ApplicationType.Desktop ? 30 : 60); // +5 ensures it spawns outside
+            float bulletSpawnOffset = Math.max(tankSprite.getSprite().getWidth(), tankSprite.getSprite().getHeight()) / 2 + (Gdx.app.getType() == Application.ApplicationType.Desktop ? 30 : 60) - (Gdx.app.getType() != Application.ApplicationType.Desktop && knobAngle > 180 ? 30 : 0); // +5 ensures it spawns outside
             float offsetAdjustment = Gdx.app.getType() == Application.ApplicationType.Desktop ? 10 : 30;
             float bulletStartX = tankPosition.x + (knobAngle >= 270 ? offsetAdjustment : 0) + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionX * bulletSpawnOffset;
             float bulletStartY = tankPosition.y + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionY * bulletSpawnOffset;
