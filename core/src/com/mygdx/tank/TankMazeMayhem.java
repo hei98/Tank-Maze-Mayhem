@@ -9,14 +9,14 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.screens.MainMenuScreen;
 
 public class TankMazeMayhem extends Game {
-    private FirebaseAPI api;
+    private FirebaseInterface firebaseInterface;
     private GameModel model;
     private GameView view;
     private GameController controller;
     SpriteBatch batch;
 
-	public TankMazeMayhem(FirebaseAPI api) {
-		this.api = api;
+	public TankMazeMayhem(FirebaseInterface firebaseInterface) {
+		this.firebaseInterface = firebaseInterface;
 	}
 
 	@Override
@@ -41,7 +41,11 @@ public class TankMazeMayhem extends Game {
 		buttonStyle.font = getFont(); // Ensure to define getFont() method as mentioned earlier
 		return buttonStyle;
 	}
-	
+
+	public FirebaseInterface getFirebaseInterface() {
+		return firebaseInterface;
+	}
+
 	@Override
 	public void dispose () {
 		batch.dispose();
