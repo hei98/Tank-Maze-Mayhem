@@ -4,6 +4,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.mygdx.tank.controllers.GameController;
+import com.mygdx.tank.model.GameModel;
+import com.mygdx.tank.screens.MainMenuScreen;
 
 public class TankMazeMayhem extends Game {
     private FirebaseInterface firebaseInterface;
@@ -42,7 +45,7 @@ public class TankMazeMayhem extends Game {
 	public FirebaseInterface getFirebaseInterface() {
 		return firebaseInterface;
 	}
-	
+
 	@Override
 	public void dispose () {
 		batch.dispose();
