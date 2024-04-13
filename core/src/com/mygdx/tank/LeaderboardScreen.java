@@ -14,50 +14,32 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class LeaderboardScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
+    private final MenuConstants con;
     private final TankMazeMayhem game;
     private Stage stage;
-    private Texture background;
-    private TextButton backButton;
-    private ImageButton settingsButton;
+    private final Texture background;
+    private final TextButton backButton;
+    private final ImageButton settingsButton;
     private SpriteBatch batch;
-    private Skin buttonSkin;
-    final float BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT;
-    float screenWidth, screenHeight, widthScaleFactor, heightScaleFactor, centerX, buttonWidth, buttonHeight, settingsButtonSize, textScaleFactor, settingsImageSize;
+
 
     public LeaderboardScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
-        background = new Texture("Backgrounds/Leaderboard2.JPG");
-        buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
-
-        // Define your reference (base) screen width and height
-        BASE_SCREEN_WIDTH = 800f;
-        BASE_SCREEN_HEIGHT = 480f;
-
-        // Get the current screen width and height
-        screenWidth = Gdx.graphics.getWidth();
-        screenHeight = Gdx.graphics.getHeight();
-
-        // Calculate the scale factor
-        widthScaleFactor = screenWidth / BASE_SCREEN_WIDTH;
-        heightScaleFactor = screenHeight / BASE_SCREEN_HEIGHT;
+        con = MenuConstants.getInstance();
+        background = new Texture("Backgrounds/Leaderboard.JPG");
+        Skin buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         settingsButton = new ImageButton(buttonSkin, "settings");
         backButton = new TextButton("Back", buttonSkin, "default");
-        buttonWidth = 200 * widthScaleFactor;
-        buttonHeight = 50 * heightScaleFactor;
-        centerX = (screenWidth - buttonWidth) / 2;
-        settingsButtonSize = (screenHeight * 0.1f);
-        textScaleFactor = 3f;
-
     }
 
     private void setButtonLayout() {
-        backButton.setBounds(centerX, (float) (screenHeight*0.05), buttonWidth, buttonHeight);
-        backButton.getLabel().setFontScale(textScaleFactor);
-        settingsButton.setSize(settingsButtonSize, settingsButtonSize);
+        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
+        backButton.getLabel().setFontScale(con.getTScaleF());
+        settingsButton.setSize(con.getIBSize(), con.getIBSize());
         settingsButton.getImageCell().expand().fill();
-        settingsButton.setPosition(screenWidth - settingsButtonSize - 10, screenHeight - settingsButtonSize - 10);
+        settingsButton.setPosition(con.getSWidth() - con.getIBSize() - 10, con.getSHeight() - con.getIBSize() - 10);
     }
 
     @Override
@@ -89,10 +71,9 @@ public class LeaderboardScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(background, 0, 0, screenWidth, screenHeight);
+        batch.draw(background, 0, 0, con.getSWidth(), con.getSHeight());
         batch.end();
 
         stage.act(delta);

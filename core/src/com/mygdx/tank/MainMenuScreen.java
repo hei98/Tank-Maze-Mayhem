@@ -23,24 +23,13 @@ public class MainMenuScreen implements Screen {
     private SpriteBatch batch;
     private Texture background;
     private Skin buttonSkin;
+    private final MenuConstants con;
     private TextButton multiplayerButton, leaderboardButton, loginButton;
     private ImageButton settingsButton;
-    final float BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT;
-    float screenWidth, screenHeight, widthScaleFactor, heightScaleFactor;
 
     public MainMenuScreen(TankMazeMayhem game) {
         this.game = game;
-        // Define your reference (base) screen width and height
-        BASE_SCREEN_WIDTH = 800f;
-        BASE_SCREEN_HEIGHT = 480f;
-
-        // Get the current screen width and height
-        screenWidth = Gdx.graphics.getWidth();
-        screenHeight = Gdx.graphics.getHeight();
-
-        // Calculate the scale factor
-        widthScaleFactor = screenWidth / BASE_SCREEN_WIDTH;
-        heightScaleFactor = screenHeight / BASE_SCREEN_HEIGHT;
+        con = MenuConstants.getInstance();
     }
 
     @Override
@@ -48,8 +37,6 @@ public class MainMenuScreen implements Screen {
         batch = new SpriteBatch();
         stage = new Stage();
         background = new Texture("Backgrounds/main-menu.JPG");
-        float scale = 3f;
-
         //Load the skin and atlas for the buttons
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
@@ -57,7 +44,6 @@ public class MainMenuScreen implements Screen {
         multiplayerButton = new TextButton("Multiplayer", buttonSkin, "menu");
         leaderboardButton = new TextButton("Leaderboard", buttonSkin, "default");
         loginButton = new TextButton("Create User/Login", buttonSkin, "default");
-
         settingsButton = new ImageButton(buttonSkin, "settings");
 
         setButtonLayout();
@@ -100,31 +86,22 @@ public class MainMenuScreen implements Screen {
     }
 
     private void setButtonLayout() {
-        float buttonWidth = 200 * widthScaleFactor;
-        float buttonHeight = 50 * heightScaleFactor;
-        float buttonX = (screenWidth - buttonWidth) / 2;
-        float button1Y = screenHeight * 0.6f;
-        float button2Y = screenHeight * 0.45f;
-        float button3Y = screenHeight * 0.3f;
-        float scale = 3f;
-        float settingsButtonSize = (screenHeight * 0.1f);
+        float buttonX = con.getCenterX();
+        float button1Y = con.getSHeight() * 0.6f;
+        float button2Y = con.getSHeight() * 0.45f;
+        float button3Y = con.getSHeight() * 0.3f;
 
-        multiplayerButton.setBounds(buttonX, button1Y, buttonWidth, buttonHeight);
-        leaderboardButton.setBounds(buttonX, button2Y, buttonWidth, buttonHeight);
-        loginButton.setBounds(buttonX, button3Y, buttonWidth, buttonHeight);
-        settingsButton.setBounds(Gdx.graphics.getWidth() - settingsButton.getWidth() - 10, Gdx.graphics.getHeight() - settingsButton.getHeight() - 10, 50, 50);
+        multiplayerButton.setBounds(buttonX, button1Y, con.getTBWidth(), con.getTBHeight());
+        leaderboardButton.setBounds(buttonX, button2Y, con.getTBWidth(), con.getTBHeight());
+        loginButton.setBounds(buttonX, button3Y, con.getTBWidth(), con.getTBHeight());
 
-        settingsButton.setSize(settingsButtonSize, settingsButtonSize);
+        settingsButton.setSize(con.getIBSize(), con.getIBSize());
         settingsButton.getImageCell().expand().fill();
-        settingsButton.setPosition(screenWidth - settingsButtonSize - 10, screenHeight - settingsButtonSize - 10);
+        settingsButton.setPosition(con.getSWidth() - con.getIBSize() - 10, con.getSHeight() - con.getIBSize() - 10);
 
-        multiplayerButton.getLabel().setFontScale(scale);
-        leaderboardButton.getLabel().setFontScale(scale);
-        loginButton.getLabel().setFontScale(scale);
-    }
-
-    private void setButtonSize() {
-
+        multiplayerButton.getLabel().setFontScale(con.getTScaleF());
+        leaderboardButton.getLabel().setFontScale(con.getTScaleF());
+        loginButton.getLabel().setFontScale(con.getTScaleF());
     }
 
     @Override
