@@ -1,9 +1,5 @@
 package com.mygdx.tank;
 
-import static android.content.ContentValues.TAG;
-
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
@@ -15,9 +11,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class FirebaseController implements FirebaseInterface {
-    FirebaseController() {
-
-    }
+    FirebaseController() {}
 
     @Override
     public void getLeaderboardData(FirebaseDataListener listener) {

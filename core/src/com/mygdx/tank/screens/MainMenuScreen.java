@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.mygdx.tank.MenuConstants;
 import com.mygdx.tank.TankMazeMayhem;
 
 public class MainMenuScreen implements Screen {
@@ -137,10 +138,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        // Dispose of any resources held by this screen
         stage.dispose();
         buttonSkin.dispose();
     }
-
-    // Other methods from the Screen interface
 }
