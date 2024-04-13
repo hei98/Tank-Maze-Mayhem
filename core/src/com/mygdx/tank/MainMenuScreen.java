@@ -25,9 +25,22 @@ public class MainMenuScreen implements Screen {
     private Skin buttonSkin;
     private TextButton multiplayerButton, leaderboardButton, loginButton;
     private ImageButton settingsButton;
+    final float BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT;
+    float screenWidth, screenHeight, widthScaleFactor, heightScaleFactor;
 
     public MainMenuScreen(TankMazeMayhem game) {
         this.game = game;
+        // Define your reference (base) screen width and height
+        BASE_SCREEN_WIDTH = 800f;
+        BASE_SCREEN_HEIGHT = 480f;
+
+        // Get the current screen width and height
+        screenWidth = Gdx.graphics.getWidth();
+        screenHeight = Gdx.graphics.getHeight();
+
+        // Calculate the scale factor
+        widthScaleFactor = screenWidth / BASE_SCREEN_WIDTH;
+        heightScaleFactor = screenHeight / BASE_SCREEN_HEIGHT;
     }
 
     @Override
@@ -35,6 +48,7 @@ public class MainMenuScreen implements Screen {
         batch = new SpriteBatch();
         stage = new Stage();
         background = new Texture("Backgrounds/main-menu.JPG");
+        float scale = 3f;
 
         //Load the skin and atlas for the buttons
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -43,6 +57,7 @@ public class MainMenuScreen implements Screen {
         multiplayerButton = new TextButton("Multiplayer", buttonSkin, "menu");
         leaderboardButton = new TextButton("Leaderboard", buttonSkin, "default");
         loginButton = new TextButton("Create User/Login", buttonSkin, "default");
+
         settingsButton = new ImageButton(buttonSkin, "settings");
 
         setButtonLayout();
@@ -64,13 +79,13 @@ public class MainMenuScreen implements Screen {
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LeaderboardScreen(game));
+                game.setScreen(new LeaderboardScreen(game, game.getFirebaseInterface()));
             }
         });
         leaderboardButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LeaderboardScreen(game));
+                game.setScreen(new LeaderboardScreen(game, game.getFirebaseInterface()));
             }
         });
 
@@ -85,21 +100,37 @@ public class MainMenuScreen implements Screen {
     }
 
     private void setButtonLayout() {
-        float buttonWidth = 200;
-        float buttonHeight = 50;
-        float centerX = (Gdx.graphics.getWidth() - buttonWidth) / 2;
+        float buttonWidth = 200 * widthScaleFactor;
+        float buttonHeight = 50 * heightScaleFactor;
+        float buttonX = (screenWidth - buttonWidth) / 2;
+        float button1Y = screenHeight * 0.6f;
+        float button2Y = screenHeight * 0.45f;
+        float button3Y = screenHeight * 0.3f;
+        float scale = 3f;
+        float settingsButtonSize = (screenHeight * 0.1f);
 
-        multiplayerButton.setBounds(centerX, 300, buttonWidth, buttonHeight);
-        leaderboardButton.setBounds(centerX, 200, buttonWidth, buttonHeight);
-        loginButton.setBounds(centerX, 100, buttonWidth, buttonHeight);
+        multiplayerButton.setBounds(buttonX, button1Y, buttonWidth, buttonHeight);
+        leaderboardButton.setBounds(buttonX, button2Y, buttonWidth, buttonHeight);
+        loginButton.setBounds(buttonX, button3Y, buttonWidth, buttonHeight);
         settingsButton.setBounds(Gdx.graphics.getWidth() - settingsButton.getWidth() - 10, Gdx.graphics.getHeight() - settingsButton.getHeight() - 10, 50, 50);
+
+        settingsButton.setSize(settingsButtonSize, settingsButtonSize);
+        settingsButton.getImageCell().expand().fill();
+        settingsButton.setPosition(screenWidth - settingsButtonSize - 10, screenHeight - settingsButtonSize - 10);
+
+        multiplayerButton.getLabel().setFontScale(scale);
+        leaderboardButton.getLabel().setFontScale(scale);
+        loginButton.getLabel().setFontScale(scale);
+    }
+
+    private void setButtonSize() {
+
     }
 
     @Override
     public void render(float delta) {
         // Clear the screen
         Gdx.gl.glClearColor(1, 0, 0, 1);
-//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Draw background
         batch.begin();

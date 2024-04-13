@@ -4,17 +4,16 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.Gdx;
 
 public class TankMazeMayhem extends Game {
-    private FirebaseAPI api;
+    private FirebaseInterface firebaseInterface;
     private GameModel model;
     private GameView view;
     private GameController controller;
     SpriteBatch batch;
 
-	public TankMazeMayhem(FirebaseAPI api) {
-		this.api = api;
+	public TankMazeMayhem(FirebaseInterface firebaseInterface) {
+		this.firebaseInterface = firebaseInterface;
 	}
 
 	@Override
@@ -38,6 +37,10 @@ public class TankMazeMayhem extends Game {
 		TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
 		buttonStyle.font = getFont(); // Ensure to define getFont() method as mentioned earlier
 		return buttonStyle;
+	}
+
+	public FirebaseInterface getFirebaseInterface() {
+		return firebaseInterface;
 	}
 	
 	@Override
