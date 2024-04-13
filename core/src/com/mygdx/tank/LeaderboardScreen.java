@@ -8,9 +8,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+
+import java.util.ArrayList;
 
 public class LeaderboardScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
@@ -21,6 +26,8 @@ public class LeaderboardScreen implements Screen {
     private final TextButton backButton;
     private final ImageButton settingsButton;
     private SpriteBatch batch;
+    private VerticalGroup leaderboardGroup;
+    private final Skin buttonSkin;
 
 
     public LeaderboardScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface) {
@@ -28,18 +35,10 @@ public class LeaderboardScreen implements Screen {
         this.firebaseInterface = firebaseInterface;
         con = MenuConstants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.JPG");
-        Skin buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+        buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         settingsButton = new ImageButton(buttonSkin, "settings");
         backButton = new TextButton("Back", buttonSkin, "default");
-    }
-
-    private void setButtonLayout() {
-        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
-        backButton.getLabel().setFontScale(con.getTScaleF());
-        settingsButton.setSize(con.getIBSize(), con.getIBSize());
-        settingsButton.getImageCell().expand().fill();
-        settingsButton.setPosition(con.getSWidth() - con.getIBSize() - 10, con.getSHeight() - con.getIBSize() - 10);
     }
 
     @Override
@@ -66,6 +65,33 @@ public class LeaderboardScreen implements Screen {
         stage.addActor(settingsButton);
 
         Gdx.input.setInputProcessor(stage);
+
+        leaderboardGroup = new VerticalGroup().space(10).pad(10).align(Align.center);
+        leaderboardGroup.setFillParent(true); // Make the group center itself within the stage
+        stage.addActor(leaderboardGroup);
+
+        firebaseInterface.getLeaderboardData(new FirebaseDataListener() {
+            @Override
+            public void onDataReceived(Object data) {
+                ArrayList<LeaderboardEntry> entries = (ArrayList<LeaderboardEntry>) data;
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        leaderboardGroup.clearChildren(); //clear previous entries if needed
+                        for (LeaderboardEntry entry : entries) {
+                            Label label = new Label(entry.getUsername() + ": " + entry.getScore(), buttonSkin, "white");
+                            leaderboardGroup.addActor(label);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Gdx.app.log("Firebase", "Error fetching leaderboard " + errorMessage);
+            }
+        });
     }
 
     @Override
@@ -105,5 +131,13 @@ public class LeaderboardScreen implements Screen {
         stage.dispose();
         background.dispose();
         batch.dispose();
+    }
+
+    private void setButtonLayout() {
+        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
+        backButton.getLabel().setFontScale(con.getTScaleF());
+        settingsButton.setSize(con.getIBSize(), con.getIBSize());
+        settingsButton.getImageCell().expand().fill();
+        settingsButton.setPosition(con.getSWidth() - con.getIBSize() - 10, con.getSHeight() - con.getIBSize() - 10);
     }
 }
