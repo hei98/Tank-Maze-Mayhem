@@ -31,7 +31,6 @@ public class SignUpScreen implements Screen {
     private Label errorLabel;
 
     public SignUpScreen(TankMazeMayhem game, AccountService accountService) {
-        Gdx.app.log("InfoTag", "SignUpScreen entity created");
         this.game = game;
         this.accountService = accountService;
         this.signUpController = new SignUpController(accountService);
@@ -39,7 +38,6 @@ public class SignUpScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.app.log("InfoTag", "SignUpScreen show() initialized");
         batch = new SpriteBatch();
         stage = new Stage();
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -76,7 +74,6 @@ public class SignUpScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 try {
-                    Gdx.app.log("InfoTag", "Sign up clicked");
                     String email = emailTextField.getText();
                     String password = passwordTextField.getText();
                     String confirmPassword = confirmPasswordTextField.getText();
@@ -88,7 +85,6 @@ public class SignUpScreen implements Screen {
                     game.setScreen(new MainMenuScreen(game, accountService));
                 } catch (Exception e) {
                     errorLabel.setText("Sign up failed: " + e.getLocalizedMessage());
-                    Gdx.app.error("ErrorTag", e.getMessage());
                 }
             }
         });
@@ -121,7 +117,7 @@ public class SignUpScreen implements Screen {
         confirmPasswordTextField.setPasswordCharacter('*');
         signUpButton.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.2f, buttonWidth, buttonHeight);
         backButton.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.1f, buttonWidth, buttonHeight);
-        errorLabel.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.3f, buttonWidth, buttonHeight/3); // Adjust as needed
+        errorLabel.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.4f, buttonWidth, buttonHeight/3); // Adjust as needed
     }
 
     @Override

@@ -44,7 +44,7 @@ public class MainMenuScreen implements Screen {
 
         //Display the username if logged in
         font = new BitmapFont();
-        accountLabel = new Label("", new Label.LabelStyle(font, Color.WHITE));
+        accountLabel = new Label("", new Label.LabelStyle(font, Color.BLACK));
         accountLabel.setPosition(10, Gdx.graphics.getHeight() - 20);
         stage.addActor(accountLabel);
         updateAccountLabel();

@@ -84,7 +84,6 @@ public class SignInScreen implements Screen {
                     game.setScreen(new MainMenuScreen(game, accountService));
                 } catch (Exception e) {
                     errorLabel.setText("Login failed: " + e.getLocalizedMessage()); // Display the error message
-                    Gdx.app.error("InfoTag", e.getMessage());
                 }
 
             }
@@ -94,7 +93,6 @@ public class SignInScreen implements Screen {
         signUpButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("InfoTag", "signup clicked");
                 game.setScreen(new SignUpScreen(game, accountService));
             }
         });
@@ -127,7 +125,7 @@ public class SignInScreen implements Screen {
         signInButton.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.4f, buttonWidth, buttonHeight);
         signUpButton.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.3f, buttonWidth, buttonHeight);
         backButton.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.1f, buttonWidth, buttonHeight);
-        errorLabel.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.2f, buttonWidth, buttonHeight/3 );
+        errorLabel.setBounds(screenWidth/2 - buttonWidth/2, screenHeight*0.3f, buttonWidth, buttonHeight/3 );
     }
 
 

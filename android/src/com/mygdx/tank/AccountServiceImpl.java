@@ -35,7 +35,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void signIn(String email, String password) throws Exception {
-        Gdx.app.log("InfoTag", "AccountServiceImpl called");
         Tasks.await(firebaseAuth.signInWithEmailAndPassword(email, password));
     }
 
