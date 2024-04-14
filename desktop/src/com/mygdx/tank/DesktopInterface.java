@@ -6,4 +6,9 @@ public class DesktopInterface implements FirebaseInterface {
     public void getLeaderboardData(FirebaseDataListener listener) {
 
     }
+
+    @Override
+    public String getAvailibleGame(FirebaseDataListener listener) {
+        return null;
+    }
 }

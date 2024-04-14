@@ -2,15 +2,16 @@ package com.mygdx.tank.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.MenuConstants;
 import com.mygdx.tank.TankMazeMayhem;
@@ -22,8 +23,8 @@ public class LobbyScreen implements Screen {
     private final Texture background;
     private SpriteBatch batch;
     private Stage stage;
-    private Skin buttonSkin;
-    private TextButton backButton, startGameButton;
+    private final Skin buttonSkin;
+    private final TextButton backButton, startGameButton;
 
     public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface) {
         this.game = game;
@@ -42,6 +43,7 @@ public class LobbyScreen implements Screen {
         batch = new SpriteBatch();
 
         setButtonLayout();
+        createHeadline();
 
         backButton.addListener(new ClickListener() {
             @Override
@@ -109,4 +111,29 @@ public class LobbyScreen implements Screen {
         startGameButton.setBounds((con.getSWidth() - con.getTBWidth()) * 0.9f, (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
         startGameButton.getLabel().setFontScale(con.getTScaleF());
     }
+
+    private void createHeadline() {
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(buttonSkin.getFont("font"), Color.WHITE);
+        Label headlineLabel = new Label("Game lobby", headlineStyle);
+        headlineLabel.setFontScale(con.getTScaleF()*2f);
+        headlineLabel.setAlignment(Align.center);
+        headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
+        headlineLabel.setWidth(con.getSWidth());
+        stage.addActor(headlineLabel);
+    }
+
+    private void SetGame() {
+        // Get game with at least one spot available and is not running
+
+        // Reserve a spot for the current user
+
+        // Set the game here
+    }
+
+//    private void displayPlayersForGame(ArrayList<User> users) {
+//        // Update the list of the users in currently in the game
+//        for (User user : users) {
+//
+//        }
+//    }
 }
