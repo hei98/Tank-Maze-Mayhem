@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import java.text.CollationElementIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,21 +63,7 @@ public class LeaderboardScreen implements Screen {
         createHeadline();
         createLeaderboardTable();
 
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
-            }
-        });
-        settingsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game, accountService));
-            }
-        });
-
-        stage.addActor(backButton);
-        stage.addActor(settingsButton);
+        addListeners();
 
         Gdx.input.setInputProcessor(stage);
 
@@ -125,11 +112,14 @@ public class LeaderboardScreen implements Screen {
     }
 
     private void setButtonLayout() {
-        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05f), con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
         settingsButton.setSize(con.getIBSize(), con.getIBSize());
         settingsButton.getImageCell().expand().fill();
         settingsButton.setPosition(con.getSWidth() - con.getIBSize() - 10, con.getSHeight() - con.getIBSize() - 10);
+
+        stage.addActor(backButton);
+        stage.addActor(settingsButton);
     }
 
     private void createHeadline() {
@@ -142,12 +132,26 @@ public class LeaderboardScreen implements Screen {
         stage.addActor(headlineLabel);
     }
 
+    private void addListeners() {
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game, accountService));
+            }
+        });
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SettingsScreen(game, accountService));
+            }
+        });
+    }
+
     private void createLeaderboardTable() {
         leaderboardTable = new Table();
         leaderboardTable.top(); // Align the items at the top of the table
         leaderboardTable.defaults().expand().fillX();
 
-        //Assume the orange box starts 10% from the top and 5% from the button
         float orangeBoxWidth = con.getSWidth() * 0.5f;
         float orangeBoxHeight = con.getSHeight() * 0.5f;
         float orangeBoxStartY = con.getSHeight() * 0.27f;
@@ -163,36 +167,14 @@ public class LeaderboardScreen implements Screen {
 
         stage.addActor(scrollPane);
 
-        getLeaderboardData();
+        fetchLeaderboardData();
     }
 
-    private void getLeaderboardData() {
+    private void fetchLeaderboardData() {
         firebaseInterface.getLeaderboardData(new FirebaseDataListener() {
             @Override
             public void onDataReceived(Object data) {
-                ArrayList<LeaderboardEntry> entries = (ArrayList<LeaderboardEntry>) data;
-                Gdx.app.postRunnable(() -> {
-                    Collections.sort(entries, new Comparator<LeaderboardEntry>() {
-                        @Override
-                        public int compare(LeaderboardEntry o1, LeaderboardEntry o2) {
-                            return Integer.compare(o2.getScore(), o1.getScore());
-                        }
-                    });
-                    leaderboardTable.clearChildren();
-                    float columnWidth = scrollPane.getWidth() / 2 - 10;
-                    for (LeaderboardEntry entry : entries) {
-                        Label nameLabel = new Label(entry.getUsername(), new Label.LabelStyle(buttonSkin.getFont("font"), Color.BLACK));
-                        Label scoreLabel = new Label(String.valueOf(entry.getScore()), new Label.LabelStyle(buttonSkin.getFont("font"), Color.BLACK));
-
-                        nameLabel.setFontScale(con.getTScaleF());
-                        scoreLabel.setFontScale(con.getTScaleF());
-
-                        leaderboardTable.row().pad(10).fillX();
-                        leaderboardTable.add(nameLabel).width(columnWidth);
-                        leaderboardTable.add(scoreLabel).width(columnWidth);
-                    }
-                    leaderboardTable.pack();
-                });
+                handleLeaderboardData((ArrayList<LeaderboardEntry>) data);
             }
 
             @Override
@@ -200,5 +182,34 @@ public class LeaderboardScreen implements Screen {
                 Gdx.app.log("Firebase", "Error fetching leaderboard " + errorMessage);
             }
         });
+    }
+
+    private void handleLeaderboardData(ArrayList<LeaderboardEntry> entries) {
+        Gdx.app.postRunnable(() -> {
+            Collections.sort(entries, new Comparator<LeaderboardEntry>() {
+                @Override
+                public int compare(LeaderboardEntry o1, LeaderboardEntry o2) {
+                    return Integer.compare(o2.getScore(), o1.getScore());
+                }
+            });
+            populateLeaderBoardTable(entries);
+        });
+    }
+
+    private void populateLeaderBoardTable(ArrayList<LeaderboardEntry> entries) {
+        leaderboardTable.clearChildren();
+        float columnWidth = scrollPane.getWidth() / 2 - 10;
+        for (LeaderboardEntry entry : entries) {
+            Label nameLabel = new Label(entry.getUsername(), new Label.LabelStyle(buttonSkin.getFont("font"), Color.BLACK));
+            Label scoreLabel = new Label(String.valueOf(entry.getScore()), new Label.LabelStyle(buttonSkin.getFont("font"), Color.BLACK));
+
+            nameLabel.setFontScale(con.getTScaleF());
+            scoreLabel.setFontScale(con.getTScaleF());
+
+            leaderboardTable.row().pad(10).fillX();
+            leaderboardTable.add(nameLabel).width(columnWidth);
+            leaderboardTable.add(scoreLabel).width(columnWidth);
+        }
+        leaderboardTable.pack();
     }
 }

@@ -25,7 +25,7 @@ public class SettingsScreen implements Screen {
     private final AccountService accountService;
     private final MenuConstants con;
     private Stage stage;
-    private Texture background;
+    private final Texture background;
     private final TextButton backButton;
     private SpriteBatch batch;
     private final Skin buttonSkin;
@@ -34,7 +34,7 @@ public class SettingsScreen implements Screen {
         this.game = game;
         this.accountService = accountService;
         con = MenuConstants.getInstance();
-        background = new Texture("Backgrounds/Leaderboard.JPG");
+        background = new Texture("Backgrounds/Leaderboard.png");
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         backButton = new TextButton("Back", buttonSkin, "default");

@@ -11,7 +11,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class FirebaseController implements FirebaseInterface {
-    FirebaseController() {}
+    FirebaseController() {
+    }
 
     @Override
     public void getLeaderboardData(FirebaseDataListener listener) {
@@ -34,4 +35,5 @@ public class FirebaseController implements FirebaseInterface {
             }
         });
     }
+
 }

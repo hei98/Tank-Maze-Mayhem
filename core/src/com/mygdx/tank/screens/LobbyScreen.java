@@ -2,15 +2,16 @@ package com.mygdx.tank.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.MenuConstants;
@@ -24,8 +25,8 @@ public class LobbyScreen implements Screen {
     private final Texture background;
     private SpriteBatch batch;
     private Stage stage;
-    private Skin buttonSkin;
-    private TextButton backButton, startGameButton;
+    private final Skin buttonSkin;
+    private final TextButton backButton, createGameButton, joinGameButton;
 
     public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
@@ -36,7 +37,8 @@ public class LobbyScreen implements Screen {
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         backButton = new TextButton("Back", buttonSkin, "default");
-        startGameButton = new TextButton("Start game", buttonSkin,"default");
+        createGameButton = new TextButton("Create game", buttonSkin,"default");
+        joinGameButton = new TextButton("Join game", buttonSkin,"default");
     }
 
     @Override
@@ -44,23 +46,10 @@ public class LobbyScreen implements Screen {
         stage = new Stage();
         batch = new SpriteBatch();
 
-        setButtonLayout();
+        setButtons();
+        createHeadline();
+        addListeners();
 
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
-            }
-        });
-        startGameButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new InGameScreen(game, accountService));
-            }
-        });
-
-        stage.addActor(backButton);
-        stage.addActor(startGameButton);
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -105,11 +94,50 @@ public class LobbyScreen implements Screen {
         buttonSkin.dispose();
     }
 
-    private void setButtonLayout() {
-        backButton.setBounds((con.getSWidth() - con.getTBWidth()) * 0.1f, (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
+    private void setButtons() {
+        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05f), con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        startGameButton.setBounds((con.getSWidth() - con.getTBWidth()) * 0.9f, (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
-        startGameButton.getLabel().setFontScale(con.getTScaleF());
+        createGameButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.5f), con.getTBWidth(), con.getTBHeight());
+        createGameButton.getLabel().setFontScale(con.getTScaleF());
+
+        joinGameButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.3f), con.getTBWidth(), con.getTBHeight());
+        joinGameButton.getLabel().setFontScale(con.getTScaleF());
+
+        stage.addActor(backButton);
+        stage.addActor(createGameButton);
+        stage.addActor(joinGameButton);
     }
+
+    private void addListeners() {
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game, accountService));
+            }
+        });
+        createGameButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new InGameScreen(game, accountService));
+            }
+        });
+        joinGameButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new InGameScreen(game, accountService));
+            }
+        });
+    }
+
+    private void createHeadline() {
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(buttonSkin.getFont("font"), Color.WHITE);
+        Label headlineLabel = new Label("Game lobby", headlineStyle);
+        headlineLabel.setFontScale(con.getTScaleF()*2f);
+        headlineLabel.setAlignment(Align.center);
+        headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
+        headlineLabel.setWidth(con.getSWidth());
+        stage.addActor(headlineLabel);
+    }
+
 }

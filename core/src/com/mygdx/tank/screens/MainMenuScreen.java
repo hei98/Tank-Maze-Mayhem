@@ -22,9 +22,10 @@ public class MainMenuScreen implements Screen {
     private final AccountService accountService;
     private Stage stage;
     private SpriteBatch batch;
-    private Texture background;
-    private Skin buttonSkin;
+    private final Texture background;
+    private final Skin buttonSkin;
     private final MenuConstants con;
+    private final ImageButton settingsButton;
     private TextButton multiplayerButton, leaderboardButton, loginButton;
     private ImageButton settingsButton;
     private Label accountLabel;
@@ -33,14 +34,20 @@ public class MainMenuScreen implements Screen {
     public MainMenuScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         con = MenuConstants.getInstance();
+        background = new Texture("Backgrounds/main-menu.JPG");
         this.accountService = accountService;
+        buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+
+        multiplayerButton = new TextButton("Multiplayer", buttonSkin, "default");
+        leaderboardButton = new TextButton("Leaderboard", buttonSkin, "default");
+        loginButton = new TextButton("Create User/Login", buttonSkin, "default");
+        settingsButton = new ImageButton(buttonSkin, "settings");
     }
 
     @Override
     public void show() {
         batch = new SpriteBatch();
         stage = new Stage();
-        background = new Texture("Backgrounds/main-menu.JPG");
 
         //Display the username if logged in
         font = new BitmapFont();
@@ -48,17 +55,13 @@ public class MainMenuScreen implements Screen {
         accountLabel.setPosition(10, Gdx.graphics.getHeight() - 20);
         stage.addActor(accountLabel);
         updateAccountLabel();
+    }
 
 
-
-        //Load the skin and atlas for the buttons
-        buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
-
-        //Create the buttons with the new style
-        multiplayerButton = new TextButton("Multiplayer", buttonSkin, "menu");
-        leaderboardButton = new TextButton("Leaderboard", buttonSkin, "default");
-        loginButton = new TextButton("Create User/Login", buttonSkin, "default");
-        settingsButton = new ImageButton(buttonSkin, "settings");
+    @Override
+    public void show() {
+        batch = new SpriteBatch();
+        stage = new Stage();
 
         // login/logout according to user status
         if (accountService.hasUser()){
@@ -68,69 +71,13 @@ public class MainMenuScreen implements Screen {
             loginButton = new TextButton("Create User/Login", buttonSkin, "default");
         }
 
-        setButtonLayout();
-
-
-        // Add click listeners to buttons
-        multiplayerButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game, game.getFirebaseInterface(), accountService));
-            }
-        });
-        settingsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game, accountService));
-            }
-        });
-        loginButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (accountService.hasUser()){
-                    accountService.signOut();
-                    game.setScreen( new MainMenuScreen(game, accountService));
-                }
-                else{
-                    game.setScreen(new SignInScreen(game, accountService));
-                }
-            }
-        });
-        leaderboardButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LeaderboardScreen(game, game.getFirebaseInterface(), accountService));
-            }
-        });
-
-        // Add buttons to the stage
-        stage.addActor(multiplayerButton);
-        stage.addActor(settingsButton);
-        stage.addActor(leaderboardButton);
-        stage.addActor(loginButton);
+        setButtons();
+        addListeners();
 
         // Set input processor
         Gdx.input.setInputProcessor(stage);
     }
-
-    private void setButtonLayout() {
-        float buttonX = con.getCenterX();
-        float button1Y = con.getSHeight() * 0.6f;
-        float button2Y = con.getSHeight() * 0.45f;
-        float button3Y = con.getSHeight() * 0.3f;
-
-        multiplayerButton.setBounds(buttonX, button1Y, con.getTBWidth(), con.getTBHeight());
-        leaderboardButton.setBounds(buttonX, button2Y, con.getTBWidth(), con.getTBHeight());
-        loginButton.setBounds(buttonX, button3Y, con.getTBWidth(), con.getTBHeight());
-
-        settingsButton.setSize(con.getIBSize(), con.getIBSize());
-        settingsButton.getImageCell().expand().fill();
-        settingsButton.setPosition(con.getSWidth() - con.getIBSize() - 10, con.getSHeight() - con.getIBSize() - 10);
-
-        multiplayerButton.getLabel().setFontScale(con.getTScaleF());
-        leaderboardButton.getLabel().setFontScale(con.getTScaleF());
-        loginButton.getLabel().setFontScale(con.getTScaleF());
-    }
+     
     //Check if user logged in, and display ID
     private void updateAccountLabel() {
         if (accountService.hasUser()) {
@@ -140,6 +87,7 @@ public class MainMenuScreen implements Screen {
             accountLabel.setText("Not logged in");
         }
     }
+
 
     @Override
     public void render(float delta) {
@@ -181,5 +129,60 @@ public class MainMenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
         buttonSkin.dispose();
+    }
+
+    private void setButtons() {
+        multiplayerButton.setBounds(con.getCenterX(), con.getSHeight() * 0.6f, con.getTBWidth(), con.getTBHeight());
+        multiplayerButton.getLabel().setFontScale(con.getTScaleF());
+
+        leaderboardButton.setBounds(con.getCenterX(), con.getSHeight() * 0.45f, con.getTBWidth(), con.getTBHeight());
+        leaderboardButton.getLabel().setFontScale(con.getTScaleF());
+
+        loginButton.setBounds(con.getCenterX(), con.getSHeight() * 0.3f, con.getTBWidth(), con.getTBHeight());
+        loginButton.getLabel().setFontScale(con.getTScaleF());
+
+        settingsButton.setSize(con.getIBSize(), con.getIBSize());
+        settingsButton.getImageCell().expand().fill();
+        settingsButton.setPosition(con.getSWidth() - con.getIBSize() - 10, con.getSHeight() - con.getIBSize() - 10);
+
+        // Add buttons to the stage
+        stage.addActor(multiplayerButton);
+        stage.addActor(settingsButton);
+        stage.addActor(leaderboardButton);
+        stage.addActor(loginButton);
+    }
+
+    private void addListeners() {
+        // Add click listeners to buttons
+        multiplayerButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new LobbyScreen(game, game.getFirebaseInterface(), accountService));
+            }
+        });
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SettingsScreen(game, accountService));
+            }
+        });
+        loginButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (accountService.hasUser()){
+                    accountService.signOut();
+                    game.setScreen( new MainMenuScreen(game, accountService));
+                }
+                else{
+                    game.setScreen(new SignInScreen(game, accountService));
+                }
+            }
+        });
+        leaderboardButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new LeaderboardScreen(game, game.getFirebaseInterface(), accountService));
+            }
+        });
     }
 }
