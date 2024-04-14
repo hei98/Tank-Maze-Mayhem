@@ -15,6 +15,6 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		AccountService accountService = new AccountServiceImpl();
-		initialize(new TankMazeMayhem(new AndroidAPI(), accountService), config);
+		initialize(new TankMazeMayhem(new FirebaseController(), accountService), config);
 	}
 }
