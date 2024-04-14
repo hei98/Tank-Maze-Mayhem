@@ -23,29 +23,25 @@ public class TutorialScreen implements Screen {
     private Image tutorialImage;
     private TextButton skipButton, nextButton;
     private int currentPageIndex = 0;
-    private final String[] pageImages = {"backgrounds/StartpageTutorial.png", "backgrounds/projectile-tutorial.png", "backgrounds/projectile-tutorial2.png"};
-    private final Texture[] pages = new Texture[pageImages.length];
+    private final Texture[] pages = new Texture[]{
+            new Texture(Gdx.files.internal("backgrounds/StartpageTutorial.png")),
+            new Texture(Gdx.files.internal("backgrounds/projectile-tutorial.png")),
+            new Texture(Gdx.files.internal("backgrounds/projectile-tutorial2.png"))
+    };
     private Screen returnScreen;
 
-    public TutorialScreen(TankMazeMayhem game,Screen returnScreen) {
+    public TutorialScreen(TankMazeMayhem game, Screen returnScreen) {
         this.game = game;
+        stage = new Stage();
         this.returnScreen = returnScreen;
-
-        for (int i = 0; i < pageImages.length; i++) {
-            pages[i] = new Texture(Gdx.files.internal(pageImages[i]));
-        }
-
-/*
-
-
         tutorialImage = new Image(pages[currentPageIndex]);
-        tutorialImage.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Fill the screen
+        tutorialImage.setFillParent(true);
         stage.addActor(tutorialImage); // Add to the stage for drawing
 
         setupButtons();
-        stage.addActor(skipButton);
-        stage.addActor(nextButton);
-/**/
+        Gdx.input.setInputProcessor(stage);
+
+
 
     }
 
@@ -59,38 +55,43 @@ public class TutorialScreen implements Screen {
         skipButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                endTutorial(); // Use this method to handle ending the tutorial
+                endTutorial();
             }
         });
+        stage.addActor(skipButton);
 
-        // Set up the "Next" button
-        nextButton = new TextButton("Next", game.getButtonStyle());
+    // Initialize the nextButton and handle its click events
+    nextButton = new TextButton("Next", game.getButtonStyle());
         nextButton.setPosition(Gdx.graphics.getWidth() - nextButton.getWidth() - 20, 20);
         nextButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                currentPageIndex++;
-                if (currentPageIndex >= pages.length) {
-                    endTutorial(); // No more pages, end tutorial
-                } else {
-                    tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
-                }
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            currentPageIndex++;
+            if (currentPageIndex >= pages.length) {
+                endTutorial(); // No more pages, end tutorial
+            } else {
+                tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
             }
-        });
-    }
+        }
+    });
+        stage.addActor(nextButton);
+
+}
+
+
     private void endTutorial() {
         game.setScreen(returnScreen);
     }
 
     @Override
     public void show() {
-        stage = new Stage();
-        batch = new SpriteBatch();
+        //stage = new Stage();
+        //batch = new SpriteBatch();
 
 
 
 
-        Gdx.input.setInputProcessor(stage);
+        //Gdx.input.setInputProcessor(stage);
     }
 
 
@@ -98,12 +99,7 @@ public class TutorialScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
-        batch.begin();
-        batch.draw(pages[0],0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        batch.end();
-
-
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
