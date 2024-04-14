@@ -30,7 +30,7 @@ public class GameModel {
         entities = new ArrayList<>();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
-        collisionSystem = new CollisionSystem(map, entities);
+        collisionSystem = new CollisionSystem(map, entities, this);
         movementSystem = new MovementSystem(entities, collisionSystem);
         shootingSystem = new ShootingSystem(this);
         powerupSpawnSystem = new PowerupSpawnSystem(this);

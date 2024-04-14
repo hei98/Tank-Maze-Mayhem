@@ -43,7 +43,7 @@ public class LeaderboardScreen implements Screen {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         con = MenuConstants.getInstance();
-        background = new Texture("Backgrounds/Leaderboard.JPG");
+        background = new Texture("Backgrounds/Leaderboard.png");
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         settingsButton = new ImageButton(buttonSkin, "settings");

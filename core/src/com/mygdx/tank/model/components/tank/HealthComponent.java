@@ -10,10 +10,14 @@ public class HealthComponent implements Component {
     }
 
     public void takeDamage() {
-        health = 0;
+        health -= 1;
     }
 
     public boolean isAlive() {
         return health > 0;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
     }
 }

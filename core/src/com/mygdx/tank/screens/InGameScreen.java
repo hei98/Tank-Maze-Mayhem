@@ -12,12 +12,12 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.GameView;
 import com.mygdx.tank.TankMazeMayhem;
 
-public class MultiplayerScreen implements Screen {
+public class InGameScreen implements Screen {
 
     private final TankMazeMayhem game;
     private Stage stage;
 
-    public MultiplayerScreen(TankMazeMayhem game) {
+    public InGameScreen(TankMazeMayhem game) {
         this.game = game;
     }
 
