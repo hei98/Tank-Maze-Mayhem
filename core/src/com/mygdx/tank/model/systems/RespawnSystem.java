@@ -1,9 +1,11 @@
 package com.mygdx.tank.model.systems;
 
 import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 import java.util.List;
 import com.mygdx.tank.model.components.PositionComponent;
+import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 
 public class RespawnSystem {
     private List<Entity> entities;
@@ -23,8 +25,10 @@ public class RespawnSystem {
 
     public void respawn(Entity entity) {
         PositionComponent position = entity.getComponent(PositionComponent.class);
-        if (position != null) {
+        SpriteDirectionComponent direction = entity.getComponent(SpriteDirectionComponent.class);
+        if (position != null && direction != null) {
             position.resetPosition();
+            direction.angle = 0;
         }
 
         HealthComponent health = entity.getComponent(HealthComponent.class);

@@ -69,8 +69,7 @@ public class GameModel {
                             }
                             break;
                         case POWERUP:
-                            powerupSpawnSystem.spawnedPowerup = false;
-                            powerupSpawnSystem.timer = 10.0f;
+                            powerupSpawnSystem.powerupRemoved();
                             break;
                     }
                 }
