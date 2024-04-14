@@ -1,5 +1,6 @@
 package com.mygdx.tank.model.systems;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
@@ -150,7 +151,30 @@ public class CollisionSystem {
                 }
             }
         }
-        return false; // No collision detected
+        CollisionSide collisionSide = CollisionSide.NONE;
+        boolean collision = false;
+        if (spriteComponent.getSprite().getX() + deltaX < 0) {
+            collisionSide = CollisionSide.RIGHT;
+            collision = true;
+        } else if (spriteComponent.getSprite().getX() + spriteComponent.getSprite().getWidth() + deltaX > Gdx.graphics.getWidth()) {
+            collisionSide = CollisionSide.LEFT;
+            collision = true;
+        } else if (spriteComponent.getSprite().getY() + deltaY < 0) {
+            collisionSide = CollisionSide.TOP;
+            collision = true;
+        } else if (spriteComponent.getSprite().getY() + spriteComponent.getSprite().getHeight() + deltaY > Gdx.graphics.getHeight()) {
+            collisionSide = CollisionSide.BOTTOM;
+            collision = true;
+        }
+        if (collision) {
+            if (typeComponent != null && typeComponent.type == TypeComponent.EntityType.BULLET) {
+                CollisionSideComponent collisionSideComponent = entity.getComponent(CollisionSideComponent.class);
+                collisionSideComponent.side = collisionSide;
+            }
+            return true;
+        } else {
+            return false; // No collision detected
+        }
     }
 
     public void handleWallCollision(Entity entity, float deltaX, float deltaY) {
