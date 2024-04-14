@@ -7,7 +7,8 @@ import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.BulletFactory;
 import com.mygdx.tank.model.components.*;
-import com.mygdx.tank.model.components.bullet.ShootingCooldownComponent;
+import com.mygdx.tank.model.components.tank.PowerupStateComponent;
+import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 
 public class ShootingSystem {
@@ -42,13 +43,17 @@ public class ShootingSystem {
 
             Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY);
             model.addEntity(bullet);
-            shootingCooldownComponent.cooldown = 1.5f;
+
+            PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
+            if (powerupStateComponent.getState().getPowerupType() != "Minigun") {
+                shootingCooldownComponent.cooldown = 1.5f;
+            }
         }
     }
 
     public void update(float deltaTime) {
         Entity playerTank = this.model.getPlayerTank();
         ShootingCooldownComponent shootingCooldownComponent = playerTank.getComponent(ShootingCooldownComponent.class);
-        shootingCooldownComponent.cooldown = (shootingCooldownComponent.cooldown - deltaTime < 0) ? 0.0f : shootingCooldownComponent.cooldown - deltaTime;
+        shootingCooldownComponent.cooldown = (shootingCooldownComponent.cooldown - deltaTime <= 0) ? 0.0f : shootingCooldownComponent.cooldown - deltaTime;
     }
 }
