@@ -24,7 +24,7 @@ public class LobbyScreen implements Screen {
     private SpriteBatch batch;
     private Stage stage;
     private final Skin buttonSkin;
-    private final TextButton backButton, startGameButton;
+    private final TextButton backButton, createGameButton, joinGameButton;
 
     public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface) {
         this.game = game;
@@ -34,7 +34,8 @@ public class LobbyScreen implements Screen {
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         backButton = new TextButton("Back", buttonSkin, "default");
-        startGameButton = new TextButton("Start game", buttonSkin,"default");
+        createGameButton = new TextButton("Create game", buttonSkin,"default");
+        joinGameButton = new TextButton("Join game", buttonSkin,"default");
     }
 
     @Override
@@ -42,24 +43,9 @@ public class LobbyScreen implements Screen {
         stage = new Stage();
         batch = new SpriteBatch();
 
-        setButtonLayout();
+        setButtons();
         createHeadline();
-
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
-            }
-        });
-        startGameButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new InGameScreen(game));
-            }
-        });
-
-        stage.addActor(backButton);
-        stage.addActor(startGameButton);
+        addListeners();
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -104,12 +90,40 @@ public class LobbyScreen implements Screen {
         buttonSkin.dispose();
     }
 
-    private void setButtonLayout() {
-        backButton.setBounds((con.getSWidth() - con.getTBWidth()) * 0.1f, (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
+    private void setButtons() {
+        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05f), con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        startGameButton.setBounds((con.getSWidth() - con.getTBWidth()) * 0.9f, (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
-        startGameButton.getLabel().setFontScale(con.getTScaleF());
+        createGameButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.5f), con.getTBWidth(), con.getTBHeight());
+        createGameButton.getLabel().setFontScale(con.getTScaleF());
+
+        joinGameButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.3f), con.getTBWidth(), con.getTBHeight());
+        joinGameButton.getLabel().setFontScale(con.getTScaleF());
+
+        stage.addActor(backButton);
+        stage.addActor(createGameButton);
+        stage.addActor(joinGameButton);
+    }
+
+    private void addListeners() {
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+        createGameButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new InGameScreen(game));
+            }
+        });
+        joinGameButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new InGameScreen(game));
+            }
+        });
     }
 
     private void createHeadline() {
@@ -122,18 +136,4 @@ public class LobbyScreen implements Screen {
         stage.addActor(headlineLabel);
     }
 
-    private void SetGame() {
-        // Get game with at least one spot available and is not running
-
-        // Reserve a spot for the current user
-
-        // Set the game here
-    }
-
-//    private void displayPlayersForGame(ArrayList<User> users) {
-//        // Update the list of the users in currently in the game
-//        for (User user : users) {
-//
-//        }
-//    }
 }

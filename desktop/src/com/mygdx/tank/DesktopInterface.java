@@ -7,8 +7,4 @@ public class DesktopInterface implements FirebaseInterface {
 
     }
 
-    @Override
-    public String getAvailibleGame(FirebaseDataListener listener) {
-        return null;
-    }
 }

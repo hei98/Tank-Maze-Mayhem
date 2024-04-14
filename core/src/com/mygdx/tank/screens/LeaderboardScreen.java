@@ -108,7 +108,7 @@ public class LeaderboardScreen implements Screen {
     }
 
     private void setButtonLayout() {
-        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05f), con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
         settingsButton.setSize(con.getIBSize(), con.getIBSize());
         settingsButton.getImageCell().expand().fill();

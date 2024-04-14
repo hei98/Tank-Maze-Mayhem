@@ -9,8 +9,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FirebaseController implements FirebaseInterface {
     FirebaseController() {
@@ -37,14 +35,5 @@ public class FirebaseController implements FirebaseInterface {
             }
         });
     }
-
-    @Override
-    public String getAvailibleGame(FirebaseDataListener listener) {
-        // Get first game with at least one free spot and reserve that spot until they start the game
-
-        // Release the spot if start game is not started
-        return "Hello";
-    }
-
 
 }

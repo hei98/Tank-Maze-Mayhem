@@ -20,10 +20,10 @@ import com.mygdx.tank.screens.MainMenuScreen;
 
 public class SettingsScreen implements Screen {
 
-    private TankMazeMayhem game;
+    private final TankMazeMayhem game;
     private final MenuConstants con;
     private Stage stage;
-    private Texture background;
+    private final Texture background;
     private final TextButton backButton;
     private SpriteBatch batch;
     private final Skin buttonSkin;
