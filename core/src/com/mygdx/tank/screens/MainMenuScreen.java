@@ -2,19 +2,24 @@ package com.mygdx.tank.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.mygdx.tank.AccountService;
 import com.mygdx.tank.MenuConstants;
 import com.mygdx.tank.TankMazeMayhem;
 
 public class MainMenuScreen implements Screen {
     private final TankMazeMayhem game;
+    private final AccountService accountService;
     private Stage stage;
     private SpriteBatch batch;
     private Texture background;
@@ -22,10 +27,13 @@ public class MainMenuScreen implements Screen {
     private final MenuConstants con;
     private TextButton multiplayerButton, leaderboardButton, loginButton;
     private ImageButton settingsButton;
+    private Label accountLabel;
+    private BitmapFont font;
 
-    public MainMenuScreen(TankMazeMayhem game) {
+    public MainMenuScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         con = MenuConstants.getInstance();
+        this.accountService = accountService;
     }
 
     @Override
@@ -33,6 +41,16 @@ public class MainMenuScreen implements Screen {
         batch = new SpriteBatch();
         stage = new Stage();
         background = new Texture("Backgrounds/main-menu.JPG");
+
+        //Display the username if logged in
+        font = new BitmapFont();
+        accountLabel = new Label("", new Label.LabelStyle(font, Color.BLACK));
+        accountLabel.setPosition(10, Gdx.graphics.getHeight() - 20);
+        stage.addActor(accountLabel);
+        updateAccountLabel();
+
+
+
         //Load the skin and atlas for the buttons
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
@@ -42,6 +60,14 @@ public class MainMenuScreen implements Screen {
         loginButton = new TextButton("Create User/Login", buttonSkin, "default");
         settingsButton = new ImageButton(buttonSkin, "settings");
 
+        // login/logout according to user status
+        if (accountService.hasUser()){
+            loginButton = new TextButton("Log out", buttonSkin, "default");
+        }
+        else{
+            loginButton = new TextButton("Create User/Login", buttonSkin, "default");
+        }
+
         setButtonLayout();
 
 
@@ -49,25 +75,31 @@ public class MainMenuScreen implements Screen {
         multiplayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game, game.getFirebaseInterface()));
+                game.setScreen(new LobbyScreen(game, game.getFirebaseInterface(), accountService));
             }
         });
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game));
+                game.setScreen(new SettingsScreen(game, accountService));
             }
         });
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LeaderboardScreen(game, game.getFirebaseInterface()));
+                if (accountService.hasUser()){
+                    accountService.signOut();
+                    game.setScreen( new MainMenuScreen(game, accountService));
+                }
+                else{
+                    game.setScreen(new SignInScreen(game, accountService));
+                }
             }
         });
         leaderboardButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LeaderboardScreen(game, game.getFirebaseInterface()));
+                game.setScreen(new LeaderboardScreen(game, game.getFirebaseInterface(), accountService));
             }
         });
 
@@ -98,6 +130,15 @@ public class MainMenuScreen implements Screen {
         multiplayerButton.getLabel().setFontScale(con.getTScaleF());
         leaderboardButton.getLabel().setFontScale(con.getTScaleF());
         loginButton.getLabel().setFontScale(con.getTScaleF());
+    }
+    //Check if user logged in, and display ID
+    private void updateAccountLabel() {
+        if (accountService.hasUser()) {
+            String user = accountService.getCurrentUserEmail();
+            accountLabel.setText("User email: " + user);
+        } else {
+            accountLabel.setText("Not logged in");
+        }
     }
 
     @Override

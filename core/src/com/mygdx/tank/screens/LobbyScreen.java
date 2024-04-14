@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.MenuConstants;
 import com.mygdx.tank.TankMazeMayhem;
@@ -19,15 +20,17 @@ public class LobbyScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final MenuConstants con;
     private final TankMazeMayhem game;
+    private final AccountService accountService;
     private final Texture background;
     private SpriteBatch batch;
     private Stage stage;
     private Skin buttonSkin;
     private TextButton backButton, startGameButton;
 
-    public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface) {
+    public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
+        this.accountService = accountService;
         con = MenuConstants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -46,13 +49,13 @@ public class LobbyScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, accountService));
             }
         });
         startGameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new InGameScreen(game));
+                game.setScreen(new InGameScreen(game, accountService));
             }
         });
 

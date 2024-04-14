@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseDataListener;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.LeaderboardEntry;
@@ -30,6 +31,7 @@ public class LeaderboardScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final MenuConstants con;
     private final TankMazeMayhem game;
+    private final AccountService accountService;
     private Stage stage;
     private final Texture background;
     private final TextButton backButton;
@@ -39,9 +41,10 @@ public class LeaderboardScreen implements Screen {
     private Table leaderboardTable;
     private ScrollPane scrollPane;
 
-    public LeaderboardScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface) {
+    public LeaderboardScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
+        this.accountService = accountService;
         con = MenuConstants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -62,13 +65,13 @@ public class LeaderboardScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, accountService));
             }
         });
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game));
+                game.setScreen(new SettingsScreen(game, accountService));
             }
         });
 

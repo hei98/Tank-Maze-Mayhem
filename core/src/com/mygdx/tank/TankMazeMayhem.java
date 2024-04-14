@@ -9,21 +9,23 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.screens.MainMenuScreen;
 
 public class TankMazeMayhem extends Game {
+	private AccountService accountService;
     private FirebaseInterface firebaseInterface;
     private GameModel model;
     private GameView view;
     private GameController controller;
     SpriteBatch batch;
 
-	public TankMazeMayhem(FirebaseInterface firebaseInterface) {
+	public TankMazeMayhem(FirebaseInterface firebaseInterface, AccountService accountService) {
 		this.firebaseInterface = firebaseInterface;
+		this.accountService = accountService;
 	}
 
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
 		// Set the initial screen to the main menu
-		setScreen(new MainMenuScreen(this));
+		setScreen(new MainMenuScreen(this, accountService));
 	}
 
 	@Override
