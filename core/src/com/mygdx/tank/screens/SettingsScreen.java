@@ -31,7 +31,7 @@ public class SettingsScreen implements Screen {
     public SettingsScreen(TankMazeMayhem game) {
         this.game = game;
         con = MenuConstants.getInstance();
-        background = new Texture("Backgrounds/Leaderboard.JPG");
+        background = new Texture("Backgrounds/Leaderboard.png");
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         backButton = new TextButton("Back", buttonSkin, "default");
