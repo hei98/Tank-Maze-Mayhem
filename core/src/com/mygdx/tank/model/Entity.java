@@ -26,6 +26,9 @@ public class Entity {
     public boolean isMarkedForRemoval() {
         return markedForRemoval;
     }
+    public void unmarkForRemoval() {
+        this.markedForRemoval = false;
+    }
 
     public <T extends Component> void addComponent(T component) {
         components.put(component.getClass(), component);

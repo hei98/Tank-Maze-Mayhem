@@ -80,16 +80,12 @@ public class CollisionSystem {
         }
     }
 
-
     private void markBulletForRemovalAndDamageTank(Entity bullet, Entity tank) {
         bullet.markForRemoval(true);
-
         HealthComponent health = tank.getComponent(HealthComponent.class);
         if (health != null) {
             health.takeDamage();
-            if (!health.isAlive()) {
-                tank.markForRemoval(true);
-            }
+            // Do not mark the tank for removal here; let GameModel handle it based on health status
         }
     }
 
