@@ -48,7 +48,7 @@ public class PowerupFactory implements EntityFactory {
         String imagePath;
         if (randomPowerupType == PowerUpTypeComponent.PowerupType.Shield) {
             imagePath = "images/ShieldPowerup.png";
-        } else if (randomPowerupType == PowerUpTypeComponent.PowerupType.Firerate) {
+        } else if (randomPowerupType == PowerUpTypeComponent.PowerupType.Minigun) {
             imagePath = "images/MachineGunPowerup.png";
         } else if (randomPowerupType == PowerUpTypeComponent.PowerupType.Speed) {
             imagePath = "images/SpeedPowerup.png";

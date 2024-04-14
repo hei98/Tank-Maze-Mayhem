@@ -4,6 +4,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.components.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
@@ -17,15 +18,24 @@ import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.bullet.CollisionSide;
+import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 import com.mygdx.tank.model.components.tank.HealthComponent;
+import com.mygdx.tank.model.components.tank.PowerupStateComponent;
+import com.mygdx.tank.model.states.MinigunState;
+import com.mygdx.tank.model.states.NormalState;
+import com.mygdx.tank.model.states.PowerupState;
+import com.mygdx.tank.model.states.ShieldState;
+import com.mygdx.tank.model.states.SpeedState;
 
 public class CollisionSystem {
     private TiledMap map;
     private List<Entity> entities;
+    private GameModel model;
 
-    public CollisionSystem(TiledMap map, List<Entity> entities) {
+    public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model) {
         this.map = map;
         this.entities = entities;
+        this.model = model;
     }
 
     public void update(float deltaTime) {
@@ -40,6 +50,17 @@ public class CollisionSystem {
             }
         }
         processEntityCollisions();
+
+        Entity playerTank = model.getPlayerTank();
+        PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
+        if (powerupStateComponent.inPowerupMode) {
+            powerupStateComponent.timer = (powerupStateComponent.timer - deltaTime < 0) ? 0.0f : powerupStateComponent.timer - deltaTime;
+            if (powerupStateComponent.timer == 0.0f) {
+                powerupStateComponent.setState(new NormalState());
+                powerupStateComponent.getState().doAction(playerTank);
+            }
+        }
+
     }
     private Rectangle getBoundingBox(Entity entity) {
         PositionComponent position = entity.getComponent(PositionComponent.class);
@@ -74,9 +95,9 @@ public class CollisionSystem {
             markBulletForRemovalAndDamageTank(e2, e1);
             System.out.println("Entities collided: " + e1 + " with " + e2);
         } else if (type1.type == TypeComponent.EntityType.POWERUP && type2.type == TypeComponent.EntityType.TANK) {
-            e1.markForRemoval(true);
+            givePlayertankPowerup(e2, e1);
         } else if (type2.type == TypeComponent.EntityType.POWERUP && type1.type == TypeComponent.EntityType.TANK) {
-            e2.markForRemoval(true);
+            givePlayertankPowerup(e1, e2);
         }
     }
 
@@ -91,6 +112,23 @@ public class CollisionSystem {
                 tank.markForRemoval(true);
             }
         }
+    }
+
+    private void givePlayertankPowerup(Entity tank, Entity powerup) {
+        // this code could be moved to an entirely new PowerupPickupSystem
+        powerup.markForRemoval(true);
+
+        PowerupStateComponent powerupStateComponent = tank.getComponent(PowerupStateComponent.class);
+        if (powerup.getComponent(PowerUpTypeComponent.class).powerupType == PowerUpTypeComponent.PowerupType.Shield) {
+            powerupStateComponent.setState( new ShieldState());
+        } else if (powerup.getComponent(PowerUpTypeComponent.class).powerupType == PowerUpTypeComponent.PowerupType.Speed) {
+            powerupStateComponent.setState( new SpeedState());
+        } else if (powerup.getComponent(PowerUpTypeComponent.class).powerupType == PowerUpTypeComponent.PowerupType.Minigun) {
+            powerupStateComponent.setState( new MinigunState());
+        }
+
+        PowerupState powerupState =  powerupStateComponent.getState();
+        powerupState.doAction(tank);
     }
 
     public boolean isCollisionWithWalls(Entity entity, float deltaX, float deltaY) {
