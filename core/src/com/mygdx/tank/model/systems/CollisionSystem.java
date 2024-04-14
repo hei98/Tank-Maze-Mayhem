@@ -153,16 +153,16 @@ public class CollisionSystem {
         }
         CollisionSide collisionSide = CollisionSide.NONE;
         boolean collision = false;
-        if (spriteComponent.getSprite().getX() + deltaX < 0) {
+        if (positionComponent.x + deltaX < 0) {
             collisionSide = CollisionSide.RIGHT;
             collision = true;
-        } else if (spriteComponent.getSprite().getX() + spriteComponent.getSprite().getWidth() + deltaX > Gdx.graphics.getWidth()) {
+        } else if (positionComponent.x + spriteComponent.getSprite().getWidth() + deltaX > Gdx.graphics.getWidth()) {
             collisionSide = CollisionSide.LEFT;
             collision = true;
-        } else if (spriteComponent.getSprite().getY() + deltaY < 0) {
+        } else if (positionComponent.y + deltaY < 0) {
             collisionSide = CollisionSide.TOP;
             collision = true;
-        } else if (spriteComponent.getSprite().getY() + spriteComponent.getSprite().getHeight() + deltaY > Gdx.graphics.getHeight()) {
+        } else if (positionComponent.y + spriteComponent.getSprite().getHeight() + deltaY > Gdx.graphics.getHeight()) {
             collisionSide = CollisionSide.BOTTOM;
             collision = true;
         }
@@ -202,9 +202,6 @@ public class CollisionSystem {
                         }
 
                         bounce.bounces++;
-
-                        entity.getComponent(PositionComponent.class).x -= deltaX;
-                        entity.getComponent(PositionComponent.class).y -= deltaY;
                     }
                     else {
                         entity.markForRemoval(true);
