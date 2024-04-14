@@ -1,9 +1,11 @@
 package com.mygdx.tank.model.systems;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.components.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
@@ -17,15 +19,26 @@ import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.bullet.CollisionSide;
+import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 import com.mygdx.tank.model.components.tank.HealthComponent;
+import com.mygdx.tank.model.components.tank.PowerupStateComponent;
+import com.mygdx.tank.model.states.MinigunState;
+import com.mygdx.tank.model.states.NormalState;
+import com.mygdx.tank.model.states.PowerupState;
+import com.mygdx.tank.model.states.ShieldState;
+import com.mygdx.tank.model.states.SpeedState;
 
 public class CollisionSystem {
     private TiledMap map;
     private List<Entity> entities;
+    private GameModel model;
+    private GrantPowerupSystem grantPowerupSystem;
 
-    public CollisionSystem(TiledMap map, List<Entity> entities) {
+    public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model, GrantPowerupSystem grantPowerupSystem) {
         this.map = map;
         this.entities = entities;
+        this.model = model;
+        this.grantPowerupSystem = grantPowerupSystem;
     }
 
     public void update(float deltaTime) {
@@ -40,6 +53,17 @@ public class CollisionSystem {
             }
         }
         processEntityCollisions();
+
+        Entity playerTank = model.getPlayerTank();
+        PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
+        if (powerupStateComponent.inPowerupMode) {
+            powerupStateComponent.timer = (powerupStateComponent.timer - deltaTime < 0) ? 0.0f : powerupStateComponent.timer - deltaTime;
+            if (powerupStateComponent.timer == 0.0f) {
+                powerupStateComponent.setState(new NormalState());
+                powerupStateComponent.getState().doAction(playerTank);
+            }
+        }
+
     }
     private Rectangle getBoundingBox(Entity entity) {
         PositionComponent position = entity.getComponent(PositionComponent.class);
@@ -74,22 +98,18 @@ public class CollisionSystem {
             markBulletForRemovalAndDamageTank(e2, e1);
             System.out.println("Entities collided: " + e1 + " with " + e2);
         } else if (type1.type == TypeComponent.EntityType.POWERUP && type2.type == TypeComponent.EntityType.TANK) {
-            e1.markForRemoval(true);
+            grantPowerupSystem.givePlayertankPowerup(e2, e1);
         } else if (type2.type == TypeComponent.EntityType.POWERUP && type1.type == TypeComponent.EntityType.TANK) {
-            e2.markForRemoval(true);
+            grantPowerupSystem.givePlayertankPowerup(e1, e2);
         }
     }
 
-
     private void markBulletForRemovalAndDamageTank(Entity bullet, Entity tank) {
         bullet.markForRemoval(true);
-
         HealthComponent health = tank.getComponent(HealthComponent.class);
         if (health != null) {
             health.takeDamage();
-            if (!health.isAlive()) {
-                tank.markForRemoval(true);
-            }
+            // Do not mark the tank for removal here; let GameModel handle it based on health status
         }
     }
 
@@ -131,7 +151,30 @@ public class CollisionSystem {
                 }
             }
         }
-        return false; // No collision detected
+        CollisionSide collisionSide = CollisionSide.NONE;
+        boolean collision = false;
+        if (positionComponent.x + deltaX < 0) {
+            collisionSide = CollisionSide.RIGHT;
+            collision = true;
+        } else if (positionComponent.x + spriteComponent.getSprite().getWidth() + deltaX > Gdx.graphics.getWidth()) {
+            collisionSide = CollisionSide.LEFT;
+            collision = true;
+        } else if (positionComponent.y + deltaY < 0) {
+            collisionSide = CollisionSide.TOP;
+            collision = true;
+        } else if (positionComponent.y + spriteComponent.getSprite().getHeight() + deltaY > Gdx.graphics.getHeight()) {
+            collisionSide = CollisionSide.BOTTOM;
+            collision = true;
+        }
+        if (collision) {
+            if (typeComponent != null && typeComponent.type == TypeComponent.EntityType.BULLET) {
+                CollisionSideComponent collisionSideComponent = entity.getComponent(CollisionSideComponent.class);
+                collisionSideComponent.side = collisionSide;
+            }
+            return true;
+        } else {
+            return false; // No collision detected
+        }
     }
 
     public void handleWallCollision(Entity entity, float deltaX, float deltaY) {
@@ -159,9 +202,6 @@ public class CollisionSystem {
                         }
 
                         bounce.bounces++;
-
-                        entity.getComponent(PositionComponent.class).x -= deltaX;
-                        entity.getComponent(PositionComponent.class).y -= deltaY;
                     }
                     else {
                         entity.markForRemoval(true);

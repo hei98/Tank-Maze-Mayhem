@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.tank.AccountService;
 import com.mygdx.tank.MenuConstants;
 import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.screens.MainMenuScreen;
@@ -21,6 +22,7 @@ import com.mygdx.tank.screens.MainMenuScreen;
 public class SettingsScreen implements Screen {
 
     private final TankMazeMayhem game;
+    private final AccountService accountService;
     private final MenuConstants con;
     private Stage stage;
     private final Texture background;
@@ -28,8 +30,9 @@ public class SettingsScreen implements Screen {
     private SpriteBatch batch;
     private final Skin buttonSkin;
 
-    public SettingsScreen(TankMazeMayhem game) {
+    public SettingsScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
+        this.accountService = accountService;
         con = MenuConstants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -49,7 +52,7 @@ public class SettingsScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, accountService));
             }
         });
 

@@ -7,7 +7,8 @@ import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.BulletFactory;
 import com.mygdx.tank.model.components.*;
-import com.mygdx.tank.model.components.bullet.ShootingCooldownComponent;
+import com.mygdx.tank.model.components.tank.PowerupStateComponent;
+import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 
 public class ShootingSystem {
@@ -38,17 +39,21 @@ public class ShootingSystem {
             float bulletSpawnOffset = Math.max(tankSprite.getSprite().getWidth(), tankSprite.getSprite().getHeight()) / 2 + (Gdx.app.getType() == Application.ApplicationType.Desktop ? 30 : 60) - (Gdx.app.getType() != Application.ApplicationType.Desktop && knobAngle > 180 ? 30 : 0); // +5 ensures it spawns outside
             float offsetAdjustment = Gdx.app.getType() == Application.ApplicationType.Desktop ? 10 : 30;
             float bulletStartX = tankPosition.x + (knobAngle >= 270 ? offsetAdjustment : 0) + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionX * bulletSpawnOffset;
-            float bulletStartY = tankPosition.y + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionY * bulletSpawnOffset;
+            float bulletStartY = tankPosition.y + (knobAngle >= 270 ? offsetAdjustment : 0) + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionY * bulletSpawnOffset;
 
             Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY);
             model.addEntity(bullet);
-            shootingCooldownComponent.cooldown = 1.5f;
+
+            PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
+            if (powerupStateComponent.getState().getPowerupType() != "Minigun") {
+                shootingCooldownComponent.cooldown = 1.5f;
+            }
         }
     }
 
     public void update(float deltaTime) {
         Entity playerTank = this.model.getPlayerTank();
         ShootingCooldownComponent shootingCooldownComponent = playerTank.getComponent(ShootingCooldownComponent.class);
-        shootingCooldownComponent.cooldown = (shootingCooldownComponent.cooldown - deltaTime < 0) ? 0.0f : shootingCooldownComponent.cooldown - deltaTime;
+        shootingCooldownComponent.cooldown = (shootingCooldownComponent.cooldown - deltaTime <= 0) ? 0.0f : shootingCooldownComponent.cooldown - deltaTime;
     }
 }

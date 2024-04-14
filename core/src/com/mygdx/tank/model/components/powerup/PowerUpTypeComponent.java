@@ -6,7 +6,7 @@ public class PowerUpTypeComponent implements Component {
     public PowerupType powerupType;
 
     public enum PowerupType {
-        Shield, Speed, Firerate
+        Shield, Speed, Minigun
     }
 
     public PowerUpTypeComponent(PowerupType powerupType) {

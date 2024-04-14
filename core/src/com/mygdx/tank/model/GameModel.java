@@ -1,3 +1,4 @@
+
 package com.mygdx.tank.model;
 
 import com.badlogic.gdx.Application;
@@ -12,6 +13,8 @@ import com.mygdx.tank.model.systems.CollisionSystem;
 import com.mygdx.tank.model.systems.MovementSystem;
 import com.mygdx.tank.model.systems.PowerupSpawnSystem;
 import com.mygdx.tank.model.systems.ShootingSystem;
+import com.mygdx.tank.model.systems.*;
+import com.mygdx.tank.model.components.tank.HealthComponent;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ public class GameModel {
     private ShootingSystem shootingSystem;
     private CollisionSystem collisionSystem;
     private PowerupSpawnSystem powerupSpawnSystem;
+    private RespawnSystem respawnSystem;
+    private GrantPowerupSystem grantPowerupSystem;
     private Entity playerTank;
     private TiledMap map;
     private EntityFactory tankFactory = new TankFactory();
@@ -30,10 +35,12 @@ public class GameModel {
         entities = new ArrayList<>();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
-        collisionSystem = new CollisionSystem(map, entities);
+        grantPowerupSystem = new GrantPowerupSystem();
+        collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
         movementSystem = new MovementSystem(entities, collisionSystem);
         shootingSystem = new ShootingSystem(this);
         powerupSpawnSystem = new PowerupSpawnSystem(this);
+        respawnSystem = new RespawnSystem(entities);
         playerTank = tankFactory.createEntity();
         entities.add(playerTank);
     }
@@ -41,29 +48,42 @@ public class GameModel {
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
-        removeMarkedEntities();
         shootingSystem.update(deltaTime);
         powerupSpawnSystem.update(deltaTime);
+        respawnSystem.update(deltaTime);
+        removeMarkedEntities();
     }
 
     public void removeMarkedEntities() {
         List<Entity> toKeep = new ArrayList<>();
         for (Entity entity : entities) {
-            if (!entity.isMarkedForRemoval()) {
-                toKeep.add(entity);
-            }
-            else{
+            if (entity.isMarkedForRemoval()) {
                 TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
-                if (typeComponent.type == TypeComponent.EntityType.POWERUP) {
-                    powerupSpawnSystem.spawnedPowerup = false;
-                    powerupSpawnSystem.timer = 10.0f;
+                if (typeComponent != null) {
+                    switch (typeComponent.type) {
+                        case TANK:
+                            HealthComponent healthComponent = entity.getComponent(HealthComponent.class);
+                            if (healthComponent != null && !healthComponent.isAlive()) {
+                                respawnSystem.respawn(entity);
+                                continue;
+                            }
+                            break;
+                        case POWERUP:
+                            powerupSpawnSystem.powerupRemoved();
+                            break;
+                    }
                 }
                 System.out.println("Removing entity: " + entity);
+            } else {
+                toKeep.add(entity);
             }
         }
         entities.clear();
         entities.addAll(toKeep);
     }
+
+
+
 
     public Entity getPlayerTank() {
         return playerTank;
@@ -101,4 +121,5 @@ public class GameModel {
         return entities;
     }
 }
+
 
