@@ -1,6 +1,7 @@
 package com.mygdx.tank;
 
 import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -29,29 +30,43 @@ import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 public class GameView {
     private GameModel model;
     private SpriteBatch spriteBatch;
+    private final Constants con;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
-    private float mapWidthInPixels, mapHeightInPixels;
     private float knobPercentX, knobPercentY;
     private Touchpad touchpad;
     private Stage stage;
     private GameController controller;
+    private Skin touchpadSkin, skin;
+    private Texture buttonTexture;
+    private ImageButton circularButton;
+    private ImageButton.ImageButtonStyle buttonStyle;
 
     public GameView(GameModel model, GameController controller) {
         this.model = model;
         this.controller = controller;
         spriteBatch = new SpriteBatch();
+        con = Constants.getInstance();
+        touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+        buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
+
+        // Create a skin for the circular button
+        skin = new Skin();
+        skin.add("circleButton", buttonTexture);
+
+        // Define the style for the circular button
+        buttonStyle = new ImageButton.ImageButtonStyle();
+        buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+        circularButton = new ImageButton(buttonStyle);
+
     }
 
     public void create() {
+        // Can remove the first map later since we only run on android
         if (Gdx.app.getType() == ApplicationType.Desktop) {
-            mapWidthInPixels = 800;
-            mapHeightInPixels = 480;
             map = new TmxMapLoader().load("TiledMap/Map.tmx");
         } else {
-            mapWidthInPixels = 2220;
-            mapHeightInPixels = 1080;
             map = new TmxMapLoader().load("TiledMap/Map2.tmx");
         }
 
@@ -59,62 +74,14 @@ public class GameView {
 
         // Initialize the camera with the screen's width and height
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, mapWidthInPixels, mapHeightInPixels);
+        camera.setToOrtho(false, con.getSWidth(), con.getSHeight());
         camera.update();
 
         renderer = new OrthogonalTiledMapRenderer(map, 1);
 
-        Skin touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
-        knobPercentX = 0.0f;
-        knobPercentY = 0.0f;
-
-        touchpad = new Touchpad(5, touchpadSkin);
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            touchpad.setBounds(30, 30, 150, 150);
-        } else {
-            touchpad.setBounds(100, 100, 250, 250);
-        }
-
-        Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
-
-        // Create a skin for the circular button
-        Skin skin = new Skin();
-        skin.add("circleButton", buttonTexture);
-
-        // Define the style for the circular button
-        ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
-        buttonStyle.up = new TextureRegionDrawable(buttonTexture);
-
-        // Create the circular button
-        ImageButton circularButton = new ImageButton(buttonStyle);
-
-        // Set the position and size of the circular button
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            circularButton.setPosition(Gdx.graphics.getWidth() - 150, 40);
-            circularButton.setSize(100, 100);
-        } else {
-            circularButton.setPosition(Gdx.graphics.getWidth() - 300, 120);
-            circularButton.setSize(250, 250);
-        }
-
-        touchpad.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                knobPercentX = touchpad.getKnobPercentX();
-                knobPercentY = touchpad.getKnobPercentY();
-            }
-
-        });
-
-        circularButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // Handle button click event here
-                controller.handleFireButton();
-            }
-        });
-        stage.addActor(touchpad);
-        stage.addActor(circularButton);
+        setButtons();
+        addListeners();
+        ;
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -131,6 +98,66 @@ public class GameView {
         // Start batch processing
         spriteBatch.begin();
 
+        updateEntitySprites();
+
+        // End batch processing
+        spriteBatch.end();
+
+        stage.act();
+        stage.draw();
+    }
+
+
+
+    public void resize(int width, int height) {
+        // Calculate the aspect ratio of the screen
+    }
+
+    public void dispose() {
+        spriteBatch.dispose();
+        map.dispose();
+        renderer.dispose();
+        stage.dispose();
+    }
+
+    private void setButtons() {
+        knobPercentX = 0.0f;
+        knobPercentY = 0.0f;
+
+        touchpad = new Touchpad(5f, touchpadSkin);
+        touchpad.setBounds(con.getSWidth() * 0.05f, con.getSHeight() * 0.05f, con.getIBSize() * 2f, con.getIBSize() * 2f);
+
+        circularButton.setPosition(con.getSWidth() * 0.85f, con.getSHeight() * 0.05f);
+        circularButton.setSize(con.getIBSize() * 2f, con.getIBSize() * 2f);
+
+        // Make buttons see through
+        touchpad.getColor().a = 0.5f;
+        circularButton.getColor().a = 0.5f;
+
+        stage.addActor(touchpad);
+        stage.addActor(circularButton);
+    }
+
+    private void addListeners() {
+        touchpad.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                knobPercentX = touchpad.getKnobPercentX();
+                knobPercentY = touchpad.getKnobPercentY();
+            }
+
+        });
+
+        circularButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Handle button click event here
+                controller.handleFireButton();
+            }
+        });
+    }
+
+    private void updateEntitySprites() {
         for (Entity entity : model.getEntities()) {
             // Attempt to retrieve both the Sprite and Position components for the entity
             SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
@@ -161,22 +188,5 @@ public class GameView {
                 sprite.draw(spriteBatch);
             }
         }
-
-        // End batch processing
-        spriteBatch.end();
-
-        stage.act();
-        stage.draw();
-    }
-
-    public void resize(int width, int height) {
-        // Calculate the aspect ratio of the screen
-
-    }
-    public void dispose() {
-        spriteBatch.dispose();
-        map.dispose();
-        renderer.dispose();
-        stage.dispose();
     }
 }
