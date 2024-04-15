@@ -33,6 +33,7 @@ public class TutorialScreen implements Screen {
             new Texture(Gdx.files.internal("Backgrounds/projectile-tutorial2.png")),
             new Texture(Gdx.files.internal("Backgrounds/game tutorial (6).png")),
             new Texture(Gdx.files.internal("Backgrounds/game tutorial (5).png")),
+            new Texture(Gdx.files.internal("Backgrounds/game tutorial (4).png")),
     };
     private Screen returnScreen;
 
@@ -90,9 +91,20 @@ public class TutorialScreen implements Screen {
     });
         stage.addActor(nextButton);
 
+    // Initialize the "Back" button, placed on the left side of the screen at the bottom
+    TextButton backButton = new TextButton("Back", largeButtonStyle);
+    backButton.setPosition(20, 20); // Bottom left
+        backButton.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
+            }
+        }
+    });
+    stage.addActor(backButton);
 }
-
-
     private void endTutorial() {
         game.setScreen(returnScreen);
     }
