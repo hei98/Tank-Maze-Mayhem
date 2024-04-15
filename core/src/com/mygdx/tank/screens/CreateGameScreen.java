@@ -63,7 +63,6 @@ public class CreateGameScreen implements Screen {
         }
 
         server.getKryo().register(String.class);
-
         server.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
@@ -92,6 +91,7 @@ public class CreateGameScreen implements Screen {
                 if (object instanceof String) {
                     String message = (String) object;
                     System.out.println("Klient mottok denne meldingen fra server: " + message);
+                    System.out.println("Meldingen var fra: " + connection.getID());
                 }
             }
         });

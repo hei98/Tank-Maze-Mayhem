@@ -12,10 +12,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
+
+import java.io.IOException;
 
 public class LobbyScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
@@ -124,7 +129,25 @@ public class LobbyScreen implements Screen {
         joinGameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("lol");
+                Client client = new Client();
+                client.start();
+                client.getKryo().register(String.class);
+
+                client.addListener(new Listener() {
+                    @Override
+                    public void received(Connection connection, Object object) {
+                        if (object instanceof String) {
+                            String message = (String) object;
+                            System.out.println("Klient mottok denne meldingen fra server: " + message);
+                        }
+                    }
+                });
+                try {
+                    client.connect(5000, "localhost", 54555, 54777);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                game.setScreen(new InGameScreen(game, accountService, client));
             }
         });
     }
