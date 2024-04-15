@@ -94,13 +94,13 @@ public class LobbyScreen implements Screen {
     }
 
     private void setButtons() {
-        backButton.setBounds(con.getCenterX(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterTB(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        createGameButton.setBounds(con.getCenterX(),con.getSHeight()*0.5f, con.getTBWidth(), con.getTBHeight());
+        createGameButton.setBounds(con.getCenterTB(),con.getSHeight()*0.5f, con.getTBWidth(), con.getTBHeight());
         createGameButton.getLabel().setFontScale(con.getTScaleF());
 
-        joinGameButton.setBounds(con.getCenterX(), con.getSHeight()*0.3f, con.getTBWidth(), con.getTBHeight());
+        joinGameButton.setBounds(con.getCenterTB(), con.getSHeight()*0.3f, con.getTBWidth(), con.getTBHeight());
         joinGameButton.getLabel().setFontScale(con.getTScaleF());
 
         stage.addActor(backButton);

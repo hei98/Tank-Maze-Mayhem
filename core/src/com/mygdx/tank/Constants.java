@@ -25,7 +25,7 @@ public class Constants {
     private static final float TANK_HEIGHT = (53f * 0.5f) * WIDTH_SCALE_FACTOR;
 
     // Other
-    private static final float CENTER_X = (SCREEN_WIDTH - TEXT_BUTTON_WIDTH) / 2;
+    private static final float CENTER_TB = (SCREEN_WIDTH - TEXT_BUTTON_WIDTH) / 2;
 
     private Constants() {
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -38,7 +38,7 @@ public class Constants {
         return instance;
     }
 
-    public float getCenterX() { return CENTER_X; }
+    public float getCenterTB() { return CENTER_TB; }
 
     public float getSWidth() { return SCREEN_WIDTH; }
 
