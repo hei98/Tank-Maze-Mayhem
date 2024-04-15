@@ -138,7 +138,7 @@ public class LobbyScreen implements Screen {
 
     private void createHeadline() {
         Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
-        Label headlineLabel = new Label("Game lobby", headlineStyle);
+        Label headlineLabel = new Label("Multiplayer", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF()*2f);
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());

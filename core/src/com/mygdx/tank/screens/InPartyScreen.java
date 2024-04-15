@@ -166,7 +166,7 @@ public class InPartyScreen implements Screen {
 
     private void createHeadline() {
         Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
-        Label headlineLabel = new Label("Leaderboard", headlineStyle);
+        Label headlineLabel = new Label("Party", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
