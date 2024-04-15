@@ -20,6 +20,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.FirebaseInterface;
+import com.mygdx.tank.LeaderboardEntry;
 import com.mygdx.tank.TankMazeMayhem;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.model.Entity;
@@ -28,7 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateGameScreen implements Screen {
+public class InPartyScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final Constants con;
     private final TankMazeMayhem game;
@@ -37,14 +38,14 @@ public class CreateGameScreen implements Screen {
     private SpriteBatch batch;
     private Stage stage;
     private final Skin skin;
-    private final TextButton backButton, startGameButton;
+    private final TextButton backButton;
     private Server server;
     private Client client;
     private List<String> connectedPlayers = new ArrayList<>();
     private Table playersTable;
     private ScrollPane scrollPane;
 
-    public CreateGameScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
@@ -53,47 +54,12 @@ public class CreateGameScreen implements Screen {
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         backButton = new TextButton("Back", skin, "default");
-        startGameButton = new TextButton("Start game", skin,"default");
     }
 
     @Override
     public void show() {
         stage = new Stage();
         batch = new SpriteBatch();
-        server = new Server();
-        server.start();
-
-        try {
-            server.bind(54555);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        server.getKryo().register(String.class);
-        server.getKryo().register(ArrayList.class);
-        server.addListener(new Listener() {
-            @Override
-            public void connected(Connection connection) {
-                if (connectedPlayers.size() != 0) {
-                    String newUsername = "Player" + (connectedPlayers.size() + 1);
-                    connectedPlayers.add(newUsername);
-                    populatePlayerTable(connectedPlayers);
-                    server.sendToAllExceptTCP(client.getID(), connectedPlayers);
-                }
-            }
-        });
-
-        server.addListener(new Listener() {
-            @Override
-            public void received(Connection connection, Object object) {
-                if (object instanceof String) {
-                    String message = (String) object;
-                    System.out.println("Server mottok meldingen: " + message);
-                    System.out.println("Server sender tilbake meldingen: " + "Sikt bedre!");
-                    connection.sendTCP("Sikt bedre!");
-                }
-            }
-        });
 
         client = new Client();
         client.start();
@@ -107,19 +73,30 @@ public class CreateGameScreen implements Screen {
                     System.out.println("Klient mottok denne meldingen fra server: " + message);
                     System.out.println("Meldingen var fra: " + connection.getID());
                 }
+                else if (object instanceof List) {
+                    if (connectedPlayers.size() == 0) {
+                        @SuppressWarnings("unchecked")
+                        List<String> receivedPlayers = (List<String>) object;
+                        connectedPlayers = receivedPlayers;
+                        createPlayersTable();
+                    } else {
+                        @SuppressWarnings("unchecked")
+                        List<String> receivedPlayers = (List<String>) object;
+                        connectedPlayers = receivedPlayers;
+                        populatePlayerTable(connectedPlayers);
+                    }
+
+                }
             }
         });
         try {
-            client.connect(5000, "10.0.2.16", 54555);
+            client.connect(5000, "10.0.2.2", 5000);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        connectedPlayers.add("Player1");
-
         setButtons();
         createHeadline();
-        createPlayersTable();
         addListeners();
 
         Gdx.input.setInputProcessor(stage);
@@ -174,11 +151,7 @@ public class CreateGameScreen implements Screen {
         backButton.setBounds(con.getCenterX() - con.getTBWidth() / 2 - con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        startGameButton.setBounds(con.getCenterX() + con.getTBWidth() / 2 + con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
-        startGameButton.getLabel().setFontScale(con.getTScaleF());
-
         stage.addActor(backButton);
-        stage.addActor(startGameButton);
     }
 
     private void addListeners() {
@@ -189,17 +162,11 @@ public class CreateGameScreen implements Screen {
                 server.close();
             }
         });
-        startGameButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new InGameScreen(game, accountService, client));
-            }
-        });
     }
 
     private void createHeadline() {
         Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
-        Label headlineLabel = new Label("Party", headlineStyle);
+        Label headlineLabel = new Label("Leaderboard", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
@@ -246,5 +213,7 @@ public class CreateGameScreen implements Screen {
         }
         playersTable.pack();
     }
+
+
 }
 
