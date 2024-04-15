@@ -1,3 +1,5 @@
+package com.mygdx.tank;
+
 public class User {
     private String id;
 

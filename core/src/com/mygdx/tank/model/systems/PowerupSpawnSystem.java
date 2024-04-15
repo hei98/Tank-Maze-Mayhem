@@ -33,5 +33,8 @@ public class PowerupSpawnSystem {
         }
     }
 
-
+    public void powerupRemoved() {
+        this.spawnedPowerup = false;
+        this.timer = 10.0f;
+    }
 }
