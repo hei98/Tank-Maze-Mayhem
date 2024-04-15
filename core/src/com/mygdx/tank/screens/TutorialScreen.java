@@ -43,13 +43,13 @@ public class TutorialScreen implements Screen {
         this.returnScreen = returnScreen;
         tutorialImage = new Image(pages[currentPageIndex]);
         tutorialImage.setFillParent(true);
-        stage.addActor(tutorialImage); // Add to the stage for drawing
+        stage.addActor(tutorialImage);
 
         largeFont = new BitmapFont();
         largeFont.getData().setScale(3); // Set the scale to make the text larger
 
 
-        // Create a new style based on the larger font
+
         largeButtonStyle = new TextButton.TextButtonStyle();
         largeButtonStyle.font = largeFont;
         largeButtonStyle.fontColor = Color.BLACK;
@@ -64,7 +64,7 @@ public class TutorialScreen implements Screen {
 
 
     private void setupButtons() {
-        // Set up the "Skip Tutorial" button
+        // Setting up the "Skip Tutorial" button
         skipButton = new TextButton("Skip Tutorial", largeButtonStyle);
         skipButton.setPosition(20, Gdx.graphics.getHeight() - skipButton.getHeight() - 20);
         skipButton.addListener(new ClickListener() {
@@ -75,7 +75,7 @@ public class TutorialScreen implements Screen {
         });
         stage.addActor(skipButton);
 
-    // Initialize the nextButton and handle its click events
+
     nextButton = new TextButton("Next", largeButtonStyle);
         nextButton.setPosition(Gdx.graphics.getWidth() - nextButton.getWidth() - 20, 20);
         nextButton.addListener(new ClickListener() {
@@ -91,7 +91,7 @@ public class TutorialScreen implements Screen {
     });
         stage.addActor(nextButton);
 
-    // Initialize the "Back" button, placed on the left side of the screen at the bottom
+    // Initializing the "Back" button, placed on the left side of the screen at the bottom
     TextButton backButton = new TextButton("Back", largeButtonStyle);
     backButton.setPosition(20, 20); // Bottom left
         backButton.addListener(new ClickListener() {
@@ -161,5 +161,5 @@ public class TutorialScreen implements Screen {
         stage.dispose();
     }
 
-    // Implement the other required methods of the Screen interface...
+
 }}
