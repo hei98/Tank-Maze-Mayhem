@@ -122,7 +122,6 @@ public class CollisionSystem {
         } else if (powerup.getComponent(PowerUpTypeComponent.class).powerupType == PowerUpTypeComponent.PowerupType.Minigun) {
             powerupStateComponent.setState( new MinigunState());
         }
-
         PowerupState powerupState =  powerupStateComponent.getState();
         powerupState.doAction(tank);
     }
