@@ -7,6 +7,7 @@ import java.util.Map;
 public class Entity {
     private static int nextId = 1;
     private int id;
+    private String ownerId;
     private boolean markedForRemoval = false;
     private Map<Class<? extends Component>, Component> components;
 
@@ -17,6 +18,13 @@ public class Entity {
 
     public int getId() {
         return id;
+    }
+    //methods for score-logic.
+    public void setOwnerId(String ownerId){
+        this.ownerId = ownerId;
+    }
+    public String getOwnerId(String ownerId){
+        return ownerId;
     }
 
     public void markForRemoval(boolean mark) {

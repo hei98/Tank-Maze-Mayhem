@@ -12,7 +12,6 @@ import com.mygdx.tank.model.states.NormalState;
 
 public class TankFactory implements EntityFactory {
 
-
     public Entity createEntity() {
         Entity tank = new Entity();
         tank.addComponent(new PositionComponent(0.0f, 0.0f));

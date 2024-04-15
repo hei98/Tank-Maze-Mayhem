@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
+import com.mygdx.tank.AccountService;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
@@ -16,11 +17,14 @@ import com.mygdx.tank.model.systems.ShootingSystem;
 import com.mygdx.tank.model.systems.*;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class GameModel {
     private List<Entity> entities;
+    private Map<String, PlayerScoreSystem> playerScores = new HashMap<>(); //playerID and PlayerScore
     private MovementSystem movementSystem;
     private ShootingSystem shootingSystem;
     private CollisionSystem collisionSystem;
@@ -28,10 +32,14 @@ public class GameModel {
     private RespawnSystem respawnSystem;
     private GrantPowerupSystem grantPowerupSystem;
     private Entity playerTank;
+    private String playerId;
     private TiledMap map;
     private EntityFactory tankFactory = new TankFactory();
+    private AccountService accountService;
 
-    public GameModel() {
+    public GameModel(AccountService accountService) {
+        this.accountService = accountService;
+        playerId = accountService.getCurrentUserEmail();
         entities = new ArrayList<>();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
@@ -42,6 +50,7 @@ public class GameModel {
         powerupSpawnSystem = new PowerupSpawnSystem(this);
         respawnSystem = new RespawnSystem(entities);
         playerTank = tankFactory.createEntity();
+        playerTank.setOwnerId(playerId);
         entities.add(playerTank);
     }
 

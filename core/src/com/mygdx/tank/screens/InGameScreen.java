@@ -42,7 +42,7 @@ public class InGameScreen implements Screen {
             }
         });
 
-        model = new GameModel();
+        model = new GameModel(accountService);
         controller = new GameController(model);
         view = new GameView(model, controller);
 
