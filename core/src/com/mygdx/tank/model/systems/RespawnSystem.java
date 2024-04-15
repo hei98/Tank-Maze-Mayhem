@@ -1,10 +1,11 @@
 package com.mygdx.tank.model.systems;
 
 import com.mygdx.tank.model.Entity;
-import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 import java.util.List;
 import com.mygdx.tank.model.components.PositionComponent;
+import com.mygdx.tank.model.states.InvulnerabilityState;
+import com.mygdx.tank.model.components.tank.PowerupStateComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 
 public class RespawnSystem {
@@ -33,7 +34,14 @@ public class RespawnSystem {
 
         HealthComponent health = entity.getComponent(HealthComponent.class);
         if (health != null) {
-            health.resetHealth();
+            health.resetHealth(); // Reset health
+        }
+
+        PowerupStateComponent stateComponent = entity.getComponent(PowerupStateComponent.class);
+        if (stateComponent != null) {
+            InvulnerabilityState invulnerabilityState = new InvulnerabilityState();
+            stateComponent.setState(invulnerabilityState);
+            invulnerabilityState.doAction(entity);
         }
     }
 }
