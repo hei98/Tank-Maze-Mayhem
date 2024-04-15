@@ -114,7 +114,7 @@ public class SignInScreen implements Screen {
 
         errorLabel.setWrap(true);
         errorLabel.setAlignment(Align.center);
-        errorLabel.setBounds(con.getCenterX(), con.getSHeight()*0.3f, con.getTBWidth(), con.getTBHeight()/3 );
+        errorLabel.setBounds(con.getCenterX(), con.getSHeight() * (0.6f + 0.12f), con.getTBWidth(), con.getTBHeight());
         errorLabel.setFontScale(con.getTScaleF());
 
         stage.addActor(errorLabel);
@@ -122,10 +122,10 @@ public class SignInScreen implements Screen {
 
     private void setButtonsAndFields() {
         // Set bounds and font scale for buttons and TextFields, and set message for TextFields
-        emailTextField.setBounds(con.getCenterX(), con.getSHeight()*0.7f, con.getTBWidth(), con.getTBHeight());
+        emailTextField.setBounds(con.getCenterX(), con.getSHeight() * (0.6f), con.getTBWidth(), con.getTBHeight());
         emailTextField.setMessageText("Email");
 
-        passwordTextField.setBounds(con.getCenterX(), con.getSHeight()*0.55f, con.getTBWidth(), con.getTBHeight());
+        passwordTextField.setBounds(con.getCenterX(), con.getSHeight() * (0.6f - 0.12f), con.getTBWidth(), con.getTBHeight());
         passwordTextField.setMessageText("Password");
         passwordTextField.setPasswordMode(true);
         passwordTextField.setPasswordCharacter('*');
@@ -136,9 +136,9 @@ public class SignInScreen implements Screen {
         emailTextField.setStyle(textFieldStyle);
         passwordTextField.setStyle(textFieldStyle);
 
-        signInButton.setBounds(con.getCenterX(), con.getSHeight()*0.4f, con.getTBWidth(), con.getTBHeight());
+        signInButton.setBounds(con.getCenterX(), con.getSHeight() * (0.6f - 0.24f), con.getTBWidth(), con.getTBHeight());
         signInButton.getLabel().setFontScale(con.getTScaleF());
-        signUpButton.setBounds(con.getSWidth()/2 - con.getTBWidth()/2, con.getSHeight()*0.25f, con.getTBWidth(), con.getTBHeight());
+        signUpButton.setBounds(con.getCenterX(), con.getSHeight()*0.2f, con.getTBWidth(), con.getTBHeight());
         signUpButton.getLabel().setFontScale(con.getTScaleF());
 
         backButton.setBounds(con.getCenterX(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
