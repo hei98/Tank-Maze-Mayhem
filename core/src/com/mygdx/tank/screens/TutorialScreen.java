@@ -2,8 +2,10 @@ package com.mygdx.tank.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -22,11 +24,15 @@ public class TutorialScreen implements Screen {
     private SpriteBatch batch;
     private Image tutorialImage;
     private TextButton skipButton, nextButton;
+    private BitmapFont largeFont;
+    private TextButton.TextButtonStyle largeButtonStyle;
     private int currentPageIndex = 0;
     private final Texture[] pages = new Texture[]{
-            new Texture(Gdx.files.internal("backgrounds/StartpageTutorial.png")),
-            new Texture(Gdx.files.internal("backgrounds/projectile-tutorial.png")),
-            new Texture(Gdx.files.internal("backgrounds/projectile-tutorial2.png"))
+            new Texture(Gdx.files.internal("Backgrounds/StartpageTutorial.png")),
+            new Texture(Gdx.files.internal("Backgrounds/projectile-tutorial.png")),
+            new Texture(Gdx.files.internal("Backgrounds/projectile-tutorial2.png")),
+            new Texture(Gdx.files.internal("Backgrounds/game tutorial (6).png")),
+            new Texture(Gdx.files.internal("Backgrounds/game tutorial (5).png")),
     };
     private Screen returnScreen;
 
@@ -38,6 +44,14 @@ public class TutorialScreen implements Screen {
         tutorialImage.setFillParent(true);
         stage.addActor(tutorialImage); // Add to the stage for drawing
 
+        largeFont = new BitmapFont();
+        largeFont.getData().setScale(3); // Set the scale to make the text larger
+
+
+        // Create a new style based on the larger font
+        largeButtonStyle = new TextButton.TextButtonStyle();
+        largeButtonStyle.font = largeFont;
+        largeButtonStyle.fontColor = Color.BLACK;
         setupButtons();
         Gdx.input.setInputProcessor(stage);
 
@@ -50,7 +64,7 @@ public class TutorialScreen implements Screen {
 
     private void setupButtons() {
         // Set up the "Skip Tutorial" button
-        skipButton = new TextButton("Skip Tutorial", game.getButtonStyle());
+        skipButton = new TextButton("Skip Tutorial", largeButtonStyle);
         skipButton.setPosition(20, Gdx.graphics.getHeight() - skipButton.getHeight() - 20);
         skipButton.addListener(new ClickListener() {
             @Override
@@ -61,7 +75,7 @@ public class TutorialScreen implements Screen {
         stage.addActor(skipButton);
 
     // Initialize the nextButton and handle its click events
-    nextButton = new TextButton("Next", game.getButtonStyle());
+    nextButton = new TextButton("Next", largeButtonStyle);
         nextButton.setPosition(Gdx.graphics.getWidth() - nextButton.getWidth() - 20, 20);
         nextButton.addListener(new ClickListener() {
         @Override
@@ -129,9 +143,11 @@ public class TutorialScreen implements Screen {
         for (Texture page : pages) {
             page.dispose();
         }
+        if (largeFont != null) {
+            largeFont.dispose();
 
         stage.dispose();
     }
 
     // Implement the other required methods of the Screen interface...
-}
+}}
