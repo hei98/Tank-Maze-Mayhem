@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
-import java.text.CollationElementIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,12 +24,12 @@ import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseDataListener;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.LeaderboardEntry;
-import com.mygdx.tank.MenuConstants;
+import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
 
 public class LeaderboardScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
-    private final MenuConstants con;
+    private final Constants con;
     private final TankMazeMayhem game;
     private final AccountService accountService;
     private Stage stage;
@@ -46,7 +45,7 @@ public class LeaderboardScreen implements Screen {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
-        con = MenuConstants.getInstance();
+        con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 

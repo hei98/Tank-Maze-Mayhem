@@ -14,12 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseInterface;
-import com.mygdx.tank.MenuConstants;
+import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
 
 public class LobbyScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
-    private final MenuConstants con;
+    private final Constants con;
     private final TankMazeMayhem game;
     private final AccountService accountService;
     private final Texture background;
@@ -32,7 +32,7 @@ public class LobbyScreen implements Screen {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
-        con = MenuConstants.getInstance();
+        con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 

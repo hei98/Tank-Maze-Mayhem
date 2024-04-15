@@ -3,7 +3,6 @@ package com.mygdx.tank.screens;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -15,15 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.AccountService;
-import com.mygdx.tank.MenuConstants;
+import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
-import com.mygdx.tank.screens.MainMenuScreen;
 
 public class SettingsScreen implements Screen {
 
     private final TankMazeMayhem game;
     private final AccountService accountService;
-    private final MenuConstants con;
+    private final Constants con;
     private Stage stage;
     private final Texture background;
     private final TextButton backButton;
@@ -33,7 +31,7 @@ public class SettingsScreen implements Screen {
     public SettingsScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         this.accountService = accountService;
-        con = MenuConstants.getInstance();
+        con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 

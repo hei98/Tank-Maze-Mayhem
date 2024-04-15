@@ -18,13 +18,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.AccountService;
-import com.mygdx.tank.MenuConstants;
+import com.mygdx.tank.Constants;
 import com.mygdx.tank.SignUpController;
 import com.mygdx.tank.TankMazeMayhem;
 
 public class SignUpScreen implements Screen {
     private final TankMazeMayhem game;
-    private final MenuConstants con;
+    private final Constants con;
     private final AccountService accountService;
     private final SignUpController signUpController;
     private Stage stage;
@@ -39,7 +39,7 @@ public class SignUpScreen implements Screen {
         this.game = game;
         this.accountService = accountService;
         this.signUpController = new SignUpController(accountService);
-        con = MenuConstants.getInstance();
+        con = Constants.getInstance();
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
         background = new Texture("Backgrounds/main-menu.JPG");
 
