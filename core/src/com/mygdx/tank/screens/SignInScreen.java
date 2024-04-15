@@ -114,7 +114,7 @@ public class SignInScreen implements Screen {
 
         errorLabel.setWrap(true);
         errorLabel.setAlignment(Align.center);
-        errorLabel.setBounds(con.getCenterX(), con.getSHeight() * (0.6f + 0.12f), con.getTBWidth(), con.getTBHeight());
+        errorLabel.setBounds(con.getCenterTB(), con.getSHeight() * (0.6f + 0.12f), con.getTBWidth(), con.getTBHeight());
         errorLabel.setFontScale(con.getTScaleF());
 
         stage.addActor(errorLabel);
@@ -122,10 +122,10 @@ public class SignInScreen implements Screen {
 
     private void setButtonsAndFields() {
         // Set bounds and font scale for buttons and TextFields, and set message for TextFields
-        emailTextField.setBounds(con.getCenterX(), con.getSHeight() * (0.6f), con.getTBWidth(), con.getTBHeight());
+        emailTextField.setBounds(con.getCenterTB(), con.getSHeight() * (0.6f), con.getTBWidth(), con.getTBHeight());
         emailTextField.setMessageText("Email");
 
-        passwordTextField.setBounds(con.getCenterX(), con.getSHeight() * (0.6f - 0.12f), con.getTBWidth(), con.getTBHeight());
+        passwordTextField.setBounds(con.getCenterTB(), con.getSHeight() * (0.6f - 0.12f), con.getTBWidth(), con.getTBHeight());
         passwordTextField.setMessageText("Password");
         passwordTextField.setPasswordMode(true);
         passwordTextField.setPasswordCharacter('*');
@@ -136,12 +136,12 @@ public class SignInScreen implements Screen {
         emailTextField.setStyle(textFieldStyle);
         passwordTextField.setStyle(textFieldStyle);
 
-        signInButton.setBounds(con.getCenterX(), con.getSHeight() * (0.6f - 0.24f), con.getTBWidth(), con.getTBHeight());
+        signInButton.setBounds(con.getCenterTB(), con.getSHeight() * (0.6f - 0.24f), con.getTBWidth(), con.getTBHeight());
         signInButton.getLabel().setFontScale(con.getTScaleF());
-        signUpButton.setBounds(con.getCenterX(), con.getSHeight()*0.2f, con.getTBWidth(), con.getTBHeight());
+        signUpButton.setBounds(con.getCenterTB(), con.getSHeight()*0.2f, con.getTBWidth(), con.getTBHeight());
         signUpButton.getLabel().setFontScale(con.getTScaleF());
 
-        backButton.setBounds(con.getCenterX(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterTB(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
         // Add actors to the stage

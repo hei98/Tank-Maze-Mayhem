@@ -3,6 +3,7 @@ package com.mygdx.tank.model;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.mygdx.tank.Constants;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
@@ -15,6 +16,7 @@ import java.util.Random;
 public class PowerupFactory implements EntityFactory {
     @Override
     public Entity createEntity() {
+        Constants con = Constants.getInstance();
         Entity powerup = new Entity();
         powerup.addComponent(new TypeComponent(TypeComponent.EntityType.POWERUP));
 
@@ -25,25 +27,19 @@ public class PowerupFactory implements EntityFactory {
         PowerUpTypeComponent.PowerupType randomPowerupType = powerupTypes[randomIndex];
         powerup.addComponent(new PowerUpTypeComponent(randomPowerupType));
 
-        List<int[]> possibleSpawnpoints = new ArrayList<>();
-        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
-            possibleSpawnpoints.add(new int[]{220, 210});
-            possibleSpawnpoints.add(new int[]{220, 420});
-            possibleSpawnpoints.add(new int[]{560, 100});
-            possibleSpawnpoints.add(new int[]{20, 320});
-            possibleSpawnpoints.add(new int[]{740, 100});
-            possibleSpawnpoints.add(new int[]{700, 330});
-        } else {
-            possibleSpawnpoints.add(new int[]{600, 580});
-            possibleSpawnpoints.add(new int[]{600, 940});
-            possibleSpawnpoints.add(new int[]{1515, 340});
-            possibleSpawnpoints.add(new int[]{75, 755});
-            possibleSpawnpoints.add(new int[]{2100, 310});
-            possibleSpawnpoints.add(new int[]{2000, 755});
-        }
-        int randomSpawnpointIndex = new Random().nextInt(possibleSpawnpoints.size());
-        int[] spawnPoint = possibleSpawnpoints.get(randomSpawnpointIndex);
-        powerup.addComponent(new PositionComponent(spawnPoint[0], spawnPoint[1]));
+        List<float[]> possibleSpawnpoints = new ArrayList<>();
+        possibleSpawnpoints.add(new float[]{0.05f, 0.3f});
+        possibleSpawnpoints.add(new float[]{0.9f, 0.45f});
+        possibleSpawnpoints.add(new float[]{0.25f, 0.5f});
+        possibleSpawnpoints.add(new float[]{0.25f, 0.9f});
+        possibleSpawnpoints.add(new float[]{0.6f, 0.4f});
+        possibleSpawnpoints.add(new float[]{0.48f, 0.05f});
+        possibleSpawnpoints.add(new float[]{0.71f, 0.3f});
+
+        float[] spawnPoint = possibleSpawnpoints.get(new Random().nextInt(possibleSpawnpoints.size()));
+        float x = spawnPoint[0] * con.getSWidth();
+        float y = spawnPoint[1] * con.getSHeight();
+        powerup.addComponent(new PositionComponent(x, y));
 
         String imagePath;
         if (randomPowerupType == PowerUpTypeComponent.PowerupType.Shield) {
@@ -56,10 +52,8 @@ public class PowerupFactory implements EntityFactory {
             imagePath = "images/ShieldPowerup.png";
         }
         powerup.addComponent(new SpriteComponent(imagePath));
-        if (Gdx.app.getType() != Application.ApplicationType.Desktop) {
-            Sprite sprite = powerup.getComponent(SpriteComponent.class).getSprite();
-            sprite.setScale(2.0f);
-        }
+        Sprite sprite = powerup.getComponent(SpriteComponent.class).getSprite();
+        sprite.setSize(con.getIBSize() * 0.7f, con.getIBSize() * 0.7f);
         return powerup;
     }
 }

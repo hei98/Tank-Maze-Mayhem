@@ -109,13 +109,13 @@ public class MainMenuScreen implements Screen {
     }
 
     private void setButtons() {
-        multiplayerButton.setBounds(con.getCenterX(), con.getSHeight() * 0.6f, con.getTBWidth(), con.getTBHeight());
+        multiplayerButton.setBounds(con.getCenterTB(), con.getSHeight() * 0.6f, con.getTBWidth(), con.getTBHeight());
         multiplayerButton.getLabel().setFontScale(con.getTScaleF());
 
-        leaderboardButton.setBounds(con.getCenterX(), con.getSHeight() * 0.45f, con.getTBWidth(), con.getTBHeight());
+        leaderboardButton.setBounds(con.getCenterTB(), con.getSHeight() * 0.45f, con.getTBWidth(), con.getTBHeight());
         leaderboardButton.getLabel().setFontScale(con.getTScaleF());
 
-        loginButton.setBounds(con.getCenterX(), con.getSHeight() * 0.3f, con.getTBWidth(), con.getTBHeight());
+        loginButton.setBounds(con.getCenterTB(), con.getSHeight() * 0.3f, con.getTBWidth(), con.getTBHeight());
         loginButton.getLabel().setFontScale(con.getTScaleF());
 
         settingsButton.setSize(con.getIBSize(), con.getIBSize());
