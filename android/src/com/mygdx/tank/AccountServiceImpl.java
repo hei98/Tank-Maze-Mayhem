@@ -1,7 +1,11 @@
+package com.mygdx.tank;
 
+import com.badlogic.gdx.Gdx;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mygdx.tank.AccountService;
+import com.mygdx.tank.User;
 
 public class AccountServiceImpl implements AccountService {
 
@@ -17,6 +21,11 @@ public class AccountServiceImpl implements AccountService {
     public String getCurrentUserId() {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         return currentUser != null ? currentUser.getUid() : "";
+    }
+
+    public String getCurrentUserEmail() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        return currentUser != null ? currentUser.getEmail() : null;
     }
 
     @Override
@@ -46,4 +55,5 @@ public class AccountServiceImpl implements AccountService {
             Tasks.await(user.delete());
         }
     }
+
 }

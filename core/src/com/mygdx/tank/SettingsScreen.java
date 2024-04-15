@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -6,43 +6,23 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.mygdx.tank.AccountService;
-import com.mygdx.tank.controllers.GameController;
-import com.mygdx.tank.model.GameModel;
-import com.mygdx.tank.GameView;
-import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.screens.MainMenuScreen;
 
-public class InGameScreen implements Screen {
+public class SettingsScreen implements Screen {
 
     private final TankMazeMayhem game;
     private final AccountService accountService;
-
     private Stage stage;
 
-    public InGameScreen(TankMazeMayhem game, AccountService accountService) {
+    public SettingsScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         this.accountService = accountService;
     }
 
-    private GameView view;
-    private GameModel model;
-    private GameController controller;
-    private boolean tutorialShown = false;
-
-
-
     @Override
     public void show() {
-        /*
-        if (!tutorialShown) {
-            // Show the tutorial first
-            game.setScreen(new TutorialScreen(game, this));
-            tutorialShown = true;
-            return; // Skip the rest of the setup until after the tutorial is done
-        }
-
-         */
         stage = new Stage();
 
         TextButton backButton = new TextButton("Back", game.getButtonStyle());
@@ -53,15 +33,10 @@ public class InGameScreen implements Screen {
             }
         });
 
-        model = new GameModel();
-        controller = new GameController(model);
-        view = new GameView(model, controller);
-
         stage.addActor(backButton);
         backButton.setPosition(100, 100);
 
         Gdx.input.setInputProcessor(stage);
-        view.create();
     }
 
     @Override
@@ -70,14 +45,11 @@ public class InGameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        model.update(deltaTime);
-        view.render();
     }
 
     @Override
     public void resize(int width, int height) {
-        view.resize(width, height);
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -97,8 +69,6 @@ public class InGameScreen implements Screen {
 
     @Override
     public void dispose() {
-        view.dispose();
+        stage.dispose();
     }
-
-    // Other methods from the Screen interface
 }

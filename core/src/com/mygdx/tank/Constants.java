@@ -2,8 +2,8 @@ package com.mygdx.tank;
 
 import com.badlogic.gdx.Gdx;
 
-public class MenuConstants {
-    private static MenuConstants instance;
+public class Constants {
+    private static Constants instance;
     // Screen dimensions
     private static final float BASE_SCREEN_WIDTH = 800f;
     private static final float BASE_SCREEN_HEIGHT = 480f;
@@ -23,13 +23,13 @@ public class MenuConstants {
     // Other
     private static final float CENTER_X = (SCREEN_WIDTH - TEXT_BUTTON_WIDTH) / 2;
 
-    private MenuConstants() {
+    private Constants() {
 
     }
 
-    public static synchronized MenuConstants getInstance() {
+    public static synchronized Constants getInstance() {
         if(instance == null){
-            instance = new MenuConstants();
+            instance = new Constants();
         }
         return instance;
     }
