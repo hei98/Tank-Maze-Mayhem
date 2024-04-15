@@ -12,12 +12,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
-import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.Constants;
+import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.TankMazeMayhem;
+import com.esotericsoftware.kryonet.Server;
+import com.mygdx.tank.model.Entity;
 
-public class LobbyScreen implements Screen {
+import java.io.IOException;
+
+public class CreateGameScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final Constants con;
     private final TankMazeMayhem game;
@@ -26,9 +33,11 @@ public class LobbyScreen implements Screen {
     private SpriteBatch batch;
     private Stage stage;
     private final Skin skin;
-    private final TextButton backButton, createGameButton, joinGameButton;
+    private final TextButton backButton, startGameButton;
+    private Server server;
+    private Client client;
 
-    public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public CreateGameScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
@@ -37,14 +46,62 @@ public class LobbyScreen implements Screen {
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         backButton = new TextButton("Back", skin, "default");
-        createGameButton = new TextButton("Create game", skin,"default");
-        joinGameButton = new TextButton("Join game", skin,"default");
+        startGameButton = new TextButton("Start game", skin,"default");
     }
 
     @Override
     public void show() {
         stage = new Stage();
         batch = new SpriteBatch();
+        server = new Server();
+        server.start();
+
+        try {
+            server.bind(54555, 54777);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        server.getKryo().register(String.class);
+
+        server.addListener(new Listener() {
+            @Override
+            public void connected(Connection connection) {
+                connection.sendTCP("En klient har koblet til!");
+            }
+        });
+
+        server.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof String) {
+                    String message = (String) object;
+                    System.out.println("Server mottok meldingen: " + message);
+                    System.out.println("Server sender tilbake meldingen: " + "Sikt bedre!");
+                    connection.sendTCP("Sikt bedre!");
+                }
+            }
+        });
+
+        client = new Client();
+        client.start();
+        client.getKryo().register(String.class);
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof String) {
+                    String message = (String) object;
+                    System.out.println("Klient mottok denne meldingen fra server: " + message);
+                }
+            }
+        });
+        try {
+            client.connect(5000, "localhost", 54555, 54777);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
 
         setButtons();
         createHeadline();
@@ -91,40 +148,36 @@ public class LobbyScreen implements Screen {
         background.dispose();
         batch.dispose();
         skin.dispose();
+        try {
+            server.dispose();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void setButtons() {
         backButton.setBounds(con.getCenterX(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        createGameButton.setBounds(con.getCenterX(),con.getSHeight()*0.5f, con.getTBWidth(), con.getTBHeight());
-        createGameButton.getLabel().setFontScale(con.getTScaleF());
-
-        joinGameButton.setBounds(con.getCenterX(), con.getSHeight()*0.3f, con.getTBWidth(), con.getTBHeight());
-        joinGameButton.getLabel().setFontScale(con.getTScaleF());
+        startGameButton.setBounds(con.getCenterX(), con.getSHeight()*0.2f, con.getTBWidth(), con.getTBHeight());
+        startGameButton.getLabel().setFontScale(con.getTScaleF());
 
         stage.addActor(backButton);
-        stage.addActor(createGameButton);
-        stage.addActor(joinGameButton);
+        stage.addActor(startGameButton);
     }
 
     private void addListeners() {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
+                game.setScreen(new LobbyScreen(game,firebaseInterface, accountService));
+                server.close();
             }
         });
-        createGameButton.addListener(new ClickListener() {
+        startGameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new CreateGameScreen(game, firebaseInterface, accountService));
-            }
-        });
-        joinGameButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("lol");
+                game.setScreen(new InGameScreen(game, accountService, client));
             }
         });
     }
@@ -138,5 +191,5 @@ public class LobbyScreen implements Screen {
         headlineLabel.setWidth(con.getSWidth());
         stage.addActor(headlineLabel);
     }
-
 }
+
