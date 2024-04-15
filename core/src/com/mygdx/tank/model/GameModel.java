@@ -28,6 +28,7 @@ public class GameModel {
     private CollisionSystem collisionSystem;
     private PowerupSpawnSystem powerupSpawnSystem;
     private RespawnSystem respawnSystem;
+    private GrantPowerupSystem grantPowerupSystem;
     private Entity playerTank;
     private TiledMap map;
     private EntityFactory tankFactory = new TankFactory();
@@ -36,7 +37,8 @@ public class GameModel {
         entities = new ArrayList<>();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
-        collisionSystem = new CollisionSystem(map, entities, this);
+        grantPowerupSystem = new GrantPowerupSystem();
+        collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
         movementSystem = new MovementSystem(entities, collisionSystem);
         shootingSystem = new ShootingSystem(this);
         powerupSpawnSystem = new PowerupSpawnSystem(this);
@@ -71,8 +73,7 @@ public class GameModel {
                             }
                             break;
                         case POWERUP:
-                            powerupSpawnSystem.spawnedPowerup = false;
-                            powerupSpawnSystem.timer = 10.0f;
+                            powerupSpawnSystem.powerupRemoved();
                             break;
                     }
                 }
