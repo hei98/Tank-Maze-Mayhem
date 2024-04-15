@@ -38,7 +38,7 @@ public class LeaderboardScreen implements Screen {
     private final TextButton backButton;
     private final ImageButton settingsButton;
     private SpriteBatch batch;
-    private final Skin buttonSkin;
+    private final Skin skin;
     private Table leaderboardTable;
     private ScrollPane scrollPane;
 
@@ -48,10 +48,10 @@ public class LeaderboardScreen implements Screen {
         this.accountService = accountService;
         con = MenuConstants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
-        buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
-        settingsButton = new ImageButton(buttonSkin, "settings");
-        backButton = new TextButton("Back", buttonSkin, "default");
+        settingsButton = new ImageButton(skin, "settings");
+        backButton = new TextButton("Back", skin, "default");
     }
 
     @Override
@@ -108,11 +108,11 @@ public class LeaderboardScreen implements Screen {
         stage.dispose();
         background.dispose();
         batch.dispose();
-        buttonSkin.dispose();
+        skin.dispose();
     }
 
     private void setButtonLayout() {
-        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05f), con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterX(),con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
         settingsButton.setSize(con.getIBSize(), con.getIBSize());
         settingsButton.getImageCell().expand().fill();
@@ -123,7 +123,7 @@ public class LeaderboardScreen implements Screen {
     }
 
     private void createHeadline() {
-        Label.LabelStyle headlineStyle = new Label.LabelStyle(buttonSkin.getFont("font"), Color.WHITE);
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Leaderboard", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
@@ -161,7 +161,7 @@ public class LeaderboardScreen implements Screen {
         leaderboardTable.setPosition((con.getSWidth() - orangeBoxWidth) / 2, tableStartY);
 
         // Create a scroll pane for the leaderboardTable
-        scrollPane = new ScrollPane(leaderboardTable, buttonSkin);
+        scrollPane = new ScrollPane(leaderboardTable, skin);
         scrollPane.setSize(orangeBoxWidth, orangeBoxHeight);
         scrollPane.setPosition(leaderboardTable.getX(), con.getSHeight() - orangeBoxStartY - orangeBoxHeight);
 
@@ -198,15 +198,15 @@ public class LeaderboardScreen implements Screen {
 
     private void populateLeaderBoardTable(ArrayList<LeaderboardEntry> entries) {
         leaderboardTable.clearChildren();
-        float columnWidth = scrollPane.getWidth() / 2 - 10;
+        float columnWidth = scrollPane.getWidth() / 2f - 10f;
         for (LeaderboardEntry entry : entries) {
-            Label nameLabel = new Label(entry.getUsername(), new Label.LabelStyle(buttonSkin.getFont("font"), Color.BLACK));
-            Label scoreLabel = new Label(String.valueOf(entry.getScore()), new Label.LabelStyle(buttonSkin.getFont("font"), Color.BLACK));
+            Label nameLabel = new Label(entry.getUsername(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            Label scoreLabel = new Label(String.valueOf(entry.getScore()), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());
             scoreLabel.setFontScale(con.getTScaleF());
 
-            leaderboardTable.row().pad(10).fillX();
+            leaderboardTable.row().pad(10f).fillX();
             leaderboardTable.add(nameLabel).width(columnWidth);
             leaderboardTable.add(scoreLabel).width(columnWidth);
         }

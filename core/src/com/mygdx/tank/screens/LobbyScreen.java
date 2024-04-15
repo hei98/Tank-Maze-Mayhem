@@ -25,7 +25,7 @@ public class LobbyScreen implements Screen {
     private final Texture background;
     private SpriteBatch batch;
     private Stage stage;
-    private final Skin buttonSkin;
+    private final Skin skin;
     private final TextButton backButton, createGameButton, joinGameButton;
 
     public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
@@ -34,11 +34,11 @@ public class LobbyScreen implements Screen {
         this.accountService = accountService;
         con = MenuConstants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
-        buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
-        backButton = new TextButton("Back", buttonSkin, "default");
-        createGameButton = new TextButton("Create game", buttonSkin,"default");
-        joinGameButton = new TextButton("Join game", buttonSkin,"default");
+        backButton = new TextButton("Back", skin, "default");
+        createGameButton = new TextButton("Create game", skin,"default");
+        joinGameButton = new TextButton("Join game", skin,"default");
     }
 
     @Override
@@ -49,7 +49,6 @@ public class LobbyScreen implements Screen {
         setButtons();
         createHeadline();
         addListeners();
-
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -91,17 +90,17 @@ public class LobbyScreen implements Screen {
         stage.dispose();
         background.dispose();
         batch.dispose();
-        buttonSkin.dispose();
+        skin.dispose();
     }
 
     private void setButtons() {
-        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05f), con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterX(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        createGameButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.5f), con.getTBWidth(), con.getTBHeight());
+        createGameButton.setBounds(con.getCenterX(),con.getSHeight()*0.5f, con.getTBWidth(), con.getTBHeight());
         createGameButton.getLabel().setFontScale(con.getTScaleF());
 
-        joinGameButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.3f), con.getTBWidth(), con.getTBHeight());
+        joinGameButton.setBounds(con.getCenterX(), con.getSHeight()*0.3f, con.getTBWidth(), con.getTBHeight());
         joinGameButton.getLabel().setFontScale(con.getTScaleF());
 
         stage.addActor(backButton);
@@ -131,7 +130,7 @@ public class LobbyScreen implements Screen {
     }
 
     private void createHeadline() {
-        Label.LabelStyle headlineStyle = new Label.LabelStyle(buttonSkin.getFont("font"), Color.WHITE);
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Game lobby", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF()*2f);
         headlineLabel.setAlignment(Align.center);

@@ -28,16 +28,16 @@ public class SettingsScreen implements Screen {
     private final Texture background;
     private final TextButton backButton;
     private SpriteBatch batch;
-    private final Skin buttonSkin;
+    private final Skin skin;
 
     public SettingsScreen(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         this.accountService = accountService;
         con = MenuConstants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
-        buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
-        backButton = new TextButton("Back", buttonSkin, "default");
+        backButton = new TextButton("Back", skin, "default");
     }
 
     @Override
@@ -99,12 +99,12 @@ public class SettingsScreen implements Screen {
     }
 
     private void setButtonLayout() {
-        backButton.setBounds(con.getCenterX(), (float) (con.getSHeight()*0.05), con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterX(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
     }
 
     private void createHeadline() {
-        Label.LabelStyle headlineStyle = new Label.LabelStyle(buttonSkin.getFont("font"), Color.WHITE);
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Settings", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF()*2f);
         headlineLabel.setAlignment(Align.center);
@@ -114,14 +114,14 @@ public class SettingsScreen implements Screen {
     }
 
     private void createSoundControl() {
-        Label.LabelStyle soundStyle = new Label.LabelStyle(buttonSkin.getFont("font"), Color.BLACK);
+        Label.LabelStyle soundStyle = new Label.LabelStyle(skin.getFont("font"), Color.BLACK);
         Label soundLabel = new Label("Music", soundStyle);
         soundLabel.setFontScale(con.getTScaleF()* 1.5f);
         soundLabel.setX(con.getSWidth() * 0.4f);
         soundLabel.setY((con.getSHeight()*0.63f) - soundLabel.getPrefHeight());
         stage.addActor(soundLabel);
 
-        ImageButton soundControl = new ImageButton(buttonSkin, "music");
+        ImageButton soundControl = new ImageButton(skin, "music");
         soundControl.setSize(con.getIBSize(), con.getIBSize());
         soundControl.getImageCell().expand().fill();
         soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());

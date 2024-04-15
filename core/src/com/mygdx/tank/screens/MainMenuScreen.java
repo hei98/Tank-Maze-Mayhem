@@ -23,11 +23,11 @@ public class MainMenuScreen implements Screen {
     private Stage stage;
     private SpriteBatch batch;
     private final Texture background;
-    private final Skin buttonSkin;
+    private final Skin skin;
     private final MenuConstants con;
     private final ImageButton settingsButton;
-    private TextButton multiplayerButton, leaderboardButton, loginButton;
-    private ImageButton settingsButton;
+    private final TextButton multiplayerButton, leaderboardButton;
+    private TextButton loginButton;
     private Label accountLabel;
     private BitmapFont font;
 
@@ -36,58 +36,35 @@ public class MainMenuScreen implements Screen {
         con = MenuConstants.getInstance();
         background = new Texture("Backgrounds/main-menu.JPG");
         this.accountService = accountService;
-        buttonSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
-        multiplayerButton = new TextButton("Multiplayer", buttonSkin, "default");
-        leaderboardButton = new TextButton("Leaderboard", buttonSkin, "default");
-        loginButton = new TextButton("Create User/Login", buttonSkin, "default");
-        settingsButton = new ImageButton(buttonSkin, "settings");
+        multiplayerButton = new TextButton("Multiplayer", skin, "default");
+        leaderboardButton = new TextButton("Leaderboard", skin, "default");
+        loginButton = new TextButton("Create User/Login", skin, "default");
+        settingsButton = new ImageButton(skin, "settings");
     }
 
     @Override
     public void show() {
         batch = new SpriteBatch();
         stage = new Stage();
+
+        setButtons();
+        addListeners();
+        isLoggedIn();
 
         //Display the username if logged in
         font = new BitmapFont();
         accountLabel = new Label("", new Label.LabelStyle(font, Color.BLACK));
-        accountLabel.setPosition(10, Gdx.graphics.getHeight() - 20);
+        accountLabel.setPosition(con.getSWidth()*0.01f, con.getSHeight() * 0.98f);
+        accountLabel.setFontScale(con.getTScaleF());
         stage.addActor(accountLabel);
         updateAccountLabel();
-    }
-
-
-    @Override
-    public void show() {
-        batch = new SpriteBatch();
-        stage = new Stage();
-
-        // login/logout according to user status
-        if (accountService.hasUser()){
-            loginButton = new TextButton("Log out", buttonSkin, "default");
-        }
-        else{
-            loginButton = new TextButton("Create User/Login", buttonSkin, "default");
-        }
-
-        setButtons();
-        addListeners();
 
         // Set input processor
         Gdx.input.setInputProcessor(stage);
-    }
-     
-    //Check if user logged in, and display ID
-    private void updateAccountLabel() {
-        if (accountService.hasUser()) {
-            String user = accountService.getCurrentUserEmail();
-            accountLabel.setText("User email: " + user);
-        } else {
-            accountLabel.setText("Not logged in");
-        }
-    }
 
+    }
 
     @Override
     public void render(float delta) {
@@ -128,7 +105,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        buttonSkin.dispose();
+        skin.dispose();
     }
 
     private void setButtons() {
@@ -184,5 +161,25 @@ public class MainMenuScreen implements Screen {
                 game.setScreen(new LeaderboardScreen(game, game.getFirebaseInterface(), accountService));
             }
         });
+    }
+
+    //Check if user logged in, and display ID
+    private void updateAccountLabel() {
+        if (accountService.hasUser()) {
+            String user = accountService.getCurrentUserEmail();
+            accountLabel.setText("User email: " + user);
+        } else {
+            accountLabel.setText("Not logged in");
+        }
+    }
+
+    private void isLoggedIn() {
+        // login/logout according to user status
+        if (accountService.hasUser()){
+            loginButton = new TextButton("Log out", skin, "default");
+        }
+        else{
+            loginButton = new TextButton("Create User/Login", skin, "default");
+        }
     }
 }
