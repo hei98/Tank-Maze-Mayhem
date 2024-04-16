@@ -58,6 +58,7 @@ public class GameModel {
                     Object firstElement = list.get(0);
                     Object secondElement = list.get(1);
                     if (secondElement instanceof PositionComponent) {
+                        // update position of other playerTanks
                         Player player = (Player) firstElement;
                         Entity playerTank = getAnotherPlayersTank(player.getPlayerName());
                         PositionComponent positionComponentFromServer = (PositionComponent) secondElement;
@@ -66,12 +67,14 @@ public class GameModel {
                         positionComponent.y = positionComponentFromServer.y;
 
                     } else if (secondElement instanceof SpriteDirectionComponent) {
+                        // update rotation of other playerTanks
                         Player player = (Player) firstElement;
                         Entity playerTank = getAnotherPlayersTank(player.getPlayerName());
                         SpriteDirectionComponent spriteDirectionComponentFromServer = (SpriteDirectionComponent) secondElement;
                         SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
                         spriteDirectionComponent.angle = spriteDirectionComponentFromServer.angle;
                     } else if (secondElement instanceof Float && firstElement instanceof Player) {
+                        // render the bullet another playerTank shot
                         Player player = (Player) firstElement;
                         float bulletStartX = (Float) list.get(1);
                         float bulletStartY = (Float) list.get(2);
@@ -80,6 +83,7 @@ public class GameModel {
                         Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, player);
                         entities.add(bullet);
                     } else if (firstElement instanceof PowerUpTypeComponent.PowerupType) {
+                        // render the powerup that Player1 spawned in
                         PowerUpTypeComponent.PowerupType powerUpType = (PowerUpTypeComponent.PowerupType) firstElement;
                         float positionX = (Float) list.get(1);
                         float positionY = (Float) list.get(2);

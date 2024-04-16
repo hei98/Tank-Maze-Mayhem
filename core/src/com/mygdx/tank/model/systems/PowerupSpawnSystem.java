@@ -37,6 +37,8 @@ public class PowerupSpawnSystem {
             PowerUpTypeComponent powerUpType = powerUp.getComponent(PowerUpTypeComponent.class);
             PositionComponent position = powerUp.getComponent(PositionComponent.class);
             if (accountService.getCurrentUser().getPlayer().getPlayerName().equals("Player1")) {
+                // only player1 can spawn a powerup. After spawning it on client-side, it sends it to server
+                // this is to ensure only one powerup is present at a time
                 list.add(powerUpType.powerupType);
                 list.add(position.x);
                 list.add(position.y);
