@@ -12,11 +12,17 @@ public class Player {
         this.userId = userId;
     }
 
+    public Player() {}
+
     public String getPlayerName() {
         return playerName;
     }
 
     public String getUserId() {
         return this.userId;
+    }
+
+    public void setPlayerName(String newPlayername) {
+        this.playerName = newPlayername;
     }
 }

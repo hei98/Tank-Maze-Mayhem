@@ -11,6 +11,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseInterface;
+import com.mygdx.tank.Player;
 import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
@@ -40,11 +41,11 @@ public class GameModel {
     private TiledMap map;
     private EntityFactory tankFactory;
     private Client client;
-    private List<String> connectedPlayers;
+    private List<Player> connectedPlayers;
     private AccountService accountService;
     private HashMap<String, Entity> playerTanks = new HashMap<>();
 
-    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<String> connectedPlayers) {
+    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers) {
         this.connectedPlayers = connectedPlayers;
         this.accountService = accountService;
         this.client = client;
@@ -56,24 +57,26 @@ public class GameModel {
                     Object firstElement = list.get(0);
                     Object secondElement = list.get(1);
                     if (secondElement instanceof PositionComponent) {
-                        Entity playerTank = getAnotherPlayersTank((String) firstElement);
+                        Player player = (Player) firstElement;
+                        Entity playerTank = getAnotherPlayersTank(player.getPlayerName());
                         PositionComponent positionComponentFromServer = (PositionComponent) secondElement;
                         PositionComponent positionComponent = playerTank.getComponent(PositionComponent.class);
                         positionComponent.x = positionComponentFromServer.x;
                         positionComponent.y = positionComponentFromServer.y;
 
                     } else if (secondElement instanceof SpriteDirectionComponent) {
-                        Entity playerTank = getAnotherPlayersTank((String) firstElement);
+                        Player player = (Player) firstElement;
+                        Entity playerTank = getAnotherPlayersTank(player.getPlayerName());
                         SpriteDirectionComponent spriteDirectionComponentFromServer = (SpriteDirectionComponent) secondElement;
                         SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
                         spriteDirectionComponent.angle = spriteDirectionComponentFromServer.angle;
-                    } else if (secondElement instanceof Float && firstElement instanceof String) {
-                        String playerName = (String) firstElement;
+                    } else if (secondElement instanceof Float && firstElement instanceof Player) {
+                        Player player = (Player) firstElement;
                         float bulletStartX = (Float) list.get(1);
                         float bulletStartY = (Float) list.get(2);
                         float directionX = (Float) list.get(3);
                         float directionY = (Float) list.get(4);
-                        Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, playerName);
+                        Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, player);
                         entities.add(bullet);
                     }
                 }
@@ -93,13 +96,13 @@ public class GameModel {
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
         respawnSystem = new RespawnSystem(entities);
 
-        for (String player : connectedPlayers) {
+        for (Player player : connectedPlayers) {
             Entity tank = tankFactory.createEntity(player);
-            if (player.equals(user.getPlayer().getPlayerName())) {
+            if (player.getPlayerName().equals(user.getPlayer().getPlayerName())) {
                 playerTank = tank;
             }
             entities.add(tank);
-            playerTanks.put(player, tank);
+            playerTanks.put(player.getPlayerName(), tank);
         }
     }
 
@@ -170,7 +173,7 @@ public class GameModel {
         if (knobPercentX != 0 && knobPercentY != 0) {
             spriteDirectionComponent.angle = knobAngleDeg;
             List<Object> list = new ArrayList<>();
-            list.add(accountService.getCurrentUser().getPlayer().getPlayerName());
+            list.add(accountService.getCurrentUser().getPlayer());
             list.add(spriteDirectionComponent);
             client.sendTCP(list);
         }

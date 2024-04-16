@@ -53,7 +53,7 @@ public class CreateGameScreen implements Screen {
     private final TextButton backButton, startGameButton;
     private Server server;
     private Client client;
-    private List<String> connectedPlayers = new ArrayList<>();
+    private List<Player> connectedPlayers = new ArrayList<>();
     private Table playersTable;
     private ScrollPane scrollPane;
     private User user;
@@ -90,18 +90,7 @@ public class CreateGameScreen implements Screen {
         server.getKryo().register(PositionComponent.class);
         server.getKryo().register(SpriteDirectionComponent.class);
         server.getKryo().register(Float.class);
-
-        server.addListener(new Listener() {
-            @Override
-            public void connected(Connection connection) {
-                if (connectedPlayers.size() != 0) {
-                    String newUsername = "Player" + (connectedPlayers.size() + 1);
-                    connectedPlayers.add(newUsername);
-                    populatePlayerTable(connectedPlayers);
-                    server.sendToAllExceptTCP(client.getID(), connectedPlayers);
-                }
-            }
-        });
+        server.getKryo().register(Player.class);
 
         server.addListener(new Listener() {
             @Override
@@ -112,6 +101,15 @@ public class CreateGameScreen implements Screen {
                 } else if (object instanceof List) {
                     List<Object> list = (List<Object>) object;
                     server.sendToAllExceptTCP(connection.getID(), list);
+                } else if (object instanceof Player) {
+                    if (connectedPlayers.size() != 0) {
+                        String newUsername = "Player" + (connectedPlayers.size() + 1);
+                        Player player = (Player) object;
+                        player.setPlayerName(newUsername);
+                        connectedPlayers.add(player);
+                        populatePlayerTable(connectedPlayers);
+                        server.sendToAllTCP(connectedPlayers);
+                    }
                 }
             }
         });
@@ -125,6 +123,7 @@ public class CreateGameScreen implements Screen {
         client.getKryo().register(PositionComponent.class);
         client.getKryo().register(SpriteDirectionComponent.class);
         client.getKryo().register(Float.class);
+        client.getKryo().register(Player.class);
 
         listener = new Listener() {
             @Override
@@ -144,9 +143,10 @@ public class CreateGameScreen implements Screen {
             throw new RuntimeException(e);
         }
 
-        connectedPlayers.add("Player1");
         user = accountService.getCurrentUser();
-        user.setPlayer(new Player("Player1", user.getId()));
+        Player player = new Player("Player1", user.getId());
+        connectedPlayers.add(player);
+        user.setPlayer(player);
 
         setButtons();
         createHeadline();
@@ -264,11 +264,11 @@ public class CreateGameScreen implements Screen {
         populatePlayerTable(connectedPlayers);
     }
 
-    private void populatePlayerTable(List<String> players) {
+    private void populatePlayerTable(List<Player> players) {
         playersTable.clearChildren();
         float columnWidth = scrollPane.getWidth() / 2f - 10f;
-        for (String player : players) {
-            Label nameLabel = new Label(player, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+        for (Player player : players) {
+            Label nameLabel = new Label(player.getPlayerName(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
             Label scoreLabel = new Label("Connected", new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());

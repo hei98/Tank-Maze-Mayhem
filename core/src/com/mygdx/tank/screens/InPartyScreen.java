@@ -53,12 +53,13 @@ public class InPartyScreen implements Screen {
     private final Skin skin;
     private final TextButton backButton;
     private Client client;
-    private List<String> connectedPlayers = new ArrayList<>();
+    private List<Player> connectedPlayers = new ArrayList<>();
     private Table playersTable;
     private ScrollPane scrollPane;
     private User user;
     private boolean startGame;
     private Listener listener;
+    private Player player;
 
     public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
@@ -86,6 +87,7 @@ public class InPartyScreen implements Screen {
         client.getKryo().register(PositionComponent.class);
         client.getKryo().register(SpriteDirectionComponent.class);
         client.getKryo().register(Float.class);
+        client.getKryo().register(Player.class);
 
         listener = new Listener() {
             @Override
@@ -98,12 +100,16 @@ public class InPartyScreen implements Screen {
                 } else if (object instanceof List) {
                     if (connectedPlayers.size() == 0) {
                         @SuppressWarnings("unchecked")
-                        List<String> receivedPlayers = (List<String>) object;
+                        List<Player> receivedPlayers = (List<Player>) object;
+                        System.out.println(receivedPlayers);
                         connectedPlayers = receivedPlayers;
                         createPlayersTable();
                     } else {
                         @SuppressWarnings("unchecked")
-                        List<String> receivedPlayers = (List<String>) object;
+                        List<Player> receivedPlayers = (List<Player>) object;
+                        for (Player player : receivedPlayers) {
+                            System.out.println(player.getPlayerName());
+                        }
                         connectedPlayers = receivedPlayers;
                         populatePlayerTable(connectedPlayers);
                     }
@@ -129,6 +135,7 @@ public class InPartyScreen implements Screen {
         client.addListener(listener);
         try {
             client.connect(5000, "10.0.2.2", 5000);
+            client.sendTCP(new Player("Player1", accountService.getCurrentUser().getId())); // need to create a random Player-object, the correct one is sent back
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -240,11 +247,11 @@ public class InPartyScreen implements Screen {
         populatePlayerTable(connectedPlayers);
     }
 
-    private void populatePlayerTable(List<String> players) {
+    private void populatePlayerTable(List<Player> players) {
         playersTable.clearChildren();
         float columnWidth = scrollPane.getWidth() / 2f - 10f;
-        for (String player : players) {
-            Label nameLabel = new Label(player, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+        for (Player player : players) {
+            Label nameLabel = new Label(player.getPlayerName(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
             Label scoreLabel = new Label("Connected", new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());

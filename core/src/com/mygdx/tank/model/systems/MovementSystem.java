@@ -40,9 +40,9 @@ public class MovementSystem {
                     TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
                     if (typeComponent.type == TypeComponent.EntityType.TANK) {
                         PlayerComponent playerComponent = entity.getComponent(PlayerComponent.class);
-                        if (playerComponent.playerName.equals(accountService.getCurrentUser().getPlayer().getPlayerName())) {
+                        if (playerComponent.player.getPlayerName().equals(accountService.getCurrentUser().getPlayer().getPlayerName())) {
                             List<Object> list = new ArrayList<>();
-                            list.add(accountService.getCurrentUser().getPlayer().getPlayerName());
+                            list.add(accountService.getCurrentUser().getPlayer());
                             list.add(position);
                             client.sendTCP(list);
                         }

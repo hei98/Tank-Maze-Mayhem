@@ -50,11 +50,11 @@ public class ShootingSystem {
             float bulletStartX = tankPosition.x + (knobAngle >= 270 ? offsetAdjustment : 0) + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionX * bulletSpawnOffset;
             float bulletStartY = tankPosition.y + (knobAngle >= 270 ? offsetAdjustment : 0) + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionY * bulletSpawnOffset;
 
-            Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, accountService.getCurrentUser().getPlayer().getPlayerName());
+            Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, accountService.getCurrentUser().getPlayer());
             model.addEntity(bullet);
 
             List<Object> list = new ArrayList<>();
-            list.add(accountService.getCurrentUser().getPlayer().getPlayerName());
+            list.add(accountService.getCurrentUser().getPlayer());
             list.add(bulletStartX);
             list.add(bulletStartY);
             list.add(directionX);
