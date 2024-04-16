@@ -8,4 +8,6 @@ public class SpriteDirectionComponent implements Component {
     public SpriteDirectionComponent(float angle) {
         this.angle = angle;
     }
+
+    public SpriteDirectionComponent() {}
 }

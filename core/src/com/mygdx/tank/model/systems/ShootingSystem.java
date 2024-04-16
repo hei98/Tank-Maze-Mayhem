@@ -3,6 +3,8 @@ package com.mygdx.tank.model.systems;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.esotericsoftware.kryonet.Client;
+import com.mygdx.tank.AccountService;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.BulletFactory;
@@ -11,11 +13,18 @@ import com.mygdx.tank.model.components.tank.PowerupStateComponent;
 import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ShootingSystem {
     private GameModel model;
+    private AccountService accountService;
+    private Client client;
 
-    public ShootingSystem(GameModel model) {
+    public ShootingSystem(GameModel model, AccountService accountService, Client client) {
         this.model = model;
+        this.accountService = accountService;
+        this.client = client;
     }
 
     public void shootFromTank() {
@@ -41,8 +50,16 @@ public class ShootingSystem {
             float bulletStartX = tankPosition.x + (knobAngle >= 270 ? offsetAdjustment : 0) + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionX * bulletSpawnOffset;
             float bulletStartY = tankPosition.y + (knobAngle >= 270 ? offsetAdjustment : 0) + (knobAngle >= 90 && knobAngle <= 180 ? offsetAdjustment : 0) + directionY * bulletSpawnOffset;
 
-            Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY);
+            Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, accountService.getCurrentUser().getPlayer());
             model.addEntity(bullet);
+
+            List<Object> list = new ArrayList<>();
+            list.add(accountService.getCurrentUser().getPlayer());
+            list.add(bulletStartX);
+            list.add(bulletStartY);
+            list.add(directionX);
+            list.add(directionY);
+            client.sendTCP(list);
 
             PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
             if (powerupStateComponent.getState().getPowerupType() != "Minigun") {

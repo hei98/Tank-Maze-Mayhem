@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -42,10 +43,15 @@ public class GameView {
     private final Texture buttonTexture;
     private final ImageButton circularButton;
     private final ImageButton.ImageButtonStyle buttonStyle;
+    private float countdownTime = 120;
+    private float elapsedTime = 0;
+    private Label countdownLabel;
+    private TankMazeMayhem game;
 
-    public GameView(GameModel model, GameController controller) {
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game) {
         this.model = model;
         this.controller = controller;
+        this.game = game;
         spriteBatch = new SpriteBatch();
         con = Constants.getInstance();
         touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -59,7 +65,6 @@ public class GameView {
         buttonStyle = new ImageButton.ImageButtonStyle();
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
-
     }
 
     public void create() {
@@ -71,6 +76,12 @@ public class GameView {
         }
 
         stage = new Stage();
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(touchpadSkin.getFont("font"), Color.WHITE);
+        countdownLabel = new Label("", labelStyle);
+        countdownLabel.setPosition(con.getSWidth() * 0.5f, con.getSHeight() * 0.95f);
+        countdownLabel.setFontScale(con.getTScaleF());
+        stage.addActor(countdownLabel);
 
         // Initialize the camera with the screen's width and height
         camera = new OrthographicCamera();
@@ -87,6 +98,7 @@ public class GameView {
     public void render() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        elapsedTime += Gdx.graphics.getDeltaTime();
 
         camera.update();
         renderer.setView(camera);
@@ -94,10 +106,16 @@ public class GameView {
 
         controller.handleTouchpadInput(knobPercentX, knobPercentY);
 
+        float remainingTime = countdownTime - elapsedTime;
+        int minutes = (int) (remainingTime / 60);
+        int seconds = (int) (remainingTime % 60);
+
         // Start batch processing
         spriteBatch.begin();
 
         updateEntitySprites();
+        String timerText = String.format("%02d:%02d", minutes, seconds);
+        countdownLabel.setText(timerText);
 
         // End batch processing
         spriteBatch.end();
