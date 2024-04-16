@@ -146,7 +146,7 @@ public class CreateGameScreen implements Screen {
 
         connectedPlayers.add("Player1");
         user = accountService.getCurrentUser();
-        user.setPlayer(new Player("Player1"));
+        user.setPlayer(new Player("Player1", user.getId()));
 
         setButtons();
         createHeadline();

@@ -112,13 +112,13 @@ public class InPartyScreen implements Screen {
                     Player player = null;
                     switch (partySize) {
                         case 2:
-                            player = new Player("Player2");
+                            player = new Player("Player2", user.getId());
                             break;
                         case 3:
-                            player = new Player("Player3");
+                            player = new Player("Player3", user.getId());
                             break;
                         case 4:
-                            player = new Player("Player4");
+                            player = new Player("Player4", user.getId());
                             break;
                     }
                     user.setPlayer(player);
