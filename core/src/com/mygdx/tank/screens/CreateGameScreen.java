@@ -87,6 +87,9 @@ public class CreateGameScreen implements Screen {
         server.getKryo().register(String.class);
         server.getKryo().register(ArrayList.class);
         server.getKryo().register(HashMap.class);
+        server.getKryo().register(PositionComponent.class);
+        server.getKryo().register(SpriteDirectionComponent.class);
+        server.getKryo().register(Float.class);
 
         server.addListener(new Listener() {
             @Override
@@ -106,10 +109,9 @@ public class CreateGameScreen implements Screen {
                 if (object instanceof String) {
                     String message = (String) object;
                     server.sendToAllTCP(message);
-                } else if (object instanceof HashMap) {
-                    System.out.println("Server mottok entity fra: " + connection.getID());
-                    HashMap<String, Object> hashMap = (HashMap<String, Object>) object;
-                    server.sendToAllExceptTCP(connection.getID(), hashMap);
+                } else if (object instanceof List) {
+                    List<Object> list = (List<Object>) object;
+                    server.sendToAllExceptTCP(connection.getID(), list);
                 }
             }
         });
@@ -120,6 +122,9 @@ public class CreateGameScreen implements Screen {
         client.getKryo().register(String.class);
         client.getKryo().register(ArrayList.class);
         client.getKryo().register(HashMap.class);
+        client.getKryo().register(PositionComponent.class);
+        client.getKryo().register(SpriteDirectionComponent.class);
+        client.getKryo().register(Float.class);
 
         listener = new Listener() {
             @Override

@@ -8,6 +8,7 @@ import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.*;
+import com.mygdx.tank.model.components.tank.PlayerComponent;
 import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 import com.mygdx.tank.model.components.tank.PowerupStateComponent;
@@ -47,6 +48,7 @@ public class TankFactory implements EntityFactory {
         tank.addComponent(new TypeComponent(TypeComponent.EntityType.TANK));
         tank.addComponent(new ShootingCooldownComponent(1.5f));
         tank.addComponent(new PowerupStateComponent(new NormalState()));
+        tank.addComponent(new PlayerComponent(playerName));
         return tank;
     }
 }

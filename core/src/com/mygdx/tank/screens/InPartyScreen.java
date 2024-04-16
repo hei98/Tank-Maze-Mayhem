@@ -83,6 +83,9 @@ public class InPartyScreen implements Screen {
         client.getKryo().register(String.class);
         client.getKryo().register(ArrayList.class);
         client.getKryo().register(HashMap.class);
+        client.getKryo().register(PositionComponent.class);
+        client.getKryo().register(SpriteDirectionComponent.class);
+        client.getKryo().register(Float.class);
 
         listener = new Listener() {
             @Override

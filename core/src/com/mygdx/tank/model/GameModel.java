@@ -12,8 +12,10 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.User;
+import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
+import com.mygdx.tank.model.components.tank.PlayerComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.mygdx.tank.model.systems.CollisionSystem;
 import com.mygdx.tank.model.systems.MovementSystem;
@@ -39,10 +41,35 @@ public class GameModel {
     private EntityFactory tankFactory;
     private Client client;
     private List<String> connectedPlayers;
+    private AccountService accountService;
     private HashMap<String, Entity> playerTanks = new HashMap<>();
 
     public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<String> connectedPlayers) {
         this.connectedPlayers = connectedPlayers;
+        this.accountService = accountService;
+        this.client = client;
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof List) {
+                    List<Object> list = (List<Object>) object;
+                    Object secondElement = list.get(1);
+                    if (secondElement instanceof PositionComponent) {
+                        Entity playerTank = getAnotherPlayersTank((String) list.get(0));
+                        PositionComponent positionComponentFromServer = (PositionComponent) secondElement;
+                        PositionComponent positionComponent = playerTank.getComponent(PositionComponent.class);
+                        positionComponent.x = positionComponentFromServer.x;
+                        positionComponent.y = positionComponentFromServer.y;
+
+                    } else if (secondElement instanceof SpriteDirectionComponent) {
+                        Entity playerTank = getAnotherPlayersTank((String) list.get(0));
+                        SpriteDirectionComponent spriteDirectionComponentFromServer = (SpriteDirectionComponent) secondElement;
+                        SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
+                        spriteDirectionComponent.angle = spriteDirectionComponentFromServer.angle;
+                    }
+                }
+            }
+        });
 
         entities = new ArrayList<>();
         tankFactory = new TankFactory();
@@ -52,7 +79,7 @@ public class GameModel {
 
         grantPowerupSystem = new GrantPowerupSystem();
         collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
-        movementSystem = new MovementSystem(entities, collisionSystem);
+        movementSystem = new MovementSystem(entities, collisionSystem, client, accountService);
         shootingSystem = new ShootingSystem(this);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
         respawnSystem = new RespawnSystem(entities);
@@ -133,6 +160,10 @@ public class GameModel {
 
         if (knobPercentX != 0 && knobPercentY != 0) {
             spriteDirectionComponent.angle = knobAngleDeg;
+            List<Object> list = new ArrayList<>();
+            list.add(accountService.getCurrentUser().getPlayer().getPlayerName());
+            list.add(spriteDirectionComponent);
+            client.sendTCP(list);
         }
     }
 
@@ -141,6 +172,22 @@ public class GameModel {
     }
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public Entity getAnotherPlayersTank(String playerName) {
+        List<Entity> entitiesToRemove = new ArrayList<>();
+        for (Entity entity : entities) {
+            TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
+            if (typeComponent != null && typeComponent.type == TypeComponent.EntityType.TANK) {
+                PlayerComponent playerComponent = entity.getComponent(PlayerComponent.class);
+                if (playerComponent != null && playerComponent.playerName.equals(playerName)) {
+                    return entity;
+                }
+            }
+        }
+        // Remove entities marked for removal
+        entities.removeAll(entitiesToRemove);
+        return playerTank;
     }
 }
 
