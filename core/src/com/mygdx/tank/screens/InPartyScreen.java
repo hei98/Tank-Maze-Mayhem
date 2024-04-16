@@ -61,10 +61,11 @@ public class InPartyScreen implements Screen {
     private Listener listener;
     private Player player;
 
-    public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService, Client client) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
+        this.client = client;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -77,19 +78,6 @@ public class InPartyScreen implements Screen {
     public void show() {
         stage = new Stage();
         batch = new SpriteBatch();
-
-        client = new Client();
-        client.start();
-
-        client.getKryo().register(String.class);
-        client.getKryo().register(ArrayList.class);
-        client.getKryo().register(HashMap.class);
-        client.getKryo().register(PositionComponent.class);
-        client.getKryo().register(SpriteDirectionComponent.class);
-        client.getKryo().register(Float.class);
-        client.getKryo().register(Player.class);
-        client.getKryo().register(PowerUpTypeComponent.class);
-        client.getKryo().register(PowerUpTypeComponent.PowerupType.class);
 
         listener = new Listener() {
             @Override
@@ -135,12 +123,7 @@ public class InPartyScreen implements Screen {
         };
 
         client.addListener(listener);
-        try {
-            client.connect(5000, "10.0.2.2", 5000);
-            client.sendTCP(new Player("Player1", accountService.getCurrentUser().getId())); // need to create a random Player-object, the correct one is sent back
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        client.sendTCP(new Player("Player1", accountService.getCurrentUser().getId())); // need to create a random Player-object, the correct one is sent back
 
         setButtons();
         createHeadline();
