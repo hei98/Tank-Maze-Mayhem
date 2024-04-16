@@ -1,14 +1,10 @@
 package com.mygdx.tank.model;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.*;
-import com.mygdx.tank.model.components.tank.PlayerComponent;
+import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 import com.mygdx.tank.model.components.tank.PowerupStateComponent;

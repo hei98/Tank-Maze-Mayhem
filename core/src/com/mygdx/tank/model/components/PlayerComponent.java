@@ -1,4 +1,4 @@
-package com.mygdx.tank.model.components.tank;
+package com.mygdx.tank.model.components;
 
 import com.mygdx.tank.model.components.Component;
 

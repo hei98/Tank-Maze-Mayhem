@@ -15,7 +15,7 @@ import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
-import com.mygdx.tank.model.components.tank.PlayerComponent;
+import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.mygdx.tank.model.systems.CollisionSystem;
 import com.mygdx.tank.model.systems.MovementSystem;

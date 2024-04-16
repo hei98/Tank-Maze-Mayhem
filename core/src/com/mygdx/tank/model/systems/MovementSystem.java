@@ -6,7 +6,7 @@ import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
-import com.mygdx.tank.model.components.tank.PlayerComponent;
+import com.mygdx.tank.model.components.PlayerComponent;
 
 import java.util.ArrayList;
 import java.util.List;
