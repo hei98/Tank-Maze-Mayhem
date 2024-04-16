@@ -65,4 +65,32 @@ public class PowerupFactory implements EntityFactory {
         }
         return powerup;
     }
+
+    public Entity createSpecificPowerup(PowerUpTypeComponent.PowerupType powerupType, float positionX, float positionY) {
+        Entity powerup = new Entity();
+        powerup.addComponent(new TypeComponent(TypeComponent.EntityType.POWERUP));
+        powerup.addComponent(new PowerUpTypeComponent(powerupType));
+        powerup.addComponent(new PositionComponent(positionX, positionY));
+
+        String imagePath;
+        if (powerupType == PowerUpTypeComponent.PowerupType.Shield) {
+            System.out.println("Jeg lager et skjold!");
+            imagePath = "images/ShieldPowerup.png";
+        } else if (powerupType == PowerUpTypeComponent.PowerupType.Minigun) {
+            System.out.println("Jeg lager en Minigun");
+            imagePath = "images/MachineGunPowerup.png";
+        } else if (powerupType == PowerUpTypeComponent.PowerupType.Speed) {
+            System.out.println("Jeg lager en Speed");
+            imagePath = "images/SpeedPowerup.png";
+        } else {
+            System.out.println("Jeg lager en wtf");
+            imagePath = "images/ShieldPowerup.png";
+        }
+        powerup.addComponent(new SpriteComponent(imagePath));
+        if (Gdx.app.getType() != Application.ApplicationType.Desktop) {
+            Sprite sprite = powerup.getComponent(SpriteComponent.class).getSprite();
+            sprite.setScale(2.0f);
+        }
+        return powerup;
+    }
 }

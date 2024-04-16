@@ -17,6 +17,7 @@ import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.PlayerComponent;
+import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.mygdx.tank.model.systems.CollisionSystem;
 import com.mygdx.tank.model.systems.MovementSystem;
@@ -78,6 +79,13 @@ public class GameModel {
                         float directionY = (Float) list.get(4);
                         Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, player);
                         entities.add(bullet);
+                    } else if (firstElement instanceof PowerUpTypeComponent.PowerupType) {
+                        PowerUpTypeComponent.PowerupType powerUpType = (PowerUpTypeComponent.PowerupType) firstElement;
+                        float positionX = (Float) list.get(1);
+                        float positionY = (Float) list.get(2);
+                        PowerupFactory powerupFactory = new PowerupFactory();
+                        Entity powerUp = powerupFactory.createSpecificPowerup(powerUpType, positionX, positionY);
+                        entities.add(powerUp);
                     }
                 }
             }
@@ -93,8 +101,8 @@ public class GameModel {
         collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
         movementSystem = new MovementSystem(entities, collisionSystem, client, accountService);
         shootingSystem = new ShootingSystem(this, accountService, client);
-        powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
-        respawnSystem = new RespawnSystem(entities);
+        powerupSpawnSystem = new PowerupSpawnSystem(this, accountService, client);
+        respawnSystem = new RespawnSystem(entities, accountService, client);
 
         for (Player player : connectedPlayers) {
             Entity tank = tankFactory.createEntity(player);
