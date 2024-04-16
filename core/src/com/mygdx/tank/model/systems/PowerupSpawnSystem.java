@@ -37,7 +37,6 @@ public class PowerupSpawnSystem {
             PowerUpTypeComponent powerUpType = powerUp.getComponent(PowerUpTypeComponent.class);
             PositionComponent position = powerUp.getComponent(PositionComponent.class);
             if (accountService.getCurrentUser().getPlayer().getPlayerName().equals("Player1")) {
-                System.out.println(powerUpType.powerupType);
                 list.add(powerUpType.powerupType);
                 list.add(position.x);
                 list.add(position.y);

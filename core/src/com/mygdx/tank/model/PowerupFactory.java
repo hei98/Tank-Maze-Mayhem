@@ -74,16 +74,12 @@ public class PowerupFactory implements EntityFactory {
 
         String imagePath;
         if (powerupType == PowerUpTypeComponent.PowerupType.Shield) {
-            System.out.println("Jeg lager et skjold!");
             imagePath = "images/ShieldPowerup.png";
         } else if (powerupType == PowerUpTypeComponent.PowerupType.Minigun) {
-            System.out.println("Jeg lager en Minigun");
             imagePath = "images/MachineGunPowerup.png";
         } else if (powerupType == PowerUpTypeComponent.PowerupType.Speed) {
-            System.out.println("Jeg lager en Speed");
             imagePath = "images/SpeedPowerup.png";
         } else {
-            System.out.println("Jeg lager en wtf");
             imagePath = "images/ShieldPowerup.png";
         }
         powerup.addComponent(new SpriteComponent(imagePath));
