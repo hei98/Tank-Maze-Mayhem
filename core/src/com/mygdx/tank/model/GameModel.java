@@ -25,6 +25,8 @@ import com.mygdx.tank.model.systems.PowerupSpawnSystem;
 import com.mygdx.tank.model.systems.ShootingSystem;
 import com.mygdx.tank.model.systems.*;
 import com.mygdx.tank.model.components.tank.HealthComponent;
+import com.mygdx.tank.model.states.InvulnerabilityState;
+import com.mygdx.tank.model.components.tank.PowerupStateComponent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -121,11 +123,13 @@ public class GameModel {
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
-        shootingSystem.update(deltaTime);
+        shootingSystem.update(deltaTime); // Ensure this is being executed
         powerupSpawnSystem.update(deltaTime);
         respawnSystem.update(deltaTime);
         removeMarkedEntities();
+
     }
+
 
     public void removeMarkedEntities() {
         List<Entity> toKeep = new ArrayList<>();
@@ -146,7 +150,6 @@ public class GameModel {
                             break;
                     }
                 }
-                System.out.println("Removing entity: " + entity);
             } else {
                 toKeep.add(entity);
             }
@@ -154,9 +157,6 @@ public class GameModel {
         entities.clear();
         entities.addAll(toKeep);
     }
-
-
-
 
     public Entity getPlayerTank() {
         return playerTank;

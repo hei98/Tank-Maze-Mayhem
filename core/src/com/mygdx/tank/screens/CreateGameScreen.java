@@ -207,10 +207,10 @@ public class CreateGameScreen implements Screen {
     }
 
     private void setButtons() {
-        backButton.setBounds(con.getCenterX() - con.getTBWidth() / 2 - con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterTB() - con.getTBWidth() / 2 - con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        startGameButton.setBounds(con.getCenterX() + con.getTBWidth() / 2 + con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
+        startGameButton.setBounds(con.getCenterTB() + con.getTBWidth() / 2 + con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         startGameButton.getLabel().setFontScale(con.getTScaleF());
 
         stage.addActor(backButton);

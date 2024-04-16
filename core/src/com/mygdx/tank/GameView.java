@@ -4,7 +4,6 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Gdx;
@@ -30,8 +29,8 @@ import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 public class GameView {
-    private GameModel model;
-    private SpriteBatch spriteBatch;
+    private final GameModel model;
+    private final SpriteBatch spriteBatch;
     private final Constants con;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -39,11 +38,11 @@ public class GameView {
     private float knobPercentX, knobPercentY;
     private Touchpad touchpad;
     private Stage stage;
-    private GameController controller;
-    private Skin touchpadSkin, skin;
-    private Texture buttonTexture;
-    private ImageButton circularButton;
-    private ImageButton.ImageButtonStyle buttonStyle;
+    private final GameController controller;
+    private final Skin touchpadSkin, skin;
+    private final Texture buttonTexture;
+    private final ImageButton circularButton;
+    private final ImageButton.ImageButtonStyle buttonStyle;
     private float countdownTime = 120;
     private float elapsedTime = 0;
     private Label countdownLabel;
@@ -93,7 +92,6 @@ public class GameView {
 
         setButtons();
         addListeners();
-        ;
         Gdx.input.setInputProcessor(stage);
     }
 
