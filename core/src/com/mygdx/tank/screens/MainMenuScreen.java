@@ -175,6 +175,7 @@ public class MainMenuScreen implements Screen {
 
     private void isLoggedIn() {
         // login/logout according to user status
+        Gdx.app.log("InfoTag", "Logged in? " + accountService.hasUser());
         if (accountService.hasUser()){
             loginButton = new TextButton("Log out", skin, "default");
         }

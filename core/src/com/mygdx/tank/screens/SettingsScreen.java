@@ -25,6 +25,7 @@ public class SettingsScreen implements Screen {
     private Stage stage;
     private final Texture background;
     private final TextButton backButton;
+    private final ImageButton soundControl;
     private SpriteBatch batch;
     private final Skin skin;
 
@@ -34,8 +35,9 @@ public class SettingsScreen implements Screen {
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
-
         backButton = new TextButton("Back", skin, "default");
+        soundControl = new ImageButton(skin, "music");
+
     }
 
     @Override
@@ -53,6 +55,8 @@ public class SettingsScreen implements Screen {
                 game.setScreen(new MainMenuScreen(game, accountService));
             }
         });
+
+
 
         stage.addActor(backButton);
 
@@ -123,6 +127,16 @@ public class SettingsScreen implements Screen {
         soundControl.setSize(con.getIBSize(), con.getIBSize());
         soundControl.getImageCell().expand().fill();
         soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
+
+       /* soundControl.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("InfoTag", "MuteButton pressed");
+                boolean isPlaying = game.isMusicPlaying();
+                game.muteMusic(isPlaying);
+            }
+        });*/
+
         stage.addActor(soundControl);
 
     }

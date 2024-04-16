@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -42,6 +43,7 @@ public class GameView {
     private Texture buttonTexture;
     private ImageButton circularButton;
     private ImageButton.ImageButtonStyle buttonStyle;
+    private Label scoreLabel;
 
     public GameView(GameModel model, GameController controller) {
         this.model = model;
@@ -59,6 +61,7 @@ public class GameView {
         buttonStyle = new ImageButton.ImageButtonStyle();
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
+
 
     }
 

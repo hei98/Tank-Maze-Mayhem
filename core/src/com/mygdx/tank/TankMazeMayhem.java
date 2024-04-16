@@ -1,6 +1,9 @@
 package com.mygdx.tank;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -14,6 +17,8 @@ public class TankMazeMayhem extends Game {
     private GameModel model;
     private GameView view;
     private GameController controller;
+	private Music backgroundMusic, gameMusic;
+	private FPSLogger fpsLogger;
     SpriteBatch batch;
 
 	public TankMazeMayhem(FirebaseInterface firebaseInterface, AccountService accountService) {
@@ -24,13 +29,20 @@ public class TankMazeMayhem extends Game {
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
+		backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/01 - Damned.mp3"));
+		backgroundMusic.setLooping(true);
+		backgroundMusic.play();
+
+		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/44 End Credits.mp3"));
 		// Set the initial screen to the main menu
 		setScreen(new MainMenuScreen(this, accountService));
+		fpsLogger = new FPSLogger();
 	}
 
 	@Override
 	public void render() {
 		super.render(); // Delegates rendering to the current screen
+		fpsLogger.log();
 	}
 
 	public BitmapFont getFont() {
@@ -48,8 +60,42 @@ public class TankMazeMayhem extends Game {
 		return firebaseInterface;
 	}
 
+	public void muteMusic(boolean mute) {
+		if (backgroundMusic != null) {
+			if (mute) {
+				Gdx.app.log("InfoTag", "Music muted");
+				backgroundMusic.setVolume(0); // Mute the music
+			} else {
+				Gdx.app.log("InfoTag", "Music unmuted");
+
+				backgroundMusic.setVolume(1); // Restore the volume
+			}
+		}
+	}
+
+	public boolean isMusicPlaying() {
+		return backgroundMusic != null && backgroundMusic.isPlaying();
+	}
+	public void startGameMusic() {
+		if (backgroundMusic.isPlaying()) {
+			backgroundMusic.stop();
+		}
+		gameMusic.setLooping(true);
+		gameMusic.play();
+	}
+
+	public void stopGameMusic() {
+		if (gameMusic.isPlaying()) {
+			gameMusic.stop();
+		}
+		backgroundMusic.play(); // Resume background music
+	}
+
+
 	@Override
 	public void dispose () {
 		batch.dispose();
+		backgroundMusic.dispose();
+		gameMusic.dispose();
 	}
 }
