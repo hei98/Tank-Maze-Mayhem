@@ -53,19 +53,28 @@ public class GameModel {
             public void received(Connection connection, Object object) {
                 if (object instanceof List) {
                     List<Object> list = (List<Object>) object;
+                    Object firstElement = list.get(0);
                     Object secondElement = list.get(1);
                     if (secondElement instanceof PositionComponent) {
-                        Entity playerTank = getAnotherPlayersTank((String) list.get(0));
+                        Entity playerTank = getAnotherPlayersTank((String) firstElement);
                         PositionComponent positionComponentFromServer = (PositionComponent) secondElement;
                         PositionComponent positionComponent = playerTank.getComponent(PositionComponent.class);
                         positionComponent.x = positionComponentFromServer.x;
                         positionComponent.y = positionComponentFromServer.y;
 
                     } else if (secondElement instanceof SpriteDirectionComponent) {
-                        Entity playerTank = getAnotherPlayersTank((String) list.get(0));
+                        Entity playerTank = getAnotherPlayersTank((String) firstElement);
                         SpriteDirectionComponent spriteDirectionComponentFromServer = (SpriteDirectionComponent) secondElement;
                         SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
                         spriteDirectionComponent.angle = spriteDirectionComponentFromServer.angle;
+                    } else if (secondElement instanceof Float && firstElement instanceof String) {
+                        String playerName = (String) firstElement;
+                        float bulletStartX = (Float) list.get(1);
+                        float bulletStartY = (Float) list.get(2);
+                        float directionX = (Float) list.get(3);
+                        float directionY = (Float) list.get(4);
+                        Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, playerName);
+                        entities.add(bullet);
                     }
                 }
             }
@@ -80,7 +89,7 @@ public class GameModel {
         grantPowerupSystem = new GrantPowerupSystem();
         collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
         movementSystem = new MovementSystem(entities, collisionSystem, client, accountService);
-        shootingSystem = new ShootingSystem(this);
+        shootingSystem = new ShootingSystem(this, accountService, client);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
         respawnSystem = new RespawnSystem(entities);
 
@@ -175,19 +184,7 @@ public class GameModel {
     }
 
     public Entity getAnotherPlayersTank(String playerName) {
-        List<Entity> entitiesToRemove = new ArrayList<>();
-        for (Entity entity : entities) {
-            TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
-            if (typeComponent != null && typeComponent.type == TypeComponent.EntityType.TANK) {
-                PlayerComponent playerComponent = entity.getComponent(PlayerComponent.class);
-                if (playerComponent != null && playerComponent.playerName.equals(playerName)) {
-                    return entity;
-                }
-            }
-        }
-        // Remove entities marked for removal
-        entities.removeAll(entitiesToRemove);
-        return playerTank;
+        return playerTanks.get(playerName);
     }
 }
 
