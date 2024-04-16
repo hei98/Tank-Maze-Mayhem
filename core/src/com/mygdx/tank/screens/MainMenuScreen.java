@@ -134,7 +134,7 @@ public class MainMenuScreen implements Screen {
         multiplayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new TutorialScreen(game, new LobbyScreen(game, game.getFirebaseInterface(), accountService)));;
+                game.setScreen(new TutorialScreen(game, new LobbyScreen(game, game.getFirebaseInterface(), accountService), accountService));;
             }
         });
         settingsButton.addListener(new ClickListener() {
