@@ -17,23 +17,23 @@ import com.mygdx.tank.model.states.NormalState;
 public class TankFactory implements EntityFactory {
 
 
-    public Entity createEntity(User user) {
+    public Entity createEntity(int player) {
         Entity tank = new Entity();
 
         tank.addComponent(new SpeedComponent(300));
 
-        if (user.getPlayer().getOrderOfPartyJoin() == 1) {
+        if (player == 1) {
             tank.addComponent(new PositionComponent(0.0f, 0.0f));
             tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
-        } else if (user.getPlayer().getOrderOfPartyJoin() == 2) {
+        } else if (player == 2) {
             Sprite tempSprite = new Sprite(new Texture("images/tank_orange.png"));
             tank.addComponent(new PositionComponent(Constants.getInstance().getSWidth() - tempSprite.getWidth(), 0.0f));
             tank.addComponent(new SpriteComponent("images/tank_orange.png"));
-        } else if (user.getPlayer().getOrderOfPartyJoin() == 3) {
+        } else if (player == 3) {
             Sprite tempSprite = new Sprite(new Texture("images/tank_blue5.png"));
             tank.addComponent(new PositionComponent(Constants.getInstance().getSWidth() - tempSprite.getWidth(), Constants.getInstance().getSHeight() - tempSprite.getHeight()));
             tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
-        } else if (user.getPlayer().getOrderOfPartyJoin() == 4) {
+        } else if (player == 4) {
             Sprite tempSprite = new Sprite(new Texture("images/tank_blue5.png"));
             tank.addComponent(new PositionComponent(0, Constants.getInstance().getSHeight() - tempSprite.getHeight()));
             tank.addComponent(new SpriteComponent("images/tank_blue5.png"));

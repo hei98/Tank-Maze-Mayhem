@@ -4,5 +4,5 @@ import com.mygdx.tank.User;
 import com.mygdx.tank.model.Entity;
 
 public interface EntityFactory {
-    Entity createEntity(User user);
+    Entity createEntity(int player);
 }

@@ -22,6 +22,7 @@ import com.mygdx.tank.model.systems.ShootingSystem;
 import com.mygdx.tank.model.systems.*;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -39,12 +40,24 @@ public class GameModel {
     private Client client;
 
     public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client) {
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof HashMap) {
+                    System.out.println("HashMap mottatt hos klient!");
+                    HashMap<String, Object> hashMap = (HashMap<String, Object>) object;
+                    if (hashMap.get("EntityType").toString().equals("Tank")) {
+                        Entity newTank = tankFactory.createEntity(Integer.parseInt(hashMap.get("orderOfPartyJoin").toString()));
+                        entities.add(newTank);
+                    }
+                }
+            }
+        });
         entities = new ArrayList<>();
         tankFactory = new TankFactory();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
         User user = accountService.getCurrentUser();
-        System.out.println(user.getPlayer().getOrderOfPartyJoin());
 
         grantPowerupSystem = new GrantPowerupSystem();
         collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
@@ -52,17 +65,14 @@ public class GameModel {
         shootingSystem = new ShootingSystem(this);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
         respawnSystem = new RespawnSystem(entities);
-        playerTank = tankFactory.createEntity(accountService.getCurrentUser());
+        playerTank = tankFactory.createEntity(user.getPlayer().getOrderOfPartyJoin());
         entities.add(playerTank);
-        client.addListener(new Listener() {
-            @Override
-            public void received(Connection connection, Object object) {
-                if (object instanceof Entity) {
-                    System.out.println("Entity mottatt!");
-                }
-            }
-        });
-        // client.sendTCP(playerTank);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("orderOfPartyJoin", user.getPlayer().getOrderOfPartyJoin());
+        hashMap.put("EntityType", "Tank");
+
+        client.sendTCP(hashMap);
     }
 
     public void update(float deltaTime) {

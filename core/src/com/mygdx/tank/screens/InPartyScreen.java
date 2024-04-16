@@ -1,8 +1,10 @@
 package com.mygdx.tank.screens;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -34,6 +36,7 @@ import com.mygdx.tank.model.components.bullet.*;
 import com.mygdx.tank.model.components.powerup.*;
 import com.mygdx.tank.model.states.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +58,7 @@ public class InPartyScreen implements Screen {
     private ScrollPane scrollPane;
     private User user;
     private boolean startGame;
+    private Listener listener;
 
     public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
@@ -75,40 +79,12 @@ public class InPartyScreen implements Screen {
 
         client = new Client();
         client.start();
+
         client.getKryo().register(String.class);
         client.getKryo().register(ArrayList.class);
-        client.getKryo().register(Entity.class);
         client.getKryo().register(HashMap.class);
-        client.getKryo().register(Class.class);
-        client.getKryo().register(PositionComponent.class);
-        client.getKryo().register(SpeedComponent.class);
-        client.getKryo().register(SpriteComponent.class);
-        client.getKryo().register(TypeComponent.class);
-        // for tanks
-        client.getKryo().register(HealthComponent.class);
-        client.getKryo().register(SpriteDirectionComponent.class);
-        client.getKryo().register(PowerupStateComponent.class);
-        client.getKryo().register(ShootingCooldownComponent.class);
-        // for bullets
-        client.getKryo().register(CollisionSide.class);
-        client.getKryo().register(BounceComponent.class);
-        client.getKryo().register(CollisionSideComponent.class);
-        // for powerups
-        client.getKryo().register(PowerUpTypeComponent.class);
-        // for states
-        client.getKryo().register(NormalState.class);
-        client.getKryo().register(MinigunState.class);
-        client.getKryo().register(PowerupState.class);
-        client.getKryo().register(ShieldState.class);
-        client.getKryo().register(SpeedState.class);
-        // others
-        client.getKryo().register(Sprite.class);
-        client.getKryo().register(Color.class);
-        client.getKryo().register(TypeComponent.EntityType.class);
-        client.getKryo().register(Texture.class);
-        client.getKryo().register(FileTextureData.class);
 
-        client.addListener(new Listener() {
+        listener = new Listener() {
             @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof String) {
@@ -145,7 +121,9 @@ public class InPartyScreen implements Screen {
                     user.setPlayer(player);
                 }
             }
-        });
+        };
+
+        client.addListener(listener);
         try {
             client.connect(5000, "10.0.2.2", 5000);
         } catch (IOException e) {
@@ -164,6 +142,7 @@ public class InPartyScreen implements Screen {
         Gdx.gl.glClearColor(1, 0, 0, 1);
 
         if (startGame) {
+            client.removeListener(listener);
             game.setScreen(new InGameScreen(game, accountService, client));
         }
 

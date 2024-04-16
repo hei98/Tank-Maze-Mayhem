@@ -1,6 +1,11 @@
 package com.mygdx.tank;
 
+import android.content.res.AssetManager;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.android.AndroidFileHandle;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Server;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -60,6 +65,17 @@ public class AccountServiceImpl implements AccountService {
         if (user != null) {
             Tasks.await(user.delete());
         }
+    }
+
+    @Override
+    public void registerAndroidServer(Server server) {
+        server.getKryo().register(AndroidFileHandle.class);
+        server.getKryo().register(AssetManager.class);
+    }
+    @Override
+    public void registerAndroidClient(Client client) {
+        client.getKryo().register(AndroidFileHandle.class);
+        client.getKryo().register(AssetManager.class);
     }
 
 }
