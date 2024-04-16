@@ -52,6 +52,18 @@ public class GameModel {
         this.connectedPlayers = connectedPlayers;
         this.accountService = accountService;
         this.client = client;
+        entities = new ArrayList<>();
+        tankFactory = new TankFactory();
+        User user = accountService.getCurrentUser();
+        System.out.println(user.getPlayer().getPlayerName());
+        for (Player player : connectedPlayers) {
+            Entity tank = tankFactory.createEntity(player);
+            if (player.getPlayerName().equals(user.getPlayer().getPlayerName())) {
+                playerTank = tank;
+            }
+            entities.add(tank);
+            playerTanks.put(player.getPlayerName(), tank);
+        }
         client.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
@@ -97,11 +109,8 @@ public class GameModel {
             }
         });
 
-        entities = new ArrayList<>();
-        tankFactory = new TankFactory();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
-        User user = accountService.getCurrentUser();
 
         grantPowerupSystem = new GrantPowerupSystem();
         collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
@@ -109,15 +118,6 @@ public class GameModel {
         shootingSystem = new ShootingSystem(this, accountService, client);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService, client);
         respawnSystem = new RespawnSystem(entities, accountService, client);
-
-        for (Player player : connectedPlayers) {
-            Entity tank = tankFactory.createEntity(player);
-            if (player.getPlayerName().equals(user.getPlayer().getPlayerName())) {
-                playerTank = tank;
-            }
-            entities.add(tank);
-            playerTanks.put(player.getPlayerName(), tank);
-        }
     }
 
     public void update(float deltaTime) {

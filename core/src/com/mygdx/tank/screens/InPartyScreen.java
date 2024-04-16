@@ -92,33 +92,30 @@ public class InPartyScreen implements Screen {
                     if (connectedPlayers.size() == 0) {
                         @SuppressWarnings("unchecked")
                         List<Player> receivedPlayers = (List<Player>) object;
-                        System.out.println(receivedPlayers);
                         connectedPlayers = receivedPlayers;
                         createPlayersTable();
+
+                        user = accountService.getCurrentUser();
+                        int partySize = connectedPlayers.size();
+                        Player player = null;
+                        switch (partySize) {
+                            case 2:
+                                player = new Player("Player2", user.getId());
+                                break;
+                            case 3:
+                                player = new Player("Player3", user.getId());
+                                break;
+                            case 4:
+                                player = new Player("Player4", user.getId());
+                                break;
+                        }
+                        user.setPlayer(player);
                     } else {
                         @SuppressWarnings("unchecked")
                         List<Player> receivedPlayers = (List<Player>) object;
-                        for (Player player : receivedPlayers) {
-                            System.out.println(player.getPlayerName());
-                        }
                         connectedPlayers = receivedPlayers;
                         populatePlayerTable(connectedPlayers);
                     }
-                    user = accountService.getCurrentUser();
-                    int partySize = connectedPlayers.size();
-                    Player player = null;
-                    switch (partySize) {
-                        case 2:
-                            player = new Player("Player2", user.getId());
-                            break;
-                        case 3:
-                            player = new Player("Player3", user.getId());
-                            break;
-                        case 4:
-                            player = new Player("Player4", user.getId());
-                            break;
-                    }
-                    user.setPlayer(player);
                 }
             }
         };
