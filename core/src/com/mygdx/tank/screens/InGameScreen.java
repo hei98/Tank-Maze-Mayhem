@@ -45,7 +45,7 @@ public class InGameScreen implements Screen {
             }
         });
 
-        model = new GameModel(game.getFirebaseInterface(), accountService);
+        model = new GameModel(game.getFirebaseInterface(), accountService, client);
         controller = new GameController(model, client);
         view = new GameView(model, controller);
 

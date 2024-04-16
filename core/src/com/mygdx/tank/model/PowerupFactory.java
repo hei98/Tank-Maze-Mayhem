@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.mygdx.tank.AccountService;
+import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
@@ -15,7 +16,7 @@ import java.util.Random;
 
 public class PowerupFactory implements EntityFactory {
     @Override
-    public Entity createEntity(AccountService accountService) {
+    public Entity createEntity(User user) {
         Entity powerup = new Entity();
         powerup.addComponent(new TypeComponent(TypeComponent.EntityType.POWERUP));
 

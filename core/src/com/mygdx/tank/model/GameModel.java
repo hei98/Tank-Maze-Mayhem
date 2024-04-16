@@ -6,6 +6,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.User;
@@ -33,8 +36,9 @@ public class GameModel {
     private Entity playerTank;
     private TiledMap map;
     private EntityFactory tankFactory;
+    private Client client;
 
-    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService) {
+    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client) {
         entities = new ArrayList<>();
         tankFactory = new TankFactory();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
@@ -48,8 +52,17 @@ public class GameModel {
         shootingSystem = new ShootingSystem(this);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
         respawnSystem = new RespawnSystem(entities);
-        playerTank = tankFactory.createEntity(accountService);
+        playerTank = tankFactory.createEntity(accountService.getCurrentUser());
         entities.add(playerTank);
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof Entity) {
+                    System.out.println("Entity mottatt!");
+                }
+            }
+        });
+        // client.sendTCP(playerTank);
     }
 
     public void update(float deltaTime) {

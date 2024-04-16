@@ -4,7 +4,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -25,9 +27,14 @@ import com.mygdx.tank.TankMazeMayhem;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.User;
 import com.mygdx.tank.model.Entity;
-
+import com.mygdx.tank.model.components.*;
+import com.mygdx.tank.model.components.tank.*;
+import com.mygdx.tank.model.components.bullet.*;
+import com.mygdx.tank.model.components.powerup.*;
+import com.mygdx.tank.model.states.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CreateGameScreen implements Screen {
@@ -74,6 +81,37 @@ public class CreateGameScreen implements Screen {
 
         server.getKryo().register(String.class);
         server.getKryo().register(ArrayList.class);
+        server.getKryo().register(Entity.class);
+        server.getKryo().register(HashMap.class);
+        server.getKryo().register(Class.class);
+        server.getKryo().register(PositionComponent.class);
+        server.getKryo().register(SpeedComponent.class);
+        server.getKryo().register(SpriteComponent.class);
+        server.getKryo().register(TypeComponent.class);
+        // for tanks
+        server.getKryo().register(HealthComponent.class);
+        server.getKryo().register(SpriteDirectionComponent.class);
+        server.getKryo().register(PowerupStateComponent.class);
+        server.getKryo().register(ShootingCooldownComponent.class);
+        // for bullets
+        server.getKryo().register(CollisionSide.class);
+        server.getKryo().register(BounceComponent.class);
+        server.getKryo().register(CollisionSideComponent.class);
+        // for powerups
+        server.getKryo().register(PowerUpTypeComponent.class);
+        // for states
+        server.getKryo().register(NormalState.class);
+        server.getKryo().register(MinigunState.class);
+        server.getKryo().register(PowerupState.class);
+        server.getKryo().register(ShieldState.class);
+        server.getKryo().register(SpeedState.class);
+        // others
+        server.getKryo().register(Sprite.class);
+        server.getKryo().register(Color.class);
+        server.getKryo().register(TypeComponent.EntityType.class);
+        server.getKryo().register(Texture.class);
+        server.getKryo().register(FileTextureData.class);
+
         server.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
@@ -92,6 +130,9 @@ public class CreateGameScreen implements Screen {
                 if (object instanceof String) {
                     String message = (String) object;
                     server.sendToAllTCP(message);
+                } else if (object instanceof Entity) {
+                    Entity entity = (Entity) object;
+                    server.sendToAllExceptTCP(connection.getID(), entity);
                 }
             }
         });
@@ -100,6 +141,37 @@ public class CreateGameScreen implements Screen {
         client.start();
         client.getKryo().register(String.class);
         client.getKryo().register(ArrayList.class);
+        client.getKryo().register(Entity.class);
+        client.getKryo().register(HashMap.class);
+        client.getKryo().register(Class.class);
+        client.getKryo().register(PositionComponent.class);
+        client.getKryo().register(SpeedComponent.class);
+        client.getKryo().register(SpriteComponent.class);
+        client.getKryo().register(TypeComponent.class);
+        // for tanks
+        client.getKryo().register(HealthComponent.class);
+        client.getKryo().register(SpriteDirectionComponent.class);
+        client.getKryo().register(PowerupStateComponent.class);
+        client.getKryo().register(ShootingCooldownComponent.class);
+        // for bullets
+        client.getKryo().register(CollisionSide.class);
+        client.getKryo().register(BounceComponent.class);
+        client.getKryo().register(CollisionSideComponent.class);
+        // for powerups
+        client.getKryo().register(PowerUpTypeComponent.class);
+        // for states
+        client.getKryo().register(NormalState.class);
+        client.getKryo().register(MinigunState.class);
+        client.getKryo().register(PowerupState.class);
+        client.getKryo().register(ShieldState.class);
+        client.getKryo().register(SpeedState.class);
+        // others
+        client.getKryo().register(Sprite.class);
+        client.getKryo().register(Color.class);
+        client.getKryo().register(TypeComponent.EntityType.class);
+        client.getKryo().register(Texture.class);
+        client.getKryo().register(FileTextureData.class);
+
         client.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {

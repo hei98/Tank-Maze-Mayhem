@@ -17,9 +17,8 @@ import com.mygdx.tank.model.states.NormalState;
 public class TankFactory implements EntityFactory {
 
 
-    public Entity createEntity(AccountService accountService) {
+    public Entity createEntity(User user) {
         Entity tank = new Entity();
-        User user = accountService.getCurrentUser();
 
         tank.addComponent(new SpeedComponent(300));
 
