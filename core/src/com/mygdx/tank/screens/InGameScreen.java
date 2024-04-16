@@ -15,17 +15,21 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.GameView;
 import com.mygdx.tank.TankMazeMayhem;
 
+import java.util.List;
+
 public class InGameScreen implements Screen {
 
     private final TankMazeMayhem game;
     private final AccountService accountService;
     private Client client;
     private Stage stage;
+    private List<String> connectedPlayers;
 
-    public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client) {
+    public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client, List<String> connectedPlayers) {
         this.game = game;
         this.accountService = accountService;
         this.client = client;
+        this.connectedPlayers = connectedPlayers;
     }
 
     private GameView view;
@@ -45,7 +49,7 @@ public class InGameScreen implements Screen {
             }
         });
 
-        model = new GameModel(game.getFirebaseInterface(), accountService, client);
+        model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers);
         controller = new GameController(model, client);
         view = new GameView(model, controller);
 

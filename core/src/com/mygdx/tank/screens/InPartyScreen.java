@@ -109,13 +109,13 @@ public class InPartyScreen implements Screen {
                     Player player = null;
                     switch (partySize) {
                         case 2:
-                            player = new Player(2);
+                            player = new Player("Player2");
                             break;
                         case 3:
-                            player = new Player(3);
+                            player = new Player("Player3");
                             break;
                         case 4:
-                            player = new Player(4);
+                            player = new Player("Player4");
                             break;
                     }
                     user.setPlayer(player);
@@ -143,7 +143,7 @@ public class InPartyScreen implements Screen {
 
         if (startGame) {
             client.removeListener(listener);
-            game.setScreen(new InGameScreen(game, accountService, client));
+            game.setScreen(new InGameScreen(game, accountService, client, connectedPlayers));
         }
 
         batch.begin();

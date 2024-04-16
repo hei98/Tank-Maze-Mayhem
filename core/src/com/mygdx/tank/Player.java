@@ -4,17 +4,17 @@ import java.util.List;
 
 public class Player {
 
-    private int orderOfPartyJoin;
+    private String playerName;
 
-    public Player(int orderOfPartyJoin) {
-        this.orderOfPartyJoin = orderOfPartyJoin;
+    public Player(String playerName) {
+        this.playerName = playerName;
     }
 
-    public int getOrderOfPartyJoin() {
-        return orderOfPartyJoin;
+    public String getPlayerName() {
+        return playerName;
     }
 
-    public void setOrderOfPartyJoin(int orderOfPartyJoin) {
-        this.orderOfPartyJoin = orderOfPartyJoin;
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 }

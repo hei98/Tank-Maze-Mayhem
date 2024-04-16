@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class PowerupFactory implements EntityFactory {
     @Override
-    public Entity createEntity(int player) {
+    public Entity createEntity(String player) {
         Entity powerup = new Entity();
         powerup.addComponent(new TypeComponent(TypeComponent.EntityType.POWERUP));
 

@@ -24,7 +24,7 @@ public class PowerupSpawnSystem {
 
     public void update(float deltaTime) {
         if (timer == 0.0f && !spawnedPowerup) {
-            Entity powerUp = powerupFactory.createEntity(accountService.getCurrentUser().getPlayer().getOrderOfPartyJoin());
+            Entity powerUp = powerupFactory.createEntity("Player1");
             model.addEntity(powerUp);
             spawnedPowerup = true;
         } else if (timer > 0) {

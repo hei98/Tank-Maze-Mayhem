@@ -141,7 +141,7 @@ public class CreateGameScreen implements Screen {
 
         connectedPlayers.add("Player1");
         user = accountService.getCurrentUser();
-        user.setPlayer(new Player(1));
+        user.setPlayer(new Player("Player1"));
 
         setButtons();
         createHeadline();
@@ -221,7 +221,7 @@ public class CreateGameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 client.removeListener(listener);
                 client.sendTCP("GameStart");
-                game.setScreen(new InGameScreen(game, accountService, client));
+                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayers));
             }
         });
     }

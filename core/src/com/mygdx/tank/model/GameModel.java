@@ -38,21 +38,12 @@ public class GameModel {
     private TiledMap map;
     private EntityFactory tankFactory;
     private Client client;
+    private List<String> connectedPlayers;
+    private HashMap<String, Entity> playerTanks = new HashMap<>();
 
-    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client) {
-        client.addListener(new Listener() {
-            @Override
-            public void received(Connection connection, Object object) {
-                if (object instanceof HashMap) {
-                    System.out.println("HashMap mottatt hos klient!");
-                    HashMap<String, Object> hashMap = (HashMap<String, Object>) object;
-                    if (hashMap.get("EntityType").toString().equals("Tank")) {
-                        Entity newTank = tankFactory.createEntity(Integer.parseInt(hashMap.get("orderOfPartyJoin").toString()));
-                        entities.add(newTank);
-                    }
-                }
-            }
-        });
+    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<String> connectedPlayers) {
+        this.connectedPlayers = connectedPlayers;
+
         entities = new ArrayList<>();
         tankFactory = new TankFactory();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
@@ -65,14 +56,15 @@ public class GameModel {
         shootingSystem = new ShootingSystem(this);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
         respawnSystem = new RespawnSystem(entities);
-        playerTank = tankFactory.createEntity(user.getPlayer().getOrderOfPartyJoin());
-        entities.add(playerTank);
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("orderOfPartyJoin", user.getPlayer().getOrderOfPartyJoin());
-        hashMap.put("EntityType", "Tank");
-
-        client.sendTCP(hashMap);
+        for (String player : connectedPlayers) {
+            Entity tank = tankFactory.createEntity(player);
+            if (player.equals(user.getPlayer().getPlayerName())) {
+                playerTank = tank;
+            }
+            entities.add(tank);
+            playerTanks.put(player, tank);
+        }
     }
 
     public void update(float deltaTime) {
