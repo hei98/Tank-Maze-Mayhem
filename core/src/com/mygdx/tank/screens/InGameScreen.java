@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.esotericsoftware.kryonet.Client;
 import com.mygdx.tank.AccountService;
+import com.mygdx.tank.User;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.GameView;
@@ -19,7 +20,6 @@ public class InGameScreen implements Screen {
     private final TankMazeMayhem game;
     private final AccountService accountService;
     private Client client;
-
     private Stage stage;
 
     public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client) {
@@ -45,7 +45,7 @@ public class InGameScreen implements Screen {
             }
         });
 
-        model = new GameModel();
+        model = new GameModel(game.getFirebaseInterface(), accountService);
         controller = new GameController(model, client);
         view = new GameView(model, controller);
 

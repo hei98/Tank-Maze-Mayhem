@@ -10,11 +10,17 @@ import com.mygdx.tank.User;
 public class AccountServiceImpl implements AccountService {
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private User userInstance;
 
     @Override
     public User getCurrentUser() {
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        return currentUser != null ? new User(currentUser.getUid()) : null;
+        if (userInstance == null) {
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            if (currentUser != null) {
+                userInstance = new User(currentUser.getUid());
+            }
+        }
+        return userInstance;
     }
 
     @Override

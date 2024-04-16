@@ -20,8 +20,10 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.FirebaseInterface;
+import com.mygdx.tank.Player;
 import com.mygdx.tank.TankMazeMayhem;
 import com.esotericsoftware.kryonet.Server;
+import com.mygdx.tank.User;
 import com.mygdx.tank.model.Entity;
 
 import java.io.IOException;
@@ -43,6 +45,7 @@ public class CreateGameScreen implements Screen {
     private List<String> connectedPlayers = new ArrayList<>();
     private Table playersTable;
     private ScrollPane scrollPane;
+    private User user;
 
     public CreateGameScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
@@ -116,6 +119,8 @@ public class CreateGameScreen implements Screen {
         }
 
         connectedPlayers.add("Player1");
+        user = accountService.getCurrentUser();
+        user.setPlayer(new Player(1));
 
         setButtons();
         createHeadline();

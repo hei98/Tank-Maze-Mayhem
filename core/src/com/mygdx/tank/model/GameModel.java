@@ -6,6 +6,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
+import com.mygdx.tank.AccountService;
+import com.mygdx.tank.FirebaseInterface;
+import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
@@ -29,19 +32,23 @@ public class GameModel {
     private GrantPowerupSystem grantPowerupSystem;
     private Entity playerTank;
     private TiledMap map;
-    private EntityFactory tankFactory = new TankFactory();
+    private EntityFactory tankFactory;
 
-    public GameModel() {
+    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService) {
         entities = new ArrayList<>();
+        tankFactory = new TankFactory();
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
+        User user = accountService.getCurrentUser();
+        System.out.println(user.getPlayer().getOrderOfPartyJoin());
+
         grantPowerupSystem = new GrantPowerupSystem();
         collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
         movementSystem = new MovementSystem(entities, collisionSystem);
         shootingSystem = new ShootingSystem(this);
-        powerupSpawnSystem = new PowerupSpawnSystem(this);
+        powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
         respawnSystem = new RespawnSystem(entities);
-        playerTank = tankFactory.createEntity();
+        playerTank = tankFactory.createEntity(accountService);
         entities.add(playerTank);
     }
 

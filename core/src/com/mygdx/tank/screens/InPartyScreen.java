@@ -21,8 +21,10 @@ import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.LeaderboardEntry;
+import com.mygdx.tank.Player;
 import com.mygdx.tank.TankMazeMayhem;
 import com.esotericsoftware.kryonet.Server;
+import com.mygdx.tank.User;
 import com.mygdx.tank.model.Entity;
 
 import java.io.IOException;
@@ -44,6 +46,7 @@ public class InPartyScreen implements Screen {
     private List<String> connectedPlayers = new ArrayList<>();
     private Table playersTable;
     private ScrollPane scrollPane;
+    private User user;
 
     public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
@@ -85,7 +88,21 @@ public class InPartyScreen implements Screen {
                         connectedPlayers = receivedPlayers;
                         populatePlayerTable(connectedPlayers);
                     }
-
+                    user = accountService.getCurrentUser();
+                    int partySize = connectedPlayers.size();
+                    Player player = null;
+                    switch (partySize) {
+                        case 2:
+                            player = new Player(2);
+                            break;
+                        case 3:
+                            player = new Player(3);
+                            break;
+                        case 4:
+                            player = new Player(4);
+                            break;
+                    }
+                    user.setPlayer(player);
                 }
             }
         });
