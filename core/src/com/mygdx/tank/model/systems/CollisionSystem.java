@@ -33,12 +33,14 @@ public class CollisionSystem {
     private List<Entity> entities;
     private GameModel model;
     private GrantPowerupSystem grantPowerupSystem;
+    private PlayerScoreSystem playerScoreSystem;
 
-    public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model, GrantPowerupSystem grantPowerupSystem) {
+    public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model, GrantPowerupSystem grantPowerupSystem, PlayerScoreSystem playerScoreSystem) {
         this.map = map;
         this.entities = entities;
         this.model = model;
         this.grantPowerupSystem = grantPowerupSystem;
+        this.playerScoreSystem = playerScoreSystem;
     }
 
     public void update(float deltaTime) {
@@ -108,6 +110,9 @@ public class CollisionSystem {
         bullet.markForRemoval(true);
         HealthComponent health = tank.getComponent(HealthComponent.class);
         if (health != null) {
+            if (health.getHealth() == 1){
+                playerScoreSystem.updateScore(bullet, tank);
+            }
             health.takeDamage();
             // Do not mark the tank for removal here; let GameModel handle it based on health status
         }

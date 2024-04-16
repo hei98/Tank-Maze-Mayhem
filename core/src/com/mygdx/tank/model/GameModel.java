@@ -22,6 +22,7 @@ import com.mygdx.tank.model.systems.CollisionSystem;
 import com.mygdx.tank.model.systems.MovementSystem;
 import com.mygdx.tank.model.systems.PowerupSpawnSystem;
 import com.mygdx.tank.model.systems.ShootingSystem;
+import com.mygdx.tank.model.systems.PlayerScoreSystem;
 import com.mygdx.tank.model.systems.*;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 
 public class GameModel {
     private List<Entity> entities;
+    private PlayerScoreSystem playerScoreSystem;
     private MovementSystem movementSystem;
     private ShootingSystem shootingSystem;
     private CollisionSystem collisionSystem;
@@ -89,12 +91,14 @@ public class GameModel {
         map = new TmxMapLoader().load(mapPath);
         User user = accountService.getCurrentUser();
 
+        playerScoreSystem = new PlayerScoreSystem(accountService);
         grantPowerupSystem = new GrantPowerupSystem();
-        collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
+        collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem, playerScoreSystem);
         movementSystem = new MovementSystem(entities, collisionSystem, client, accountService);
         shootingSystem = new ShootingSystem(this, accountService, client);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService);
         respawnSystem = new RespawnSystem(entities);
+
 
         for (Player player : connectedPlayers) {
             Entity tank = tankFactory.createEntity(player);
