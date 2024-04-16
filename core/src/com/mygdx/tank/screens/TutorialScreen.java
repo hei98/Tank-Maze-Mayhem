@@ -28,10 +28,10 @@ public class TutorialScreen implements Screen {
     private final Texture[] pages = new Texture[]{
             new Texture(Gdx.files.internal("Backgrounds/tutorial_1.JPG")),
             new Texture(Gdx.files.internal("Backgrounds/tutorial_2.JPG")),
-            new Texture(Gdx.files.internal("Backgrounds/Tutorial_3.png")),
+            new Texture(Gdx.files.internal("Backgrounds/tutorial_3.png")),
             new Texture(Gdx.files.internal("Backgrounds/tutorial_4.JPG")),
             new Texture(Gdx.files.internal("Backgrounds/tutorial_5.JPG")),
-            new Texture(Gdx.files.internal("Backgrounds/Tutorial_6.png")),
+            new Texture(Gdx.files.internal("Backgrounds/tutorial_6.png")),
     };
     private final Screen returnScreen;
 
