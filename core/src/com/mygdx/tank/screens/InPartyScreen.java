@@ -41,12 +41,12 @@ public class InPartyScreen implements Screen {
     private Stage stage;
     private final Skin skin;
     private final TextButton backButton;
-    private Server server;
     private Client client;
     private List<String> connectedPlayers = new ArrayList<>();
     private Table playersTable;
     private ScrollPane scrollPane;
     private User user;
+    private boolean startGame;
 
     public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
@@ -57,6 +57,7 @@ public class InPartyScreen implements Screen {
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
         backButton = new TextButton("Back", skin, "default");
+        startGame = false;
     }
 
     @Override
@@ -73,10 +74,10 @@ public class InPartyScreen implements Screen {
             public void received(Connection connection, Object object) {
                 if (object instanceof String) {
                     String message = (String) object;
-                    System.out.println("Klient mottok denne meldingen fra server: " + message);
-                    System.out.println("Meldingen var fra: " + connection.getID());
-                }
-                else if (object instanceof List) {
+                    if (message.equals("GameStart")) {
+                        startGame = true;
+                    }
+                } else if (object instanceof List) {
                     if (connectedPlayers.size() == 0) {
                         @SuppressWarnings("unchecked")
                         List<String> receivedPlayers = (List<String>) object;
@@ -123,6 +124,10 @@ public class InPartyScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 0, 0, 1);
 
+        if (startGame) {
+            game.setScreen(new InGameScreen(game, accountService, client));
+        }
+
         batch.begin();
         batch.draw(background, 0, 0, con.getSWidth(), con.getSHeight());
         batch.end();
@@ -158,7 +163,7 @@ public class InPartyScreen implements Screen {
         batch.dispose();
         skin.dispose();
         try {
-            server.dispose();
+            client.dispose();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -176,7 +181,7 @@ public class InPartyScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new LobbyScreen(game,firebaseInterface, accountService));
-                server.close();
+                client.close();
             }
         });
     }

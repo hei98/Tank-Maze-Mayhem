@@ -91,9 +91,7 @@ public class CreateGameScreen implements Screen {
             public void received(Connection connection, Object object) {
                 if (object instanceof String) {
                     String message = (String) object;
-                    System.out.println("Server mottok meldingen: " + message);
-                    System.out.println("Server sender tilbake meldingen: " + "Sikt bedre!");
-                    connection.sendTCP("Sikt bedre!");
+                    server.sendToAllTCP(message);
                 }
             }
         });
@@ -170,6 +168,7 @@ public class CreateGameScreen implements Screen {
         skin.dispose();
         try {
             server.dispose();
+            client.dispose();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -197,6 +196,7 @@ public class CreateGameScreen implements Screen {
         startGameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                client.sendTCP("GameStart");
                 game.setScreen(new InGameScreen(game, accountService, client));
             }
         });
