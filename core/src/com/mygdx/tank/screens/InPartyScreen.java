@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
@@ -206,7 +207,17 @@ public class InPartyScreen implements Screen {
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
         headlineLabel.setWidth(con.getSWidth());
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+        Label label = new Label("Waiting for party leader to start game", labelStyle);
+
+        label.setAlignment(Align.center);
+        label.setY(con.getSHeight() * 0.20f);
+        label.setFontScale(con.getTScaleF());
+        label.setWidth(con.getSWidth());
+
         stage.addActor(headlineLabel);
+        stage.addActor(label);
     }
 
     private void createPlayersTable() {
