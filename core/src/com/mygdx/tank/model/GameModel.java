@@ -95,8 +95,14 @@ public class GameModel {
                         float bulletStartY = (Float) list.get(2);
                         float directionX = (Float) list.get(3);
                         float directionY = (Float) list.get(4);
-                        Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, player);
-                        entities.add(bullet);
+                        for (Player player1 : connectedPlayers) {
+                            if (player1.getPlayerName().equals(player.getPlayerName())) {
+                                Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, player1);
+                                entities.add(bullet);
+                                break;
+                            }
+                        }
+
                     } else if (firstElement instanceof PowerUpTypeComponent.PowerupType) {
                         // render the powerup that Player1 spawned in
                         PowerUpTypeComponent.PowerupType powerUpType = (PowerUpTypeComponent.PowerupType) firstElement;
