@@ -1,15 +1,13 @@
 package com.mygdx.tank;
 
-import java.util.List;
-
 public class Player {
 
     private String playerName;
-    private String userId; // samme som sin User! Hentet fra firebase
+    private String userMail;
 
-    public Player(String playerName, String userId) {
+    public Player(String playerName, String userMail) {
         this.playerName = playerName;
-        this.userId = userId;
+        this.userMail = userMail;
     }
 
     public Player() {}
@@ -18,8 +16,8 @@ public class Player {
         return playerName;
     }
 
-    public String getUserId() {
-        return this.userId;
+    public String getUserMail() {
+        return this.userMail;
     }
 
     public void setPlayerName(String newPlayername) {

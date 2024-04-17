@@ -148,7 +148,7 @@ public class CreateGameScreen implements Screen {
         }
 
         user = accountService.getCurrentUser();
-        Player player = new Player("Player1", user.getId());
+        Player player = new Player("Player1", user.getUserMail());
         connectedPlayers.add(player);
         user.setPlayer(player);
 
@@ -272,7 +272,9 @@ public class CreateGameScreen implements Screen {
         playersTable.clearChildren();
         float columnWidth = scrollPane.getWidth() / 2f - 10f;
         for (Player player : players) {
-            Label nameLabel = new Label(player.getPlayerName(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            String userMail = player.getUserMail();
+            String displayName = userMail.split("@")[0];
+            Label nameLabel = new Label(displayName, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
             Label scoreLabel = new Label("Connected", new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());

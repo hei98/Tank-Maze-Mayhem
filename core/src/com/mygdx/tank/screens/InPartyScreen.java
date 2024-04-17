@@ -100,13 +100,13 @@ public class InPartyScreen implements Screen {
                         Player player = null;
                         switch (partySize) {
                             case 2:
-                                player = new Player("Player2", user.getId());
+                                player = new Player("Player2", user.getUserMail());
                                 break;
                             case 3:
-                                player = new Player("Player3", user.getId());
+                                player = new Player("Player3", user.getUserMail());
                                 break;
                             case 4:
-                                player = new Player("Player4", user.getId());
+                                player = new Player("Player4", user.getUserMail());
                                 break;
                         }
                         user.setPlayer(player);
@@ -121,7 +121,7 @@ public class InPartyScreen implements Screen {
         };
 
         client.addListener(listener);
-        client.sendTCP(new Player("Player1", accountService.getCurrentUser().getId())); // need to create a random Player-object, the correct one is sent back
+        client.sendTCP(new Player("Player1", accountService.getCurrentUser().getUserMail())); // need to create a random Player-object, the correct one is sent back
 
         setButtons();
         createHeadline();
@@ -244,7 +244,9 @@ public class InPartyScreen implements Screen {
         playersTable.clearChildren();
         float columnWidth = scrollPane.getWidth() / 2f - 10f;
         for (Player player : players) {
-            Label nameLabel = new Label(player.getPlayerName(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            String userMail = player.getUserMail();
+            String displayName = userMail.split("@")[0];
+            Label nameLabel = new Label(displayName, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
             Label scoreLabel = new Label("Connected", new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());
