@@ -42,6 +42,7 @@ public class GameView {
     private final Texture buttonTexture;
     private final ImageButton circularButton;
     private final ImageButton.ImageButtonStyle buttonStyle;
+    private boolean isMenuVisible;
 
     public GameView(GameModel model, GameController controller) {
         this.model = model;
@@ -59,6 +60,7 @@ public class GameView {
         buttonStyle = new ImageButton.ImageButtonStyle();
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
+        isMenuVisible = false;
 
     }
 
@@ -85,28 +87,14 @@ public class GameView {
     }
 
     public void render() {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        camera.update();
-        renderer.setView(camera);
-        renderer.render();
-
-        controller.handleTouchpadInput(knobPercentX, knobPercentY);
-
-        // Start batch processing
-        spriteBatch.begin();
-
-        updateEntitySprites();
-
-        // End batch processing
-        spriteBatch.end();
-
-        stage.act();
-        stage.draw();
+        if (isMenuVisible) {
+            // Menu screen is visible
+            renderMenuScreen();
+        } else {
+            // Game is visible
+            renderGame();
+        }
     }
-
-
 
     public void resize(int width, int height) {
         // Calculate the aspect ratio of the screen
@@ -187,5 +175,36 @@ public class GameView {
                 sprite.draw(spriteBatch);
             }
         }
+    }
+
+    public void renderGame() {
+        // Render the game
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        camera.update();
+        renderer.setView(camera);
+        renderer.render();
+
+        controller.handleTouchpadInput(knobPercentX, knobPercentY);
+
+        // Start batch processing
+        spriteBatch.begin();
+
+        updateEntitySprites();
+
+        // End batch processing
+        spriteBatch.end();
+
+        stage.act();
+        stage.draw();
+    }
+
+    public void renderMenuScreen() {
+        // Render the in menu screen
+    }
+
+    public void toggleMenuIsVisible() {
+        isMenuVisible = !isMenuVisible;
     }
 }

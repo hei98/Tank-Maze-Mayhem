@@ -34,15 +34,6 @@ public class InGameScreen implements Screen {
 
     @Override
     public void show() {
-        /*
-        if (!tutorialShown) {
-            // Show the tutorial first
-            game.setScreen(new TutorialScreen(game, this));
-            tutorialShown = true;
-            return; // Skip the rest of the setup until after the tutorial is done
-        }
-
-         */
         stage = new Stage();
 
         TextButton backButton = new TextButton("Back", game.getButtonStyle());
