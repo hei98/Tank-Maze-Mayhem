@@ -121,7 +121,7 @@ public class GameModel {
 
         playerScoreSystem = new PlayerScoreSystem(accountService, scoreboard);
         grantPowerupSystem = new GrantPowerupSystem();
-        collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem, playerScoreSystem);
+        collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem, playerScoreSystem, connectedPlayers);
         movementSystem = new MovementSystem(entities, collisionSystem, client, accountService);
         shootingSystem = new ShootingSystem(this, accountService, client);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService, client);
@@ -130,7 +130,7 @@ public class GameModel {
 
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
-        collisionSystem.update(deltaTime);
+        collisionSystem.update(deltaTime, connectedPlayers);
         shootingSystem.update(deltaTime); // Ensure this is being executed
         powerupSpawnSystem.update(deltaTime);
         respawnSystem.update(deltaTime);

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.tank.Player;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.components.*;
@@ -36,16 +37,18 @@ public class CollisionSystem {
     private GameModel model;
     private GrantPowerupSystem grantPowerupSystem;
     private PlayerScoreSystem playerScoreSystem;
+    private List<Player> connectedPlayers;
 
-    public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model, GrantPowerupSystem grantPowerupSystem, PlayerScoreSystem playerScoreSystem) {
+    public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model, GrantPowerupSystem grantPowerupSystem, PlayerScoreSystem playerScoreSystem, List<Player> connectedPlayers) {
         this.map = map;
         this.entities = entities;
         this.model = model;
         this.grantPowerupSystem = grantPowerupSystem;
         this.playerScoreSystem = playerScoreSystem;
+        this.connectedPlayers = connectedPlayers;
     }
 
-    public void update(float deltaTime) {
+    public void update(float deltaTime, List<Player> connectedPlayers) {
         for (Entity entity : entities) {
             SpeedComponent speed = entity.getComponent(SpeedComponent.class);
             if (speed != null) {
@@ -56,6 +59,7 @@ public class CollisionSystem {
                 }
             }
         }
+        this.connectedPlayers = connectedPlayers;
         processEntityCollisions();
         for (Map.Entry<String, Entity> entry : model.getPlayerTanks().entrySet()) {
             Entity playerTank = entry.getValue();
@@ -111,7 +115,7 @@ public class CollisionSystem {
         HealthComponent health = tank.getComponent(HealthComponent.class);
         if (health != null) {
             if (health.getHealth() == 1) {
-                playerScoreSystem.updateScore(bullet, tank);
+                playerScoreSystem.updateScore(bullet, tank, connectedPlayers);
             }
             health.takeDamage();
             // Do not mark the tank for removal here; let GameModel handle it based on health status
