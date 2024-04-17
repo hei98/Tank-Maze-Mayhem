@@ -31,6 +31,9 @@ import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.mygdx.tank.screens.GameOverScreen;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GameView{
     private final GameModel model;
     private final SpriteBatch spriteBatch;
@@ -130,6 +133,12 @@ public class GameView{
         int seconds = (int) (remainingTime % 60);
 
         if (remainingTime < 0) {
+            HashMap<String, Integer> scores = scoreboard.getScoreboard();
+            for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+                String userName = entry.getKey();
+                Integer score = entry.getValue();
+                game.getFirebaseInterface().updateLeaderboard(userName, score);
+            }
             game.setScreen(new GameOverScreen(game, accountService, scoreboard));
         }
 
