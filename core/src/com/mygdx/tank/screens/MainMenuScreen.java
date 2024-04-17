@@ -110,16 +110,16 @@ public class MainMenuScreen implements Screen {
     }
 
     private void setButtons() {
-        multiplayerButton.setBounds(con.getCenterX(), con.getSHeight() * 0.6f, con.getTBWidth(), con.getTBHeight());
+        multiplayerButton.setBounds(con.getCenterTB(), con.getSHeight() * 0.6f, con.getTBWidth(), con.getTBHeight());
         multiplayerButton.getLabel().setFontScale(con.getTScaleF());
         if(!accountService.hasUser()){
             multiplayerButton.getColor().set(Color.DARK_GRAY);
         }
 
-        leaderboardButton.setBounds(con.getCenterX(), con.getSHeight() * 0.45f, con.getTBWidth(), con.getTBHeight());
+        leaderboardButton.setBounds(con.getCenterTB(), con.getSHeight() * 0.45f, con.getTBWidth(), con.getTBHeight());
         leaderboardButton.getLabel().setFontScale(con.getTScaleF());
 
-        loginButton.setBounds(con.getCenterX(), con.getSHeight() * 0.3f, con.getTBWidth(), con.getTBHeight());
+        loginButton.setBounds(con.getCenterTB(), con.getSHeight() * 0.3f, con.getTBWidth(), con.getTBHeight());
         loginButton.getLabel().setFontScale(con.getTScaleF());
 
         settingsButton.setSize(con.getIBSize(), con.getIBSize());
@@ -139,7 +139,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (accountService.hasUser()){
-                    game.setScreen(new LobbyScreen(game, game.getFirebaseInterface(), accountService));
+                    game.setScreen(new TutorialScreen(game, new LobbyScreen(game, game.getFirebaseInterface(), accountService), accountService));;
                 }
             }
         });
@@ -181,7 +181,6 @@ public class MainMenuScreen implements Screen {
 
     private void isLoggedIn() {
         // login/logout according to user status
-        Gdx.app.log("InfoTag", "Logged in? " + accountService.hasUser());
         if (accountService.hasUser()){
             loginButton.setText("Log Out");
         }

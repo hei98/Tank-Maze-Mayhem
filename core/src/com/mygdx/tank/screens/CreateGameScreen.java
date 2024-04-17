@@ -29,6 +29,8 @@ import com.mygdx.tank.TankMazeMayhem;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.User;
 import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.Observer;
+import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.bullet.*;
@@ -91,6 +93,8 @@ public class CreateGameScreen implements Screen {
         server.getKryo().register(SpriteDirectionComponent.class);
         server.getKryo().register(Float.class);
         server.getKryo().register(Player.class);
+        server.getKryo().register(PowerUpTypeComponent.class);
+        server.getKryo().register(PowerUpTypeComponent.PowerupType.class);
         server.getKryo().register(PlayerScoreComponent.class);
 
         server.addListener(new Listener() {
@@ -125,6 +129,8 @@ public class CreateGameScreen implements Screen {
         client.getKryo().register(SpriteDirectionComponent.class);
         client.getKryo().register(Float.class);
         client.getKryo().register(Player.class);
+        client.getKryo().register(PowerUpTypeComponent.class);
+        client.getKryo().register(PowerUpTypeComponent.PowerupType.class);
         client.getKryo().register(PlayerScoreComponent.class);
 
         listener = new Listener() {
@@ -146,7 +152,7 @@ public class CreateGameScreen implements Screen {
         }
 
         user = accountService.getCurrentUser();
-        Player player = new Player("Player1", user.getId());
+        Player player = new Player("Player1", user.getUserMail());
         connectedPlayers.add(player);
         user.setPlayer(player);
 
@@ -205,10 +211,10 @@ public class CreateGameScreen implements Screen {
     }
 
     private void setButtons() {
-        backButton.setBounds(con.getCenterX() - con.getTBWidth() / 2 - con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterTB() - con.getTBWidth() / 2 - con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        startGameButton.setBounds(con.getCenterX() + con.getTBWidth() / 2 + con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
+        startGameButton.setBounds(con.getCenterTB() + con.getTBWidth() / 2 + con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         startGameButton.getLabel().setFontScale(con.getTScaleF());
 
         stage.addActor(backButton);
@@ -270,7 +276,9 @@ public class CreateGameScreen implements Screen {
         playersTable.clearChildren();
         float columnWidth = scrollPane.getWidth() / 2f - 10f;
         for (Player player : players) {
-            Label nameLabel = new Label(player.getPlayerName(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            String userMail = player.getUserMail();
+            String displayName = userMail.split("@")[0];
+            Label nameLabel = new Label(displayName, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
             Label scoreLabel = new Label("Connected", new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());

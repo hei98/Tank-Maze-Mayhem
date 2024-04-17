@@ -1,7 +1,8 @@
 package com.mygdx.tank.model.components;
 
-public class PlayerScoreComponent implements Component{
-    private int score;
+
+public class PlayerScoreComponent implements Component {
+    public int score;
 
     public PlayerScoreComponent(){
         this.score = 0;
@@ -16,6 +17,11 @@ public class PlayerScoreComponent implements Component{
     }
 
     public void subtractPoints(int points){
-        score -= points;
+        if (score - points < 0) {
+            score = 0;
+        } else {
+            score -= points;
+        }
+
     }
 }

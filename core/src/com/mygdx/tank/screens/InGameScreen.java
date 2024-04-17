@@ -15,8 +15,12 @@ import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.GameView;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.Observer;
+import com.mygdx.tank.model.Scoreboard;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InGameScreen implements Screen {
 
@@ -36,10 +40,21 @@ public class InGameScreen implements Screen {
     private GameView view;
     private GameModel model;
     private GameController controller;
+    private boolean tutorialShown = false;
+
 
 
     @Override
     public void show() {
+        /*
+        if (!tutorialShown) {
+            // Show the tutorial first
+            game.setScreen(new TutorialScreen(game, this));
+            tutorialShown = true;
+            return; // Skip the rest of the setup until after the tutorial is done
+        }
+
+         */
         stage = new Stage();
 
         TextButton backButton = new TextButton("Back", game.getButtonStyle());
@@ -50,9 +65,16 @@ public class InGameScreen implements Screen {
             }
         });
 
-        model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers);
+        Scoreboard scoreboard = new Scoreboard();
+
+
+        for (Player player : connectedPlayers) {
+            scoreboard.addPlayer(player);
+        }
+
+        model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
         controller = new GameController(model, client);
-        view = new GameView(model, controller);
+        view = new GameView(model, controller, game, accountService, scoreboard);
 
         stage.addActor(backButton);
         backButton.setPosition(100, 100);

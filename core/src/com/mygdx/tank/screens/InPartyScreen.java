@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
@@ -61,10 +62,11 @@ public class InPartyScreen implements Screen {
     private Listener listener;
     private Player player;
 
-    public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService, Client client) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
+        this.client = client;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -77,18 +79,6 @@ public class InPartyScreen implements Screen {
     public void show() {
         stage = new Stage();
         batch = new SpriteBatch();
-
-        client = new Client();
-        client.start();
-
-        client.getKryo().register(String.class);
-        client.getKryo().register(ArrayList.class);
-        client.getKryo().register(HashMap.class);
-        client.getKryo().register(PositionComponent.class);
-        client.getKryo().register(SpriteDirectionComponent.class);
-        client.getKryo().register(Float.class);
-        client.getKryo().register(Player.class);
-        client.getKryo().register(PlayerScoreComponent.class);
 
         listener = new Listener() {
             @Override
@@ -105,41 +95,34 @@ public class InPartyScreen implements Screen {
                         System.out.println(receivedPlayers);
                         connectedPlayers = receivedPlayers;
                         createPlayersTable();
+
+                        user = accountService.getCurrentUser();
+                        int partySize = connectedPlayers.size();
+                        Player player = null;
+                        switch (partySize) {
+                            case 2:
+                                player = new Player("Player2", user.getUserMail());
+                                break;
+                            case 3:
+                                player = new Player("Player3", user.getUserMail());
+                                break;
+                            case 4:
+                                player = new Player("Player4", user.getUserMail());
+                                break;
+                        }
+                        user.setPlayer(player);
                     } else {
                         @SuppressWarnings("unchecked")
                         List<Player> receivedPlayers = (List<Player>) object;
-                        for (Player player : receivedPlayers) {
-                            System.out.println(player.getPlayerName());
-                        }
                         connectedPlayers = receivedPlayers;
                         populatePlayerTable(connectedPlayers);
                     }
-                    user = accountService.getCurrentUser();
-                    int partySize = connectedPlayers.size();
-                    Player player = null;
-                    switch (partySize) {
-                        case 2:
-                            player = new Player("Player2", user.getId());
-                            break;
-                        case 3:
-                            player = new Player("Player3", user.getId());
-                            break;
-                        case 4:
-                            player = new Player("Player4", user.getId());
-                            break;
-                    }
-                    user.setPlayer(player);
                 }
             }
         };
 
         client.addListener(listener);
-        try {
-            client.connect(5000, "10.0.2.2", 5000);
-            client.sendTCP(new Player("Player1", accountService.getCurrentUser().getId())); // need to create a random Player-object, the correct one is sent back
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        client.sendTCP(new Player("Player1", accountService.getCurrentUser().getUserMail())); // need to create a random Player-object, the correct one is sent back
 
         setButtons();
         createHeadline();
@@ -199,7 +182,7 @@ public class InPartyScreen implements Screen {
     }
 
     private void setButtons() {
-        backButton.setBounds(con.getCenterX() - con.getTBWidth() / 2 - con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterTB() - con.getTBWidth() / 2 - con.getTBWidth() / 5, con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
         stage.addActor(backButton);
@@ -222,7 +205,17 @@ public class InPartyScreen implements Screen {
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
         headlineLabel.setWidth(con.getSWidth());
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+        Label label = new Label("Waiting for party leader to start game", labelStyle);
+
+        label.setAlignment(Align.center);
+        label.setY(con.getSHeight() * 0.20f);
+        label.setFontScale(con.getTScaleF());
+        label.setWidth(con.getSWidth());
+
         stage.addActor(headlineLabel);
+        stage.addActor(label);
     }
 
     private void createPlayersTable() {
@@ -252,7 +245,9 @@ public class InPartyScreen implements Screen {
         playersTable.clearChildren();
         float columnWidth = scrollPane.getWidth() / 2f - 10f;
         for (Player player : players) {
-            Label nameLabel = new Label(player.getPlayerName(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            String userMail = player.getUserMail();
+            String displayName = userMail.split("@")[0];
+            Label nameLabel = new Label(displayName, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
             Label scoreLabel = new Label("Connected", new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());

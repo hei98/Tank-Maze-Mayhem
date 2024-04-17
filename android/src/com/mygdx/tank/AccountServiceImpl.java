@@ -22,7 +22,7 @@ public class AccountServiceImpl implements AccountService {
         if (userInstance == null) {
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
             if (currentUser != null) {
-                userInstance = new User(currentUser.getUid());
+                userInstance = new User(currentUser.getEmail());
             }
         }
         return userInstance;

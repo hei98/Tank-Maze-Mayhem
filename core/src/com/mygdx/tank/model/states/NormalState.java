@@ -20,7 +20,7 @@ public class NormalState implements PowerupState {
                 tank.getComponent(SpeedComponent.class).speed = 300;
         }
 
-        tank.getComponent(HealthComponent.class).setHealth(1);
+        tank.getComponent(HealthComponent.class).resetHealth();
 
         tank.getComponent(ShootingCooldownComponent.class).cooldown = 1.5f;
 

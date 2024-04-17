@@ -16,6 +16,7 @@ public class TankFactory implements EntityFactory {
 
 
     public Entity createEntity(Player player) {
+        Constants con = Constants.getInstance();
         Entity tank = new Entity();
 
         tank.addComponent(new SpeedComponent(300));
@@ -38,7 +39,8 @@ public class TankFactory implements EntityFactory {
         }
 
         Sprite sprite = tank.getComponent(SpriteComponent.class).getSprite();
-        sprite.setOrigin(sprite.getWidth() / 2, (sprite.getHeight() - sprite.getHeight() / 3) / 2);
+        sprite.setSize(con.getTankWidth(), con.getTankHeight());
+        sprite.setOrigin(con.getTankWidth() / 2, (sprite.getHeight() - sprite.getHeight() / 3) / 2);
         tank.addComponent(new SpriteDirectionComponent(0f));
 
         tank.addComponent(new HealthComponent());
@@ -46,6 +48,7 @@ public class TankFactory implements EntityFactory {
         tank.addComponent(new ShootingCooldownComponent(1.5f));
         tank.addComponent(new PowerupStateComponent(new NormalState()));
         tank.addComponent(new PlayerComponent(player));
+
         return tank;
     }
 }

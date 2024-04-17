@@ -19,6 +19,9 @@ import com.badlogic.gdx.utils.Align;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseDataListener;
@@ -26,9 +29,9 @@ import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.LeaderboardEntry;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.Scoreboard;
 
-public class LeaderboardScreen implements Screen {
-    private final FirebaseInterface firebaseInterface;
+public class GameOverScreen implements Screen {
     private final Constants con;
     private final TankMazeMayhem game;
     private final AccountService accountService;
@@ -38,13 +41,14 @@ public class LeaderboardScreen implements Screen {
     private final ImageButton settingsButton;
     private SpriteBatch batch;
     private final Skin skin;
-    private Table leaderboardTable;
+    private Table scoreboardTable;
     private ScrollPane scrollPane;
+    private Scoreboard scoreboard;
 
-    public LeaderboardScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public GameOverScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
         this.game = game;
-        this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
+        this.scoreboard = scoreboard;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -123,7 +127,7 @@ public class LeaderboardScreen implements Screen {
 
     private void createHeadline() {
         Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
-        Label headlineLabel = new Label("Leaderboard", headlineStyle);
+        Label headlineLabel = new Label("Scoreboard", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
@@ -147,68 +151,60 @@ public class LeaderboardScreen implements Screen {
     }
 
     private void createLeaderboardTable() {
-        leaderboardTable = new Table();
-        leaderboardTable.top(); // Align the items at the top of the table
-        leaderboardTable.defaults().expand().fillX();
+        scoreboardTable = new Table();
+        scoreboardTable.top(); // Align the items at the top of the table
+        scoreboardTable.defaults().expand().fillX();
 
         float orangeBoxWidth = con.getSWidth() * 0.5f;
         float orangeBoxHeight = con.getSHeight() * 0.5f;
         float orangeBoxStartY = con.getSHeight() * 0.27f;
         float tableStartY = orangeBoxStartY + (orangeBoxHeight / 2);
 
-        leaderboardTable.setSize(orangeBoxWidth, orangeBoxHeight);
-        leaderboardTable.setPosition((con.getSWidth() - orangeBoxWidth) / 2, tableStartY);
+        scoreboardTable.setSize(orangeBoxWidth, orangeBoxHeight);
+        scoreboardTable.setPosition((con.getSWidth() - orangeBoxWidth) / 2, tableStartY);
 
         // Create a scroll pane for the leaderboardTable
-        scrollPane = new ScrollPane(leaderboardTable, skin);
+        scrollPane = new ScrollPane(scoreboardTable, skin);
         scrollPane.setSize(orangeBoxWidth, orangeBoxHeight);
-        scrollPane.setPosition(leaderboardTable.getX(), con.getSHeight() - orangeBoxStartY - orangeBoxHeight);
+        scrollPane.setPosition(scoreboardTable.getX(), con.getSHeight() - orangeBoxStartY - orangeBoxHeight);
 
         stage.addActor(scrollPane);
 
-        fetchLeaderboardData();
+        handleLeaderboardData(scoreboard.getScoreboard());
     }
 
-    private void fetchLeaderboardData() {
-        firebaseInterface.getLeaderboardData(new FirebaseDataListener() {
-            @Override
-            public void onDataReceived(Object data) {
-                handleLeaderboardData((ArrayList<LeaderboardEntry>) data);
-            }
+    private void handleLeaderboardData(HashMap<String, Integer> entries) {
+        List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(entries.entrySet());
 
+        // Sort the list based on the values
+        Collections.sort(sortedEntries, new Comparator<Map.Entry<String, Integer>>() {
             @Override
-            public void onError(String errorMessage) {
-                Gdx.app.log("Firebase", "Error fetching leaderboard " + errorMessage);
+            public int compare(Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
+                // Compare the values in descending order
+                return entry2.getValue().compareTo(entry1.getValue());
             }
         });
+
+        // Populate the scoreboard table with sorted entries
+        populateLeaderBoardTable(sortedEntries);
     }
 
-    private void handleLeaderboardData(ArrayList<LeaderboardEntry> entries) {
-        Gdx.app.postRunnable(() -> {
-            Collections.sort(entries, new Comparator<LeaderboardEntry>() {
-                @Override
-                public int compare(LeaderboardEntry o1, LeaderboardEntry o2) {
-                    return Integer.compare(o2.getScore(), o1.getScore());
-                }
-            });
-            populateLeaderBoardTable(entries);
-        });
-    }
-
-    private void populateLeaderBoardTable(ArrayList<LeaderboardEntry> entries) {
-        leaderboardTable.clearChildren();
+    private void populateLeaderBoardTable(List<Map.Entry<String, Integer>> scoreboard) {
+        scoreboardTable.clearChildren();
         float columnWidth = scrollPane.getWidth() / 2f - 10f;
-        for (LeaderboardEntry entry : entries) {
-            Label nameLabel = new Label(entry.getUsername(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
-            Label scoreLabel = new Label(String.valueOf(entry.getScore()), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+        for (Map.Entry<String, Integer> entry : scoreboard) {
+            String userName = entry.getKey();
+            Integer score = entry.getValue();
+            Label nameLabel = new Label(userName, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            Label scoreLabel = new Label(String.valueOf(score), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());
             scoreLabel.setFontScale(con.getTScaleF());
 
-            leaderboardTable.row().pad(10f).fillX();
-            leaderboardTable.add(nameLabel).width(columnWidth);
-            leaderboardTable.add(scoreLabel).width(columnWidth);
+            scoreboardTable.row().pad(10f).fillX();
+            scoreboardTable.add(nameLabel).width(columnWidth);
+            scoreboardTable.add(scoreLabel).width(columnWidth);
         }
-        leaderboardTable.pack();
+        scoreboardTable.pack();
     }
 }

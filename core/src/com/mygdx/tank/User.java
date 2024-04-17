@@ -1,15 +1,11 @@
 package com.mygdx.tank;
 
 public class User {
-    private String id;
+    private String userMail;
     private Player player;
 
-    public User(String id) {
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
+    public User(String userMail) {
+        this.userMail = userMail;
     }
 
     public void setPlayer(Player player) {
@@ -20,7 +16,7 @@ public class User {
         return this.player;
     }
 
-    public void removePlayer() {
-        this.player = null;
+    public String getUserMail() {
+        return userMail;
     }
 }
