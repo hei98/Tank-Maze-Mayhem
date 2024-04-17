@@ -1,16 +1,13 @@
 package com.mygdx.tank;
 
 import android.content.res.AssetManager;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidFileHandle;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.mygdx.tank.AccountService;
-import com.mygdx.tank.User;
+
 
 public class AccountServiceImpl implements AccountService {
 

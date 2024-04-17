@@ -5,11 +5,10 @@ import com.mygdx.tank.Player;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Scoreboard implements Observer {
-    private List<Player> players;
-    private HashMap<String, Integer> scoreboard;
+    private final List<Player> players;
+    private final HashMap<String, Integer> scoreboard;
 
     public Scoreboard() {
         players = new ArrayList<>();

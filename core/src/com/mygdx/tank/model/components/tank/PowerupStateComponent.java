@@ -3,8 +3,6 @@ package com.mygdx.tank.model.components.tank;
 import com.mygdx.tank.model.components.Component;
 import com.mygdx.tank.model.states.PowerupState;
 
-import java.util.Objects;
-
 public class PowerupStateComponent implements Component {
     private PowerupState state;
     public boolean inPowerupMode;

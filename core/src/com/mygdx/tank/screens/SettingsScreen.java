@@ -24,7 +24,6 @@ public class SettingsScreen implements Screen {
     private Stage stage;
     private final Texture background;
     private final TextButton backButton;
-    private final ImageButton soundControl;
     private SpriteBatch batch;
 
     public SettingsScreen(TankMazeMayhem game, AccountService accountService) {
@@ -33,8 +32,6 @@ public class SettingsScreen implements Screen {
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         backButton = new TextButton("Back", con.getSkin(), "default");
-        soundControl = new ImageButton(con.getSkin(), "music");
-
     }
 
     @Override

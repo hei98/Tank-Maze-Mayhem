@@ -2,7 +2,6 @@ package com.mygdx.tank.model.systems;
 
 import com.esotericsoftware.kryonet.Client;
 import com.mygdx.tank.AccountService;
-import com.mygdx.tank.model.BulletFactory;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.EntityFactory;
 import com.mygdx.tank.model.GameModel;
@@ -16,10 +15,10 @@ import java.util.List;
 public class PowerupSpawnSystem {
     public float timer;
     public boolean spawnedPowerup;
-    private EntityFactory powerupFactory;
-    private GameModel model;
-    private AccountService accountService;
-    private Client client;
+    private final EntityFactory powerupFactory;
+    private final GameModel model;
+    private final AccountService accountService;
+    private final Client client;
 
     public PowerupSpawnSystem(GameModel model, AccountService accountService, Client client) {
         this.timer = 10.0f;

@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShootingSystem {
-    private GameModel model;
-    private AccountService accountService;
-    private Client client;
+    private final GameModel model;
+    private final AccountService accountService;
+    private final Client client;
 
     public ShootingSystem(GameModel model, AccountService accountService, Client client) {
         this.model = model;
@@ -62,7 +62,7 @@ public class ShootingSystem {
             client.sendTCP(list);
 
             PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
-            if (powerupStateComponent.getState().getPowerupType() != "Minigun") {
+            if (!powerupStateComponent.getState().getPowerupType().equals("Minigun")) {
                 shootingCooldownComponent.cooldown = 1.5f;
             }
         }

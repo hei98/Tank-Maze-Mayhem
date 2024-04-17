@@ -6,9 +6,9 @@ import java.util.Map;
 
 public class Entity {
     private static int nextId = 1;
-    private int id;
+    private final int id;
     private boolean markedForRemoval = false;
-    private Map<Class<? extends Component>, Component> components;
+    private final Map<Class<? extends Component>, Component> components;
 
     public Entity() {
         this.id = nextId++;

@@ -1,7 +1,7 @@
 package com.mygdx.tank;
 
 public class User {
-    private String userMail;
+    private final String userMail;
     private Player player;
 
     public User(String userMail) {
