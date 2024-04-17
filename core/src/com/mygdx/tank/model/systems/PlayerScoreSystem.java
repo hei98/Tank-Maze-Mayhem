@@ -26,7 +26,8 @@ public class PlayerScoreSystem {
         for (Player player : connectedPlayers) {
             if (player.getPlayerName().equals(playerTank.getComponent(PlayerComponent.class).player.getPlayerName())) {
                 tankPlayer = player;
-            } else if (player.getPlayerName().equals(playerBullet.getComponent(PlayerComponent.class).player.getPlayerName())) {
+            }
+            if (player.getPlayerName().equals(playerBullet.getComponent(PlayerComponent.class).player.getPlayerName())) {
                 bulletPlayer = player;
             }
         }
