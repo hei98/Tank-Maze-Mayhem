@@ -96,7 +96,6 @@ public class CreateGameScreen implements Screen {
         server.getKryo().register(PowerUpTypeComponent.class);
         server.getKryo().register(PowerUpTypeComponent.PowerupType.class);
         server.getKryo().register(PlayerScoreComponent.class);
-        server.getKryo().register(Scoreboard.class);
 
         server.addListener(new Listener() {
             @Override
@@ -133,7 +132,6 @@ public class CreateGameScreen implements Screen {
         client.getKryo().register(PowerUpTypeComponent.class);
         client.getKryo().register(PowerUpTypeComponent.PowerupType.class);
         client.getKryo().register(PlayerScoreComponent.class);
-        client.getKryo().register(Scoreboard.class);
 
         listener = new Listener() {
             @Override

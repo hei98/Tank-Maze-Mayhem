@@ -12,7 +12,6 @@ public class Player {
     private String playerName;
     private String userMail;
     private PlayerScoreComponent playerScore;
-    private List<Observer> observers = new ArrayList<>();
 
     public Player(String playerName, String userMail) {
         this.playerName = playerName;
@@ -21,16 +20,6 @@ public class Player {
     }
 
     public Player() {}
-
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
-
-    public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.update(this);
-        }
-    }
 
     public String getPlayerName() {
         return playerName;

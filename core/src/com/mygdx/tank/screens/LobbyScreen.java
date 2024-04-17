@@ -182,7 +182,6 @@ public class LobbyScreen implements Screen {
                 client.getKryo().register(PowerUpTypeComponent.class);
                 client.getKryo().register(PowerUpTypeComponent.PowerupType.class);
                 client.getKryo().register(PlayerScoreComponent.class);
-                client.getKryo().register(Scoreboard.class);
 
                 String IPaddress = IPaddressField.getText();
                 int port = Integer.parseInt(portField.getText());

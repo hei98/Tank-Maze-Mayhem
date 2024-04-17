@@ -67,13 +67,12 @@ public class InGameScreen implements Screen {
 
         Scoreboard scoreboard = new Scoreboard();
 
-        /*
+
         for (Player player : connectedPlayers) {
             scoreboard.addPlayer(player);
         }
-        */
 
-        model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers);
+        model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
         controller = new GameController(model, client);
         view = new GameView(model, controller, game, scoreboard);
 

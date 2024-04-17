@@ -9,6 +9,8 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.components.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
+import java.util.Map;
+
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.tank.model.Entity;
@@ -55,17 +57,17 @@ public class CollisionSystem {
             }
         }
         processEntityCollisions();
-
-        Entity playerTank = model.getPlayerTank();
-        PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
-        if (powerupStateComponent.inPowerupMode) {
-            powerupStateComponent.timer = (powerupStateComponent.timer - deltaTime < 0) ? 0.0f : powerupStateComponent.timer - deltaTime;
-            if (powerupStateComponent.timer == 0.0f) {
-                powerupStateComponent.setState(new NormalState());
-                powerupStateComponent.getState().doAction(playerTank);
+        for (Map.Entry<String, Entity> entry : model.getPlayerTanks().entrySet()) {
+            Entity playerTank = entry.getValue();
+            PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
+            if (powerupStateComponent.inPowerupMode) {
+                powerupStateComponent.timer = (powerupStateComponent.timer - deltaTime < 0) ? 0.0f : powerupStateComponent.timer - deltaTime;
+                if (powerupStateComponent.timer == 0.0f) {
+                    powerupStateComponent.setState(new NormalState());
+                    powerupStateComponent.getState().doAction(playerTank);
+                }
             }
         }
-
     }
     private Rectangle getBoundingBox(Entity entity) {
         PositionComponent position = entity.getComponent(PositionComponent.class);
@@ -95,10 +97,8 @@ public class CollisionSystem {
 
         if (type1.type == TypeComponent.EntityType.BULLET && type2.type == TypeComponent.EntityType.TANK) {
             markBulletForRemovalAndDamageTank(e1, e2);
-            System.out.println("Entities collided: " + e1 + " with " + e2);
         } else if (type2.type == TypeComponent.EntityType.BULLET && type1.type == TypeComponent.EntityType.TANK) {
             markBulletForRemovalAndDamageTank(e2, e1);
-            System.out.println("Entities collided: " + e1 + " with " + e2);
         } else if (type1.type == TypeComponent.EntityType.POWERUP && type2.type == TypeComponent.EntityType.TANK) {
             grantPowerupSystem.givePlayertankPowerup(e2, e1);
         } else if (type2.type == TypeComponent.EntityType.POWERUP && type1.type == TypeComponent.EntityType.TANK) {

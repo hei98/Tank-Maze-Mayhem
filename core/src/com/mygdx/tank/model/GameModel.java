@@ -50,7 +50,7 @@ public class GameModel {
     private AccountService accountService;
     private HashMap<String, Entity> playerTanks = new HashMap<>();
 
-    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers) {
+    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
         this.connectedPlayers = connectedPlayers;
         this.accountService = accountService;
         this.client = client;
@@ -113,7 +113,7 @@ public class GameModel {
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
 
-        playerScoreSystem = new PlayerScoreSystem(accountService);
+        playerScoreSystem = new PlayerScoreSystem(accountService, scoreboard);
         grantPowerupSystem = new GrantPowerupSystem();
         collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem, playerScoreSystem);
         movementSystem = new MovementSystem(entities, collisionSystem, client, accountService);
@@ -202,6 +202,10 @@ public class GameModel {
 
     public Entity getAnotherPlayersTank(String playerName) {
         return playerTanks.get(playerName);
+    }
+
+    public HashMap<String, Entity> getPlayerTanks() {
+        return this.playerTanks;
     }
 }
 
