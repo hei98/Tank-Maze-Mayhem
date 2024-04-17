@@ -11,6 +11,11 @@ public class PositionComponent implements Component {
         this.originalY = y;
     }
 
+    public PositionComponent() {
+        this.originalX = x;
+        this.originalY = y;
+    }
+
     public void resetPosition() {
         this.x = originalX;
         this.y = originalY;

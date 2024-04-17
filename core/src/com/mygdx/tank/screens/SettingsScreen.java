@@ -24,6 +24,7 @@ public class SettingsScreen implements Screen {
     private Stage stage;
     private final Texture background;
     private final TextButton backButton;
+    private final ImageButton soundControl;
     private SpriteBatch batch;
 
     public SettingsScreen(TankMazeMayhem game, AccountService accountService) {
@@ -31,8 +32,9 @@ public class SettingsScreen implements Screen {
         this.accountService = accountService;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
-
         backButton = new TextButton("Back", con.getSkin(), "default");
+        soundControl = new ImageButton(con.getSkin(), "music");
+
     }
 
     @Override
@@ -118,6 +120,18 @@ public class SettingsScreen implements Screen {
         soundControl.setSize(con.getIBSize(), con.getIBSize());
         soundControl.getImageCell().expand().fill();
         soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
+        soundControl.toggle(); //For visual correctness
+
+        soundControl.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("InfoTag", "MuteButton pressed");
+                boolean isPlaying = game.isMusicPlaying();
+                Gdx.app.log("InfoTag", "isPlaying?" + isPlaying);
+                game.muteMusic(isPlaying);
+            }
+        });
+
         stage.addActor(soundControl);
 
     }

@@ -4,6 +4,9 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.mygdx.tank.Constants;
+import com.mygdx.tank.AccountService;
+import com.mygdx.tank.Player;
+import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
@@ -15,7 +18,7 @@ import java.util.Random;
 
 public class PowerupFactory implements EntityFactory {
     @Override
-    public Entity createEntity() {
+    public Entity createEntity(Player player) {
         Constants con = Constants.getInstance();
         Entity powerup = new Entity();
         powerup.addComponent(new TypeComponent(TypeComponent.EntityType.POWERUP));
@@ -47,6 +50,29 @@ public class PowerupFactory implements EntityFactory {
         } else if (randomPowerupType == PowerUpTypeComponent.PowerupType.Minigun) {
             imagePath = "images/MachineGunPowerup.png";
         } else if (randomPowerupType == PowerUpTypeComponent.PowerupType.Speed) {
+            imagePath = "images/SpeedPowerup.png";
+        } else {
+            imagePath = "images/ShieldPowerup.png";
+        }
+        powerup.addComponent(new SpriteComponent(imagePath));
+        Sprite sprite = powerup.getComponent(SpriteComponent.class).getSprite();
+        sprite.setSize(con.getIBSize() * 0.7f, con.getIBSize() * 0.7f);
+        return powerup;
+    }
+
+    public Entity createSpecificPowerup(PowerUpTypeComponent.PowerupType powerupType, float positionX, float positionY) {
+        Constants con = Constants.getInstance();
+        Entity powerup = new Entity();
+        powerup.addComponent(new TypeComponent(TypeComponent.EntityType.POWERUP));
+        powerup.addComponent(new PowerUpTypeComponent(powerupType));
+        powerup.addComponent(new PositionComponent(positionX, positionY));
+
+        String imagePath;
+        if (powerupType == PowerUpTypeComponent.PowerupType.Shield) {
+            imagePath = "images/ShieldPowerup.png";
+        } else if (powerupType == PowerUpTypeComponent.PowerupType.Minigun) {
+            imagePath = "images/MachineGunPowerup.png";
+        } else if (powerupType == PowerUpTypeComponent.PowerupType.Speed) {
             imagePath = "images/SpeedPowerup.png";
         } else {
             imagePath = "images/ShieldPowerup.png";

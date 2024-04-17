@@ -3,13 +3,14 @@ package com.mygdx.tank.model;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.tank.Constants;
+import com.mygdx.tank.Player;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.bullet.BounceComponent;
 import com.mygdx.tank.model.components.bullet.CollisionSide;
 import com.mygdx.tank.model.components.bullet.CollisionSideComponent;
 
 public class BulletFactory {
-    public static Entity createBullet(float startX, float startY, float directionX, float directionY) {
+    public static Entity createBullet(float startX, float startY, float directionX, float directionY, Player player) {
         Constants con = Constants.getInstance();
         Entity bullet = new Entity();
         bullet.addComponent(new PositionComponent(startX, startY));
@@ -25,6 +26,7 @@ public class BulletFactory {
         bullet.addComponent(new BounceComponent());
         bullet.addComponent(new CollisionSideComponent(CollisionSide.NONE));
         bullet.addComponent(new TypeComponent(TypeComponent.EntityType.BULLET));
+        bullet.addComponent(new PlayerComponent(player));
         return bullet;
     }
 }

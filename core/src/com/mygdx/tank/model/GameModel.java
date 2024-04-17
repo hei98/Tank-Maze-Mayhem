@@ -6,23 +6,36 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.mygdx.tank.AccountService;
+import com.mygdx.tank.FirebaseInterface;
+import com.mygdx.tank.Player;
+import com.mygdx.tank.User;
+import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
+import com.mygdx.tank.model.components.PlayerComponent;
+import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.mygdx.tank.model.systems.CollisionSystem;
 import com.mygdx.tank.model.systems.MovementSystem;
 import com.mygdx.tank.model.systems.PowerupSpawnSystem;
 import com.mygdx.tank.model.systems.ShootingSystem;
+import com.mygdx.tank.model.systems.PlayerScoreSystem;
 import com.mygdx.tank.model.systems.*;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 import com.mygdx.tank.model.states.InvulnerabilityState;
 import com.mygdx.tank.model.components.tank.PowerupStateComponent;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
 public class GameModel {
     private List<Entity> entities;
+    private PlayerScoreSystem playerScoreSystem;
     private MovementSystem movementSystem;
     private ShootingSystem shootingSystem;
     private CollisionSystem collisionSystem;
@@ -31,32 +44,98 @@ public class GameModel {
     private GrantPowerupSystem grantPowerupSystem;
     private Entity playerTank;
     private TiledMap map;
-    private EntityFactory tankFactory = new TankFactory();
+    private EntityFactory tankFactory;
+    private Client client;
+    private List<Player> connectedPlayers;
+    private AccountService accountService;
+    private HashMap<String, Entity> playerTanks = new HashMap<>();
 
-    public GameModel() {
+    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
+        this.connectedPlayers = connectedPlayers;
+        this.accountService = accountService;
+        this.client = client;
         entities = new ArrayList<>();
+        tankFactory = new TankFactory();
+        User user = accountService.getCurrentUser();
+        for (Player player : connectedPlayers) {
+            Entity tank = tankFactory.createEntity(player);
+            if (player.getPlayerName().equals(user.getPlayer().getPlayerName())) {
+                playerTank = tank;
+            }
+            entities.add(tank);
+            playerTanks.put(player.getPlayerName(), tank);
+        }
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof List) {
+                    List<Object> list = (List<Object>) object;
+                    Object firstElement = list.get(0);
+                    Object secondElement = list.get(1);
+                    if (secondElement instanceof PositionComponent) {
+                        // update position of other playerTanks
+                        Player player = (Player) firstElement;
+                        Entity playerTank = getAnotherPlayersTank(player.getPlayerName());
+                        PositionComponent positionComponentFromServer = (PositionComponent) secondElement;
+                        PositionComponent positionComponent = playerTank.getComponent(PositionComponent.class);
+                        positionComponent.x = positionComponentFromServer.x;
+                        positionComponent.y = positionComponentFromServer.y;
+
+                    } else if (secondElement instanceof SpriteDirectionComponent) {
+                        // update rotation of other playerTanks
+                        Player player = (Player) firstElement;
+                        Entity playerTank = getAnotherPlayersTank(player.getPlayerName());
+                        SpriteDirectionComponent spriteDirectionComponentFromServer = (SpriteDirectionComponent) secondElement;
+                        SpriteDirectionComponent spriteDirectionComponent = playerTank.getComponent(SpriteDirectionComponent.class);
+                        spriteDirectionComponent.angle = spriteDirectionComponentFromServer.angle;
+                    } else if (secondElement instanceof Float && firstElement instanceof Player) {
+                        // render the bullet another playerTank shot
+                        Player player = (Player) firstElement;
+                        float bulletStartX = (Float) list.get(1);
+                        float bulletStartY = (Float) list.get(2);
+                        float directionX = (Float) list.get(3);
+                        float directionY = (Float) list.get(4);
+                        for (Player player1 : connectedPlayers) {
+                            if (player1.getPlayerName().equals(player.getPlayerName())) {
+                                Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, player1);
+                                entities.add(bullet);
+                                break;
+                            }
+                        }
+
+                    } else if (firstElement instanceof PowerUpTypeComponent.PowerupType) {
+                        // render the powerup that Player1 spawned in
+                        PowerUpTypeComponent.PowerupType powerUpType = (PowerUpTypeComponent.PowerupType) firstElement;
+                        float positionX = (Float) list.get(1);
+                        float positionY = (Float) list.get(2);
+                        PowerupFactory powerupFactory = new PowerupFactory();
+                        Entity powerUp = powerupFactory.createSpecificPowerup(powerUpType, positionX, positionY);
+                        entities.add(powerUp);
+                    }
+                }
+            }
+        });
+
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
+
+        playerScoreSystem = new PlayerScoreSystem(accountService, scoreboard);
         grantPowerupSystem = new GrantPowerupSystem();
-        collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem);
-        movementSystem = new MovementSystem(entities, collisionSystem);
-        shootingSystem = new ShootingSystem(this);
-        powerupSpawnSystem = new PowerupSpawnSystem(this);
-        respawnSystem = new RespawnSystem(entities);
-        playerTank = tankFactory.createEntity();
-        entities.add(playerTank);
+        collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem, playerScoreSystem, connectedPlayers);
+        movementSystem = new MovementSystem(entities, collisionSystem, client, accountService);
+        shootingSystem = new ShootingSystem(this, accountService, client);
+        powerupSpawnSystem = new PowerupSpawnSystem(this, accountService, client);
+        respawnSystem = new RespawnSystem(entities, accountService, client);
     }
 
     public void update(float deltaTime) {
         movementSystem.update(deltaTime);
-        collisionSystem.update(deltaTime);
+        collisionSystem.update(deltaTime, connectedPlayers);
         shootingSystem.update(deltaTime); // Ensure this is being executed
         powerupSpawnSystem.update(deltaTime);
         respawnSystem.update(deltaTime);
         removeMarkedEntities();
-
     }
-
 
     public void removeMarkedEntities() {
         List<Entity> toKeep = new ArrayList<>();
@@ -85,6 +164,11 @@ public class GameModel {
         entities.addAll(toKeep);
     }
 
+    //for the observer-pattern
+    public PlayerScoreSystem getPlayerScoreSystem() {
+        return playerScoreSystem;
+    }
+
     public Entity getPlayerTank() {
         return playerTank;
     }
@@ -111,6 +195,10 @@ public class GameModel {
 
         if (knobPercentX != 0 && knobPercentY != 0) {
             spriteDirectionComponent.angle = knobAngleDeg;
+            List<Object> list = new ArrayList<>();
+            list.add(accountService.getCurrentUser().getPlayer());
+            list.add(spriteDirectionComponent);
+            client.sendTCP(list);
         }
     }
 
@@ -119,6 +207,14 @@ public class GameModel {
     }
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public Entity getAnotherPlayersTank(String playerName) {
+        return playerTanks.get(playerName);
+    }
+
+    public HashMap<String, Entity> getPlayerTanks() {
+        return this.playerTanks;
     }
 }
 

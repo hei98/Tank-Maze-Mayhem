@@ -1,5 +1,8 @@
 package com.mygdx.tank;
 
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Server;
+
 public interface AccountService {
     User getCurrentUser();
     String getCurrentUserId();
@@ -9,4 +12,6 @@ public interface AccountService {
     void signUp(String email, String password) throws Exception;
     void signOut();
     void deleteAccount() throws Exception;
+    void registerAndroidServer(Server server);
+    void registerAndroidClient(Client client);
 }
