@@ -8,9 +8,10 @@ import com.mygdx.tank.model.components.tank.HealthComponent;
 import java.util.ArrayList;
 import java.util.List;
 import com.mygdx.tank.model.components.PositionComponent;
-import com.mygdx.tank.model.states.InvulnerabilityState;
 import com.mygdx.tank.model.components.tank.PowerupStateComponent;
+import com.mygdx.tank.model.states.InvulnerabilityState;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
+import com.mygdx.tank.model.states.NormalState;
 
 public class RespawnSystem {
     private List<Entity> entities;
@@ -36,6 +37,7 @@ public class RespawnSystem {
         PositionComponent position = entity.getComponent(PositionComponent.class);
         SpriteDirectionComponent direction = entity.getComponent(SpriteDirectionComponent.class);
         if (position != null && direction != null) {
+            entity.getComponent(PowerupStateComponent.class).setState(new NormalState());
             position.resetPosition();
             direction.angle = 0;
             List<Object> list = new ArrayList<>();

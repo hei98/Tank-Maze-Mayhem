@@ -25,6 +25,9 @@ public class Scoreboard implements Observer {
         scoreboard.put(userMail.split("@")[0], 0);
     }
 
+    public Integer getPlayerScore(String playerName){
+        return scoreboard.get(playerName);
+    }
     @Override
     public void update(Player updatePlayer) {
         // Update the scoreboard based on the updated playerScore
@@ -32,7 +35,7 @@ public class Scoreboard implements Observer {
             if (player.getPlayerName().equals(updatePlayer.getPlayerName())) {
                 String userMail = updatePlayer.getUserMail();
                 String userName = userMail.split("@")[0];
-                Integer newScore = updatePlayer.getPlayerScoreComponent().getScore();
+                Integer newScore = updatePlayer.getPlayerScoreComponent().score;
 
                 scoreboard.put(userName, newScore);
 

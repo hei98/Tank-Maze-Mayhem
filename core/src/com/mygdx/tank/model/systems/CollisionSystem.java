@@ -72,6 +72,7 @@ public class CollisionSystem {
                 }
             }
         }
+
     }
     private Rectangle getBoundingBox(Entity entity) {
         PositionComponent position = entity.getComponent(PositionComponent.class);

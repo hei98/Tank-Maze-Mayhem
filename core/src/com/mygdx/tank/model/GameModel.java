@@ -135,9 +135,7 @@ public class GameModel {
         powerupSpawnSystem.update(deltaTime);
         respawnSystem.update(deltaTime);
         removeMarkedEntities();
-
     }
-
 
     public void removeMarkedEntities() {
         List<Entity> toKeep = new ArrayList<>();
@@ -164,6 +162,11 @@ public class GameModel {
         }
         entities.clear();
         entities.addAll(toKeep);
+    }
+
+    //for the observer-pattern
+    public PlayerScoreSystem getPlayerScoreSystem() {
+        return playerScoreSystem;
     }
 
     public Entity getPlayerTank() {

@@ -1,9 +1,12 @@
 package com.mygdx.tank;
 
+import static java.awt.Color.WHITE;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Gdx;
@@ -23,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
+import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.Observer;
 import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PositionComponent;
@@ -31,9 +35,9 @@ import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.mygdx.tank.screens.GameOverScreen;
 
-public class GameView {
-    private final GameModel model;
-    private final SpriteBatch spriteBatch;
+public class GameView implements ScoreObserver{
+    private GameModel model;
+    private SpriteBatch spriteBatch;
     private final Constants con;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -52,6 +56,7 @@ public class GameView {
     private TankMazeMayhem game;
     private Scoreboard scoreboard;
     private AccountService accountService;
+    private Label scoreLabel;
 
     public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
         this.model = model;
@@ -72,6 +77,11 @@ public class GameView {
         buttonStyle = new ImageButton.ImageButtonStyle();
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
+
+        BitmapFont font = new BitmapFont();
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+        scoreLabel = new Label("Score: 0", labelStyle);
+        this.model.getPlayerScoreSystem().addObserver(this);
     }
 
     public void create() {
@@ -113,6 +123,9 @@ public class GameView {
 
         controller.handleTouchpadInput(knobPercentX, knobPercentY);
 
+        //Player Score
+        String playerName = accountService.getCurrentUserEmail().split("@")[0];
+        scoreLabel.setText("Score:" + scoreboard.getPlayerScore(playerName));
         float remainingTime = countdownTime - elapsedTime;
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
@@ -146,6 +159,7 @@ public class GameView {
         map.dispose();
         renderer.dispose();
         stage.dispose();
+        model.getPlayerScoreSystem().removeObserver(this);
     }
 
     private void setButtons() {
@@ -162,8 +176,14 @@ public class GameView {
         touchpad.getColor().a = 0.5f;
         circularButton.getColor().a = 0.5f;
 
+        //scoreLabel
+        scoreLabel.setPosition(con.getSWidth()*0.9f, Gdx.graphics.getHeight()*0.9f);
+        scoreLabel.setFontScale(con.getTScaleF());
+
+
         stage.addActor(touchpad);
         stage.addActor(circularButton);
+        stage.addActor(scoreLabel);
     }
 
     private void addListeners() {
@@ -215,6 +235,15 @@ public class GameView {
                 // Draw the sprite with its set position (and rotation, if applicable)
                 sprite.draw(spriteBatch);
             }
+        }
+    }
+
+    @Override
+    public void scoreUpdated(String playerId, int newScore) {
+        if (playerId.equals(model.getPlayerTank().getComponent(PlayerComponent.class).player.getPlayerName())) {
+            Gdx.app.postRunnable(() -> {
+                scoreLabel.setText("Score: " + newScore);
+            });
         }
     }
 }

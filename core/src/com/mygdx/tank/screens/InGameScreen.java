@@ -78,6 +78,7 @@ public class InGameScreen implements Screen {
 
         stage.addActor(backButton);
         backButton.setPosition(100, 100);
+        game.startGameMusic();
 
         Gdx.input.setInputProcessor(stage);
         view.create();
@@ -111,6 +112,7 @@ public class InGameScreen implements Screen {
 
     @Override
     public void hide() {
+        game.stopGameMusic();
         stage.dispose();
     }
 
