@@ -74,7 +74,7 @@ public class InGameScreen implements Screen {
 
         model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
         controller = new GameController(model, client);
-        view = new GameView(model, controller, game, scoreboard);
+        view = new GameView(model, controller, game, accountService, scoreboard);
 
         stage.addActor(backButton);
         backButton.setPosition(100, 100);

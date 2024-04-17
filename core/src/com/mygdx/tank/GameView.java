@@ -29,6 +29,7 @@ import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.mygdx.tank.screens.GameOverScreen;
 
 public class GameView {
     private final GameModel model;
@@ -50,12 +51,14 @@ public class GameView {
     private Label countdownLabel;
     private TankMazeMayhem game;
     private Scoreboard scoreboard;
+    private AccountService accountService;
 
-    public GameView(GameModel model, GameController controller, TankMazeMayhem game, Scoreboard scoreboard) {
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
         this.model = model;
         this.controller = controller;
         this.game = game;
         this.scoreboard = scoreboard;
+        this.accountService = accountService;
         spriteBatch = new SpriteBatch();
         con = Constants.getInstance();
         touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -113,6 +116,10 @@ public class GameView {
         float remainingTime = countdownTime - elapsedTime;
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
+
+        if (remainingTime < 0) {
+            game.setScreen(new GameOverScreen(game, accountService, scoreboard));
+        }
 
         // Start batch processing
         spriteBatch.begin();
