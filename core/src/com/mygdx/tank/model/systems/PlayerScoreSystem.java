@@ -39,25 +39,17 @@ public class PlayerScoreSystem {
 
         if (tankPlayer.getPlayerName().equals(bulletPlayer.getPlayerName()) ) {
             System.out.println("Fjerner 150 poeng fra " + tankPlayer.getUserMail());
-            if (tankPlayerScoreComponent.score - 150 < 0) {
-                tankPlayerScoreComponent.score = 0;
-            } else {
-                tankPlayerScoreComponent.score -= 150;
-            }
+            tankPlayerScoreComponent.subtractPoints(150);
             System.out.println(tankPlayer.getUserMail() + " nye poeng er " + tankPlayerScoreComponent.score);
             scoreboard.update(tankPlayer);
         } else {
             System.out.println("Fjerner 50 poeng fra " + tankPlayer.getUserMail());
-            if (tankPlayerScoreComponent.score - 50 < 0) {
-                tankPlayerScoreComponent.score = 0;
-            } else {
-                tankPlayerScoreComponent.score -= 50;
-            }
+            tankPlayerScoreComponent.subtractPoints(50);
             System.out.println(tankPlayer.getUserMail() + " nye poeng er " + tankPlayerScoreComponent.score);
             scoreboard.update(tankPlayer);
 
             System.out.println("Legger til 100 poeng til " + bulletPlayer.getUserMail());
-            bulletPlayerScoreComponent.score += 100;
+            bulletPlayerScoreComponent.addPoints(100);
             System.out.println(bulletPlayer.getUserMail() + " nye poeng er " + bulletPlayerScoreComponent.score);
             scoreboard.update(bulletPlayer);
         }
