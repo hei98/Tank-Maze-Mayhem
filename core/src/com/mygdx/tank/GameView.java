@@ -105,7 +105,13 @@ public class GameView implements ScoreObserver{
         camera.setToOrtho(false, con.getSWidth(), con.getSHeight());
         camera.update();
 
-        renderer = new OrthogonalTiledMapRenderer(map, 1);
+        float mapWidth = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class);
+        float mapHeight = map.getProperties().get("height", Integer.class) * map.getProperties().get("tileheight", Integer.class);
+        float scaleFactorX = con.getSWidth() / mapWidth;
+        float scaleFactorY = con.getSHeight() / mapHeight;
+        float scaleFactor = Math.min(scaleFactorX, scaleFactorY);
+
+        renderer = new OrthogonalTiledMapRenderer(map, scaleFactor);
 
         setButtons();
         addListeners();
