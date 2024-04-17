@@ -21,7 +21,6 @@ public class GameController {
 
     public void handleFireButton() {
         model.handleShootAction();
-        System.out.println("Sender meldingen til server om at jeg skyter");
         client.sendTCP("Jeg skyter!");
     }
 }

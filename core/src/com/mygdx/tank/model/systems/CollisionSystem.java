@@ -4,11 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.tank.Player;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.components.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
+import java.util.Map;
+
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.tank.model.Entity;
@@ -33,15 +36,19 @@ public class CollisionSystem {
     private List<Entity> entities;
     private GameModel model;
     private GrantPowerupSystem grantPowerupSystem;
+    private PlayerScoreSystem playerScoreSystem;
+    private List<Player> connectedPlayers;
 
-    public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model, GrantPowerupSystem grantPowerupSystem) {
+    public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model, GrantPowerupSystem grantPowerupSystem, PlayerScoreSystem playerScoreSystem, List<Player> connectedPlayers) {
         this.map = map;
         this.entities = entities;
         this.model = model;
         this.grantPowerupSystem = grantPowerupSystem;
+        this.playerScoreSystem = playerScoreSystem;
+        this.connectedPlayers = connectedPlayers;
     }
 
-    public void update(float deltaTime) {
+    public void update(float deltaTime, List<Player> connectedPlayers) {
         for (Entity entity : entities) {
             SpeedComponent speed = entity.getComponent(SpeedComponent.class);
             if (speed != null) {
@@ -52,18 +59,19 @@ public class CollisionSystem {
                 }
             }
         }
+        this.connectedPlayers = connectedPlayers;
         processEntityCollisions();
-
-        Entity playerTank = model.getPlayerTank();
-        PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
-        if (powerupStateComponent.inPowerupMode) {
-            powerupStateComponent.timer = (powerupStateComponent.timer - deltaTime < 0) ? 0.0f : powerupStateComponent.timer - deltaTime;
-            if (powerupStateComponent.timer == 0.0f) {
-                powerupStateComponent.setState(new NormalState());
-                powerupStateComponent.getState().doAction(playerTank);
+        for (Map.Entry<String, Entity> entry : model.getPlayerTanks().entrySet()) {
+            Entity playerTank = entry.getValue();
+            PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
+            if (powerupStateComponent.inPowerupMode) {
+                powerupStateComponent.timer = (powerupStateComponent.timer - deltaTime < 0) ? 0.0f : powerupStateComponent.timer - deltaTime;
+                if (powerupStateComponent.timer == 0.0f) {
+                    powerupStateComponent.setState(new NormalState());
+                    powerupStateComponent.getState().doAction(playerTank);
+                }
             }
         }
-
     }
     private Rectangle getBoundingBox(Entity entity) {
         PositionComponent position = entity.getComponent(PositionComponent.class);
@@ -93,10 +101,8 @@ public class CollisionSystem {
 
         if (type1.type == TypeComponent.EntityType.BULLET && type2.type == TypeComponent.EntityType.TANK) {
             markBulletForRemovalAndDamageTank(e1, e2);
-            System.out.println("Entities collided: " + e1 + " with " + e2);
         } else if (type2.type == TypeComponent.EntityType.BULLET && type1.type == TypeComponent.EntityType.TANK) {
             markBulletForRemovalAndDamageTank(e2, e1);
-            System.out.println("Entities collided: " + e1 + " with " + e2);
         } else if (type1.type == TypeComponent.EntityType.POWERUP && type2.type == TypeComponent.EntityType.TANK) {
             grantPowerupSystem.givePlayertankPowerup(e2, e1);
         } else if (type2.type == TypeComponent.EntityType.POWERUP && type1.type == TypeComponent.EntityType.TANK) {
@@ -108,6 +114,9 @@ public class CollisionSystem {
         bullet.markForRemoval(true);
         HealthComponent health = tank.getComponent(HealthComponent.class);
         if (health != null) {
+            if (health.getHealth() == 1) {
+                playerScoreSystem.updateScore(bullet, tank, connectedPlayers);
+            }
             health.takeDamage();
             // Do not mark the tank for removal here; let GameModel handle it based on health status
         }
