@@ -1,7 +1,5 @@
 package com.mygdx.tank;
 
-import static java.awt.Color.WHITE;
-
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -26,8 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
-import com.mygdx.tank.model.components.PlayerComponent;
-import com.mygdx.tank.model.Observer;
 import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
@@ -35,9 +31,9 @@ import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.mygdx.tank.screens.GameOverScreen;
 
-public class GameView implements ScoreObserver{
-    private GameModel model;
-    private SpriteBatch spriteBatch;
+public class GameView{
+    private final GameModel model;
+    private final SpriteBatch spriteBatch;
     private final Constants con;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -47,16 +43,14 @@ public class GameView implements ScoreObserver{
     private Stage stage;
     private final GameController controller;
     private final Skin touchpadSkin, skin;
-    private final Texture buttonTexture;
     private final ImageButton circularButton;
-    private final ImageButton.ImageButtonStyle buttonStyle;
-    private float countdownTime = 120;
+    private final float countdownTime = 120;
     private float elapsedTime = 0;
     private Label countdownLabel;
-    private TankMazeMayhem game;
-    private Scoreboard scoreboard;
-    private AccountService accountService;
-    private Label scoreLabel;
+    private final TankMazeMayhem game;
+    private final Scoreboard scoreboard;
+    private final AccountService accountService;
+    private final Label scoreLabel;
 
     public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
         this.model = model;
@@ -67,21 +61,20 @@ public class GameView implements ScoreObserver{
         spriteBatch = new SpriteBatch();
         con = Constants.getInstance();
         touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
-        buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
+        Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
 
         // Create a skin for the circular button
         skin = new Skin();
         skin.add("circleButton", buttonTexture);
 
         // Define the style for the circular button
-        buttonStyle = new ImageButton.ImageButtonStyle();
+        ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
 
         BitmapFont font = new BitmapFont();
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         scoreLabel = new Label("Score: 0", labelStyle);
-        this.model.getPlayerScoreSystem().addObserver(this);
     }
 
     public void create() {
@@ -165,7 +158,6 @@ public class GameView implements ScoreObserver{
         map.dispose();
         renderer.dispose();
         stage.dispose();
-        model.getPlayerScoreSystem().removeObserver(this);
     }
 
     private void setButtons() {
@@ -241,15 +233,6 @@ public class GameView implements ScoreObserver{
                 // Draw the sprite with its set position (and rotation, if applicable)
                 sprite.draw(spriteBatch);
             }
-        }
-    }
-
-    @Override
-    public void scoreUpdated(String playerId, int newScore) {
-        if (playerId.equals(model.getPlayerTank().getComponent(PlayerComponent.class).player.getPlayerName())) {
-            Gdx.app.postRunnable(() -> {
-                scoreLabel.setText("Score: " + newScore);
-            });
         }
     }
 }

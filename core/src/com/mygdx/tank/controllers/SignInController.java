@@ -1,6 +1,7 @@
-package com.mygdx.tank;
+package com.mygdx.tank.controllers;
 
 import com.badlogic.gdx.Gdx;
+import com.mygdx.tank.AccountService;
 
 public class SignInController{
     private final AccountService accountService;

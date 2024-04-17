@@ -1,4 +1,6 @@
-package com.mygdx.tank;
+package com.mygdx.tank.controllers;
+
+import com.mygdx.tank.AccountService;
 
 public class SignUpController {
     private final AccountService accountService;

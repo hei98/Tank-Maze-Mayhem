@@ -1,15 +1,11 @@
 package com.mygdx.tank.screens;
 
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -25,22 +21,11 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.FirebaseInterface;
-import com.mygdx.tank.LeaderboardEntry;
 import com.mygdx.tank.Player;
 import com.mygdx.tank.TankMazeMayhem;
-import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.User;
-import com.mygdx.tank.model.Entity;
-import com.mygdx.tank.model.components.*;
-import com.mygdx.tank.model.components.tank.*;
-import com.mygdx.tank.model.components.bullet.*;
-import com.mygdx.tank.model.components.powerup.*;
-import com.mygdx.tank.model.states.*;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class InPartyScreen implements Screen {
@@ -53,14 +38,13 @@ public class InPartyScreen implements Screen {
     private Stage stage;
     private final Skin skin;
     private final TextButton backButton;
-    private Client client;
+    private final Client client;
     private List<Player> connectedPlayers = new ArrayList<>();
     private Table playersTable;
     private ScrollPane scrollPane;
     private User user;
     private boolean startGame;
     private Listener listener;
-    private Player player;
 
     public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService, Client client) {
         this.game = game;

@@ -19,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.SignUpController;
+import com.mygdx.tank.controllers.SignUpController;
 import com.mygdx.tank.TankMazeMayhem;
 
 public class SignUpScreen implements Screen {

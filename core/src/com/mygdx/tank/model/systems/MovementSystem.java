@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovementSystem {
-    private List<Entity> entities;
-    private CollisionSystem collisionSystem;
-    private Client client;
-    private AccountService accountService;
+    private final List<Entity> entities;
+    private final CollisionSystem collisionSystem;
+    private final Client client;
+    private final AccountService accountService;
 
     public MovementSystem(List<Entity> entities, CollisionSystem collisionSystem, Client client, AccountService accountService) {
         this.entities = entities;

@@ -1,11 +1,7 @@
 package com.mygdx.tank;
 
-import com.mygdx.tank.model.Observer;
 import com.mygdx.tank.model.components.PlayerScoreComponent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class Player {
 

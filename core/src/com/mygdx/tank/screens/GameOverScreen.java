@@ -43,7 +43,7 @@ public class GameOverScreen implements Screen {
     private final Skin skin;
     private Table scoreboardTable;
     private ScrollPane scrollPane;
-    private Scoreboard scoreboard;
+    private final Scoreboard scoreboard;
 
     public GameOverScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
         this.game = game;
