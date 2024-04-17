@@ -6,6 +6,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Gdx;
@@ -65,8 +66,9 @@ public class GameView implements ScoreObserver{
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
 
-        scoreLabel = new Label("Score:" + model.getPlayerTank().getComponent(PlayerComponent.class).player.getPlayerScoreComponent().getScore(), skin);
-
+        BitmapFont font = new BitmapFont();
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+        scoreLabel = new Label("Score: 0", labelStyle);
         this.model.getPlayerScoreSystem().addObserver(this);
     }
 
@@ -139,12 +141,19 @@ public class GameView implements ScoreObserver{
         circularButton.setPosition(con.getSWidth() * 0.85f, con.getSHeight() * 0.05f);
         circularButton.setSize(con.getIBSize() * 2f, con.getIBSize() * 2f);
 
+
         // Make buttons see through
         touchpad.getColor().a = 0.5f;
         circularButton.getColor().a = 0.5f;
 
+        //scoreLabel
+        scoreLabel.setPosition(con.getSWidth()*0.9f, Gdx.graphics.getHeight()*0.9f);
+        scoreLabel.setFontScale(con.getTScaleF());
+
+
         stage.addActor(touchpad);
         stage.addActor(circularButton);
+        stage.addActor(scoreLabel);
     }
 
     private void addListeners() {

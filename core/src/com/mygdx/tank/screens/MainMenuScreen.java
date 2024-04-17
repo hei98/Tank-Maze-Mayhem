@@ -40,7 +40,7 @@ public class MainMenuScreen implements Screen {
 
         multiplayerButton = new TextButton("Multiplayer", skin, "default");
         leaderboardButton = new TextButton("Leaderboard", skin, "default");
-        loginButton = new TextButton("Create User/Login", skin, "default");
+        loginButton = new TextButton("", skin, "default");
         settingsButton = new ImageButton(skin, "settings");
     }
 
@@ -51,7 +51,7 @@ public class MainMenuScreen implements Screen {
 
         setButtons();
         addListeners();
-        isLoggedIn();
+
 
         //Display the username if logged in
         font = new BitmapFont();
@@ -60,6 +60,7 @@ public class MainMenuScreen implements Screen {
         accountLabel.setFontScale(con.getTScaleF());
         stage.addActor(accountLabel);
         updateAccountLabel();
+        isLoggedIn();
 
         // Set input processor
         Gdx.input.setInputProcessor(stage);
@@ -111,6 +112,9 @@ public class MainMenuScreen implements Screen {
     private void setButtons() {
         multiplayerButton.setBounds(con.getCenterX(), con.getSHeight() * 0.6f, con.getTBWidth(), con.getTBHeight());
         multiplayerButton.getLabel().setFontScale(con.getTScaleF());
+        if(!accountService.hasUser()){
+            multiplayerButton.getColor().set(Color.DARK_GRAY);
+        }
 
         leaderboardButton.setBounds(con.getCenterX(), con.getSHeight() * 0.45f, con.getTBWidth(), con.getTBHeight());
         leaderboardButton.getLabel().setFontScale(con.getTScaleF());
@@ -134,7 +138,9 @@ public class MainMenuScreen implements Screen {
         multiplayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game, game.getFirebaseInterface(), accountService));
+                if (accountService.hasUser()){
+                    game.setScreen(new LobbyScreen(game, game.getFirebaseInterface(), accountService));
+                }
             }
         });
         settingsButton.addListener(new ClickListener() {
@@ -177,10 +183,10 @@ public class MainMenuScreen implements Screen {
         // login/logout according to user status
         Gdx.app.log("InfoTag", "Logged in? " + accountService.hasUser());
         if (accountService.hasUser()){
-            loginButton = new TextButton("Log out", skin, "default");
+            loginButton.setText("Log Out");
         }
         else{
-            loginButton = new TextButton("Create User/Login", skin, "default");
+            loginButton.setText("Create user/login");
         }
     }
 }

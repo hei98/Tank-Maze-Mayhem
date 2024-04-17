@@ -29,7 +29,7 @@ public class TankMazeMayhem extends Game {
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
-		backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/01 - Damned.mp3"));
+		backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/09 - Fortunate Son.mp3"));
 		backgroundMusic.setLooping(true);
 		backgroundMusic.play();
 
@@ -63,12 +63,9 @@ public class TankMazeMayhem extends Game {
 	public void muteMusic(boolean mute) {
 		if (backgroundMusic != null) {
 			if (mute) {
-				Gdx.app.log("InfoTag", "Music muted");
-				backgroundMusic.setVolume(0); // Mute the music
+				backgroundMusic.stop();
 			} else {
-				Gdx.app.log("InfoTag", "Music unmuted");
-
-				backgroundMusic.setVolume(1); // Restore the volume
+				backgroundMusic.play();
 			}
 		}
 	}
