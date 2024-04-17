@@ -59,8 +59,7 @@ public class PlayerScoreSystem {
             System.out.println("Fjerner 150 poeng fra " + tankPlayer.getUserMail());
             if(tankPlayerScoreComponent.score - 150 < 0){
                 tankPlayerScoreComponent.score = 0;
-            }
-            else{
+            } else{
                 tankPlayerScoreComponent.score -= 150;
             }
             System.out.println(tankPlayer.getUserMail() + " nye poeng er " + tankPlayerScoreComponent.score);
@@ -69,6 +68,8 @@ public class PlayerScoreSystem {
             System.out.println("Fjerner 50 poeng fra " + tankPlayer.getUserMail());
             if (tankPlayerScoreComponent.score - 50 < 0){
                 tankPlayerScoreComponent.score = 0;
+            } else {
+                tankPlayerScoreComponent.score -= 50;
             }
             System.out.println(tankPlayer.getUserMail() + " nye poeng er " + tankPlayerScoreComponent.score);
             scoreboard.update(tankPlayer);
