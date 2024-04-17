@@ -204,34 +204,36 @@ public class GameView{
     }
 
     private void updateEntitySprites() {
-        for (Entity entity : model.getEntities()) {
-            // Attempt to retrieve both the Sprite and Position components for the entity
-            SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
-            PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
+        synchronized (model.getEntities()) {
+            for (Entity entity : model.getEntities()) {
+                // Attempt to retrieve both the Sprite and Position components for the entity
+                SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
+                PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
 
-            // Only proceed if both Sprite and Position components are present
-            if (spriteComponent != null && positionComponent != null) {
-                // Get the sprite from the component
-                Sprite sprite = spriteComponent.getSprite();
+                // Only proceed if both Sprite and Position components are present
+                if (spriteComponent != null && positionComponent != null) {
+                    // Get the sprite from the component
+                    Sprite sprite = spriteComponent.getSprite();
 
-                // Set the sprite's position based on the entity's position
-                sprite.setPosition(positionComponent.x, positionComponent.y);
+                    // Set the sprite's position based on the entity's position
+                    sprite.setPosition(positionComponent.x, positionComponent.y);
 
-                // Attempt to retrieve the SpriteDirectionComponent, if it exists
-                SpriteDirectionComponent spriteDirectionComponent = entity.getComponent(SpriteDirectionComponent.class);
+                    // Attempt to retrieve the SpriteDirectionComponent, if it exists
+                    SpriteDirectionComponent spriteDirectionComponent = entity.getComponent(SpriteDirectionComponent.class);
 
-                // If a SpriteDirectionComponent is present, apply its angle to the sprite's rotation
-                if (spriteDirectionComponent != null) {
-                    sprite.setRotation(spriteDirectionComponent.angle);
-                } else {
-                    // If no direction component, reset rotation to default or simply do not rotate.
-                    // This line can be omitted if you want to keep the sprite's current rotation,
-                    // or if your sprites do not require resetting rotation.
-                    sprite.setRotation(0);
+                    // If a SpriteDirectionComponent is present, apply its angle to the sprite's rotation
+                    if (spriteDirectionComponent != null) {
+                        sprite.setRotation(spriteDirectionComponent.angle);
+                    } else {
+                        // If no direction component, reset rotation to default or simply do not rotate.
+                        // This line can be omitted if you want to keep the sprite's current rotation,
+                        // or if your sprites do not require resetting rotation.
+                        sprite.setRotation(0);
+                    }
+
+                    // Draw the sprite with its set position (and rotation, if applicable)
+                    sprite.draw(spriteBatch);
                 }
-
-                // Draw the sprite with its set position (and rotation, if applicable)
-                sprite.draw(spriteBatch);
             }
         }
     }

@@ -39,16 +39,19 @@ public class CollisionSystem {
     }
 
     public void update(float deltaTime, List<Player> connectedPlayers) {
-        for (Entity entity : entities) {
-            SpeedComponent speed = entity.getComponent(SpeedComponent.class);
-            if (speed != null) {
-                float deltaX = speed.speedX * deltaTime;
-                float deltaY = speed.speedY * deltaTime;
-                if (isCollisionWithWalls(entity, deltaX, deltaY)) {
-                    handleWallCollision(entity, deltaX, deltaY);
+        synchronized (entities) {
+            for (Entity entity : entities) {
+                SpeedComponent speed = entity.getComponent(SpeedComponent.class);
+                if (speed != null) {
+                    float deltaX = speed.speedX * deltaTime;
+                    float deltaY = speed.speedY * deltaTime;
+                    if (isCollisionWithWalls(entity, deltaX, deltaY)) {
+                        handleWallCollision(entity, deltaX, deltaY);
+                    }
                 }
             }
         }
+
         this.connectedPlayers = connectedPlayers;
         processEntityCollisions();
         for (Map.Entry<String, Entity> entry : model.getPlayerTanks().entrySet()) {
