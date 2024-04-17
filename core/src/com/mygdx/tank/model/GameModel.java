@@ -147,8 +147,10 @@ public class GameModel {
         entities.addAll(toKeep);
     }
 
-
-
+    //for the observer-pattern
+    public PlayerScoreSystem getPlayerScoreSystem() {
+        return playerScoreSystem;
+    }
 
     public Entity getPlayerTank() {
         return playerTank;

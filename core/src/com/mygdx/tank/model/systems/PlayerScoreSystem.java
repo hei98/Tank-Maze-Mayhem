@@ -40,15 +40,15 @@ public class PlayerScoreSystem {
 
         if (tankPlayer.player.getPlayerName().equals(bulletPlayer.player.getPlayerName()) ) {
             tankPlayerScoreComponent.subtractPoints(150);
-            notifyObservers(accountService.getCurrentUserEmail(), tankPlayerScoreComponent.getScore());
+            notifyObservers(tankPlayer.player.getPlayerName(), tankPlayerScoreComponent.getScore());
         }
         else if (tankPlayer.player.getPlayerName().equals(accountService.getCurrentUser().getPlayer().getPlayerName())){
             tankPlayerScoreComponent.subtractPoints(50);
-            notifyObservers(accountService.getCurrentUserEmail(), tankPlayerScoreComponent.getScore());
+            notifyObservers(tankPlayer.player.getPlayerName(), tankPlayerScoreComponent.getScore());
         }
         else if (bulletPlayer.player.getPlayerName().equals(accountService.getCurrentUser().getPlayer().getPlayerName())){
             bulletPlayerScoreComponent.addPoints(100);
-            notifyObservers(accountService.getCurrentUserEmail(), bulletPlayerScoreComponent.getScore());
+            notifyObservers(bulletPlayer.player.getPlayerName(), bulletPlayerScoreComponent.getScore());
         }
         Gdx.app.log("InfoTag", accountService.getCurrentUserEmail() + " has a score of " + accountService.getCurrentUser().getPlayer().getPlayerScoreComponent().getScore());
     }

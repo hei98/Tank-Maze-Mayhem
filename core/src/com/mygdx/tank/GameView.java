@@ -1,5 +1,7 @@
 package com.mygdx.tank;
 
+import static java.awt.Color.WHITE;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,12 +25,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
+import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
-public class GameView {
+public class GameView implements ScoreObserver{
     private GameModel model;
     private SpriteBatch spriteBatch;
     private final Constants con;
@@ -62,7 +65,9 @@ public class GameView {
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
 
+        scoreLabel = new Label("Score:" + model.getPlayerTank().getComponent(PlayerComponent.class).player.getPlayerScoreComponent().getScore(), skin);
 
+        this.model.getPlayerScoreSystem().addObserver(this);
     }
 
     public void create() {
@@ -121,6 +126,7 @@ public class GameView {
         map.dispose();
         renderer.dispose();
         stage.dispose();
+        model.getPlayerScoreSystem().removeObserver(this);
     }
 
     private void setButtons() {
@@ -190,6 +196,15 @@ public class GameView {
                 // Draw the sprite with its set position (and rotation, if applicable)
                 sprite.draw(spriteBatch);
             }
+        }
+    }
+
+    @Override
+    public void scoreUpdated(String playerId, int newScore) {
+        if (playerId.equals(model.getPlayerTank().getComponent(PlayerComponent.class).player.getPlayerName())) {
+            Gdx.app.postRunnable(() -> {
+                scoreLabel.setText("Score: " + newScore);
+            });
         }
     }
 }

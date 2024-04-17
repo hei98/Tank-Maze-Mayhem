@@ -128,14 +128,14 @@ public class SettingsScreen implements Screen {
         soundControl.getImageCell().expand().fill();
         soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
 
-       /* soundControl.addListener(new ClickListener() {
+        soundControl.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("InfoTag", "MuteButton pressed");
                 boolean isPlaying = game.isMusicPlaying();
                 game.muteMusic(isPlaying);
             }
-        });*/
+        });
 
         stage.addActor(soundControl);
 
