@@ -29,6 +29,7 @@ import com.mygdx.tank.TankMazeMayhem;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.User;
 import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.bullet.*;
@@ -93,6 +94,9 @@ public class CreateGameScreen implements Screen {
         server.getKryo().register(Player.class);
         server.getKryo().register(PowerUpTypeComponent.class);
         server.getKryo().register(PowerUpTypeComponent.PowerupType.class);
+        server.getKryo().register(PlayerScoreComponent.class);
+        server.getKryo().register(Scoreboard.class);
+        server.getKryo().register(Object.class);
 
         server.addListener(new Listener() {
             @Override
@@ -128,6 +132,9 @@ public class CreateGameScreen implements Screen {
         client.getKryo().register(Player.class);
         client.getKryo().register(PowerUpTypeComponent.class);
         client.getKryo().register(PowerUpTypeComponent.PowerupType.class);
+        client.getKryo().register(PlayerScoreComponent.class);
+        client.getKryo().register(Scoreboard.class);
+        client.getKryo().register(Object.class);
 
         listener = new Listener() {
             @Override

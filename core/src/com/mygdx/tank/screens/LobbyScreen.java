@@ -24,6 +24,8 @@ import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.Player;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.Scoreboard;
+import com.mygdx.tank.model.components.PlayerScoreComponent;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
@@ -178,6 +180,9 @@ public class LobbyScreen implements Screen {
                 client.getKryo().register(Player.class);
                 client.getKryo().register(PowerUpTypeComponent.class);
                 client.getKryo().register(PowerUpTypeComponent.PowerupType.class);
+                client.getKryo().register(PlayerScoreComponent.class);
+                client.getKryo().register(Scoreboard.class);
+                client.getKryo().register(Object.class);
 
                 String IPaddress = IPaddressField.getText();
                 int port = Integer.parseInt(portField.getText());

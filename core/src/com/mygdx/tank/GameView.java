@@ -23,6 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
+import com.mygdx.tank.model.Observer;
+import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
@@ -47,11 +49,13 @@ public class GameView {
     private float elapsedTime = 0;
     private Label countdownLabel;
     private TankMazeMayhem game;
+    private Scoreboard scoreboard;
 
-    public GameView(GameModel model, GameController controller, TankMazeMayhem game) {
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, Scoreboard scoreboard) {
         this.model = model;
         this.controller = controller;
         this.game = game;
+        this.scoreboard = scoreboard;
         spriteBatch = new SpriteBatch();
         con = Constants.getInstance();
         touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
