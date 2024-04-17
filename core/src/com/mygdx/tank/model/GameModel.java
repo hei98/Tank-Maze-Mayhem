@@ -98,7 +98,9 @@ public class GameModel {
                         for (Player player1 : connectedPlayers) {
                             if (player1.getPlayerName().equals(player.getPlayerName())) {
                                 Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, player1);
-                                entities.add(bullet);
+                                synchronized (entities) {
+                                    entities.add(bullet);
+                                }
                                 break;
                             }
                         }
@@ -110,7 +112,9 @@ public class GameModel {
                         float positionY = (Float) list.get(2);
                         PowerupFactory powerupFactory = new PowerupFactory();
                         Entity powerUp = powerupFactory.createSpecificPowerup(powerUpType, positionX, positionY);
-                        entities.add(powerUp);
+                        synchronized (entities) {
+                            entities.add(powerUp);
+                        }
                     }
                 }
             }
@@ -139,29 +143,31 @@ public class GameModel {
 
     public void removeMarkedEntities() {
         List<Entity> toKeep = new ArrayList<>();
-        for (Entity entity : entities) {
-            if (entity.isMarkedForRemoval()) {
-                TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
-                if (typeComponent != null) {
-                    switch (typeComponent.type) {
-                        case TANK:
-                            HealthComponent healthComponent = entity.getComponent(HealthComponent.class);
-                            if (healthComponent != null && !healthComponent.isAlive()) {
-                                respawnSystem.respawn(entity);
-                                continue;
-                            }
-                            break;
-                        case POWERUP:
-                            powerupSpawnSystem.powerupRemoved();
-                            break;
+        synchronized (entities) {
+            for (Entity entity : entities) {
+                if (entity.isMarkedForRemoval()) {
+                    TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
+                    if (typeComponent != null) {
+                        switch (typeComponent.type) {
+                            case TANK:
+                                HealthComponent healthComponent = entity.getComponent(HealthComponent.class);
+                                if (healthComponent != null && !healthComponent.isAlive()) {
+                                    respawnSystem.respawn(entity);
+                                    continue;
+                                }
+                                break;
+                            case POWERUP:
+                                powerupSpawnSystem.powerupRemoved();
+                                break;
+                        }
                     }
+                } else {
+                    toKeep.add(entity);
                 }
-            } else {
-                toKeep.add(entity);
             }
+            entities.clear();
+            entities.addAll(toKeep);
         }
-        entities.clear();
-        entities.addAll(toKeep);
     }
 
     //for the observer-pattern
