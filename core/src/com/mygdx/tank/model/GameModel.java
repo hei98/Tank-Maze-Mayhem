@@ -13,6 +13,7 @@ import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.Player;
 import com.mygdx.tank.User;
+import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
@@ -112,6 +113,16 @@ public class GameModel {
                         Entity powerUp = powerupFactory.createSpecificPowerup(powerUpType, positionX, positionY);
                         synchronized (entities) {
                             entities.add(powerUp);
+                        }
+                    }
+                } else if (object instanceof String) {
+                    String playerName = (String) object;
+                    for (Entity entity : entities)  {
+                        PlayerComponent playerComponent = entity.getComponent(PlayerComponent.class);
+                        if (playerComponent != null) {
+                            if (playerComponent.player.getPlayerName().equals(playerName)) {
+                                entity.markForRemoval(true);
+                            }
                         }
                     }
                 }
@@ -215,6 +226,10 @@ public class GameModel {
 
     public HashMap<String, Entity> getPlayerTanks() {
         return this.playerTanks;
+    }
+
+    public void playerDisconnected(String playerName) {
+        client.sendTCP(playerName);
     }
 }
 

@@ -16,10 +16,13 @@
     import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
     import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
     import com.badlogic.gdx.utils.Align;
+    import com.esotericsoftware.kryonet.Client;
+    import com.esotericsoftware.kryonet.Server;
     import com.mygdx.tank.AccountService;
     import com.mygdx.tank.Constants;
     import com.mygdx.tank.GameView;
     import com.mygdx.tank.TankMazeMayhem;
+    import com.mygdx.tank.model.GameModel;
     import com.mygdx.tank.model.Scoreboard;
 
     import java.util.ArrayList;
@@ -33,8 +36,8 @@
         private final TankMazeMayhem game;
         private final AccountService accountService;
         private final GameView view;
-        private final Constants con;
-        private final Texture background;
+        private Constants con;
+        private Texture background;
         private Stage stage;
         private TextButton exitGameButton;
         private Button closeButton;
@@ -42,26 +45,39 @@
         private Table scoreboardTable;
         private ScrollPane scrollPane;
         private final Scoreboard scoreboard;
+        private Client client;
+        private Server server;
+        private GameModel model;
 
 
-        public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view) {
+        public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Server server) {
             this.game = game;
             this.accountService = accountService;
             this.scoreboard = scoreboard;
             this.view = view;
-            con = Constants.getInstance();
-            background = new Texture("Backgrounds/orange.png");
-            exitGameButton = new TextButton("Exit Game", con.getSkin());
-            closeButton = new Button(con.getSkin(), "close");
+            this.server = server;
+        }
+
+        public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Client client, GameModel model) {
+            this.game = game;
+            this.accountService = accountService;
+            this.scoreboard = scoreboard;
+            this.view = view;
+            this.client = client;
+            this.model = model;
         }
 
         @Override
         public void show() {
             // Clear the screen
-            Gdx.gl.glClearColor(1, 0, 0, 1);
+            Gdx.gl.glClearColor(0, 0, 0, 1);
 
             stage = new Stage();
             batch = new SpriteBatch();
+            con = Constants.getInstance();
+            background = new Texture("Backgrounds/orange.png");
+            exitGameButton = new TextButton("Exit Game", con.getSkin());
+            closeButton = new Button(con.getSkin(), "close");
 
             Image backgroundImage = new Image(background);
             backgroundImage.setBounds(con.getSWidth() * 0.2f, con.getSHeight() * 0.1f, con.getSWidth() * 0.6f, con.getSHeight() * 0.8f);
@@ -154,6 +170,12 @@
             exitGameButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    if (client != null) {
+                        model.playerDisconnected(accountService.getCurrentUser().getPlayer().getPlayerName());
+                        client.close();
+                    } else if (server != null) {
+                        server.close();
+                    }
                     game.setScreen(new MainMenuScreen(game, accountService));
                 }
             });

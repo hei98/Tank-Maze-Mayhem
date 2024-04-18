@@ -70,7 +70,7 @@ public class InGameScreen implements Screen {
         if (server != null) {
             view = new GameView(model, controller, game, accountService, scoreboard, server);
         } else {
-            view = new GameView(model, controller, game, accountService, scoreboard);
+            view = new GameView(model, controller, game, accountService, scoreboard, client);
         }
 
         stage.addActor(backButton);

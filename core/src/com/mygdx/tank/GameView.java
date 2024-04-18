@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
@@ -56,15 +57,17 @@ public class GameView{
     private final AccountService accountService;
     private Label scoreLabel;
     private Server server;
+    private Client client;
     private InGameMenuScreen inGameMenuScreen;
     private boolean isMenuVisible;
 
-    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Client client) {
         this.model = model;
         this.controller = controller;
         this.game = game;
         this.scoreboard = scoreboard;
         this.accountService = accountService;
+        this.client = client;
     }
 
     public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Server server) {
@@ -104,7 +107,12 @@ public class GameView{
         scoreLabel = new Label("Score: 0", labelStyle);
 
         // Initiate in game menu screen and ensure it is hidden
-        inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this);
+        if (client != null) {
+            inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this, client, model);
+        } else {
+            inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this, server);
+        }
+
         isMenuVisible = false;
 
         countdownLabel = new Label("", labelStyle);

@@ -52,6 +52,7 @@ public class CreateGameScreen implements Screen {
     private ScrollPane scrollPane;
     private User user;
     private Listener listener;
+    private Listener serverListener;
 
     public CreateGameScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
@@ -115,7 +116,7 @@ public class CreateGameScreen implements Screen {
             }
         });
 
-        server.addListener(new Listener() {
+        serverListener = new Listener() {
             @Override
             public void disconnected(Connection connection) {
                 int lastConnection = (int) connectedPlayers.keySet().toArray()[connectedPlayers.size() - 1];
@@ -148,7 +149,9 @@ public class CreateGameScreen implements Screen {
                 populatePlayerTable(connectedPlayersList);
                 server.sendToAllTCP(connectedPlayersList);
             }
-        });
+        };
+
+        server.addListener(serverListener);
 
         client = new Client();
         client.start();
@@ -265,6 +268,7 @@ public class CreateGameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 client.removeListener(listener);
+                server.removeListener(serverListener);
                 client.sendTCP("GameStart");
                 List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
                 game.setScreen(new InGameScreen(game, accountService, client, connectedPlayersList, server));
