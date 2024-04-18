@@ -7,6 +7,7 @@
     import com.badlogic.gdx.graphics.g2d.SpriteBatch;
     import com.badlogic.gdx.scenes.scene2d.InputEvent;
     import com.badlogic.gdx.scenes.scene2d.Stage;
+    import com.badlogic.gdx.scenes.scene2d.ui.Image;
     import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
     import com.badlogic.gdx.scenes.scene2d.ui.Label;
     import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -28,17 +29,17 @@
     import java.util.Map;
 
     public class InGameMenuScreen implements Screen {
-        private TankMazeMayhem game;
+        private final TankMazeMayhem game;
         private final AccountService accountService;
-        private GameView view;
-        private Constants con;
-        private Texture background;
+        private final GameView view;
+        private final Constants con;
+        private final Texture background;
         private Stage stage;
-        private TextButton backButton;
+        private final TextButton backButton;
         private SpriteBatch batch;
         private Table scoreboardTable;
         private ScrollPane scrollPane;
-        private Scoreboard scoreboard;
+        private final Scoreboard scoreboard;
 
 
         public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view) {
@@ -49,7 +50,6 @@
             con = Constants.getInstance();
             background = new Texture("Backgrounds/orange.png");
             backButton = new TextButton("Close", con.getSkin());
-
         }
 
         @Override
@@ -59,6 +59,10 @@
 
             stage = new Stage();
             batch = new SpriteBatch();
+
+            Image backgroundImage = new Image(background);
+            backgroundImage.setBounds(con.getSWidth() * 0.2f, con.getSHeight() * 0.1f, con.getSWidth() * 0.6f, con.getSHeight() * 0.8f);
+            stage.addActor(backgroundImage);
 
             setButtons();
             createHeadline();
@@ -72,10 +76,6 @@
         @Override
         public void render(float delta) {
             Gdx.gl.glClearColor(0, 0, 0, 1);
-
-            batch.begin();
-            batch.draw(background, con.getSWidth() * 0.2f, con.getSHeight() * 0.1f, con.getSWidth() * 0.6f, con.getSHeight() * 0.8f);
-            batch.end();
 
             // Update and render the stage
             stage.act();
@@ -99,14 +99,12 @@
 
         @Override
         public void hide() {
-            background.dispose();
             stage.dispose();
             batch.dispose();
         }
 
         @Override
         public void dispose() {
-            background.dispose();
             stage.dispose();
             batch.dispose();
         }
@@ -142,8 +140,7 @@
             backButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    // Need to go back to the current game and close and dispose menuscreen
-                    dispose();
+                    view.toggleMenu();
                 }
             });
         }
@@ -165,10 +162,7 @@
             soundControl.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    Gdx.app.log("InfoTag", "MuteButton pressed");
-                    boolean isPlaying = game.isMusicPlaying();
-                    Gdx.app.log("InfoTag", "isPlaying?" + isPlaying);
-                    game.muteMusic(isPlaying);
+                    game.muteGameMusic(game.isGameMusicPlaying());
                 }
             });
             stage.addActor(soundControl);

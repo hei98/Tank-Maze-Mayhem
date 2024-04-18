@@ -12,8 +12,8 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.screens.MainMenuScreen;
 
 public class TankMazeMayhem extends Game {
-	private AccountService accountService;
-    private FirebaseInterface firebaseInterface;
+	private final AccountService accountService;
+    private final FirebaseInterface firebaseInterface;
     private GameModel model;
     private GameView view;
     private GameController controller;
@@ -70,9 +70,23 @@ public class TankMazeMayhem extends Game {
 		}
 	}
 
+	public void muteGameMusic(boolean mute) {
+		if (gameMusic != null) {
+			if (mute) {
+				gameMusic.stop();
+			} else {
+				gameMusic.play();
+			}
+		}
+    }
+
 	public boolean isMusicPlaying() {
 		return backgroundMusic != null && backgroundMusic.isPlaying();
 	}
+	public boolean isGameMusicPlaying() {
+		return gameMusic.isPlaying();
+	}
+
 	public void startGameMusic() {
 		if (backgroundMusic.isPlaying()) {
 			backgroundMusic.stop();
