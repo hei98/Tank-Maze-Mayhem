@@ -223,7 +223,7 @@ public class CreateGameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 client.removeListener(listener);
                 client.sendTCP("GameStart");
-                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayers));
+                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayers, server));
             }
         });
     }
