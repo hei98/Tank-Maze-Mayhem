@@ -48,7 +48,7 @@ public class GameView{
     private final GameController controller;
     private Skin touchpadSkin, skin;
     private ImageButton circularButton;
-    private final float countdownTime = 20;
+    private final float countdownTime = 120;
     private float elapsedTime = 0;
     private Label countdownLabel;
     private final TankMazeMayhem game;
