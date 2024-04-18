@@ -7,6 +7,7 @@
     import com.badlogic.gdx.graphics.g2d.SpriteBatch;
     import com.badlogic.gdx.scenes.scene2d.InputEvent;
     import com.badlogic.gdx.scenes.scene2d.Stage;
+    import com.badlogic.gdx.scenes.scene2d.ui.Button;
     import com.badlogic.gdx.scenes.scene2d.ui.Image;
     import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
     import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -35,7 +36,8 @@
         private final Constants con;
         private final Texture background;
         private Stage stage;
-        private final TextButton backButton;
+        private TextButton exitGameButton;
+        private Button closeButton;
         private SpriteBatch batch;
         private Table scoreboardTable;
         private ScrollPane scrollPane;
@@ -49,7 +51,8 @@
             this.view = view;
             con = Constants.getInstance();
             background = new Texture("Backgrounds/orange.png");
-            backButton = new TextButton("Close", con.getSkin());
+            exitGameButton = new TextButton("Exit Game", con.getSkin());
+            closeButton = new Button(con.getSkin(), "close");
         }
 
         @Override
@@ -110,12 +113,17 @@
         }
 
         private void setButtons() {
-            backButton.setSize(con.getTBWidth(), con.getTBHeight());
-            backButton.setPosition(con.getCenterTB(), con.getSHeight() * 0.12f);
-            backButton.getLabel().setFontScale(con.getTScaleF());
-            backButton.getColor().set(Color.BLACK);
+            closeButton.setSize(con.getIBSize(), con.getIBSize());
+            closeButton.setPosition(con.getSWidth() * 0.73f, con.getSHeight() * 0.78f);
+            closeButton.getColor().set(Color.RED);
 
-            stage.addActor(backButton);
+            exitGameButton.setSize(con.getTBWidth(), con.getTBHeight());
+            exitGameButton.getLabel().setFontScale(con.getTScaleF());
+            exitGameButton.setPosition(con.getCenterTB(), con.getSHeight() * 0.12f);
+            exitGameButton.getColor().set(Color.BLACK);
+
+            stage.addActor(closeButton);
+            stage.addActor(exitGameButton);
         }
 
         private void createHeadline() {
@@ -137,10 +145,16 @@
         }
 
         private void addListeners() {
-            backButton.addListener(new ClickListener() {
+            closeButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     view.toggleMenu();
+                }
+            });
+            exitGameButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    game.setScreen(new MainMenuScreen(game, accountService));
                 }
             });
         }
