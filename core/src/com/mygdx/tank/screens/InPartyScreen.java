@@ -76,7 +76,6 @@ public class InPartyScreen implements Screen {
                     if (connectedPlayers.size() == 0) {
                         @SuppressWarnings("unchecked")
                         List<Player> receivedPlayers = (List<Player>) object;
-                        System.out.println(receivedPlayers);
                         connectedPlayers = receivedPlayers;
                         createPlayersTable();
 
@@ -101,6 +100,10 @@ public class InPartyScreen implements Screen {
                         connectedPlayers = receivedPlayers;
                         populatePlayerTable(connectedPlayers);
                     }
+                } else if (object instanceof Player) {
+                    Player player = (Player) object;
+                    user = accountService.getCurrentUser();
+                    user.getPlayer().setPlayerName(player.getPlayerName());
                 }
             }
         };
