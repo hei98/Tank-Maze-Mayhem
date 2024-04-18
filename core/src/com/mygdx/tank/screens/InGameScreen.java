@@ -29,6 +29,9 @@ public class InGameScreen implements Screen {
     private Client client;
     private Stage stage;
     private List<Player> connectedPlayers;
+    private GameView view;
+    private GameModel model;
+    private GameController controller;
 
     public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers) {
         this.game = game;
@@ -36,13 +39,6 @@ public class InGameScreen implements Screen {
         this.client = client;
         this.connectedPlayers = connectedPlayers;
     }
-
-    private GameView view;
-    private GameModel model;
-    private GameController controller;
-    private boolean tutorialShown = false;
-
-
 
     @Override
     public void show() {

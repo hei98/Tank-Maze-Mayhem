@@ -31,29 +31,31 @@ import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.mygdx.tank.screens.GameOverScreen;
+import com.mygdx.tank.screens.InGameMenuScreen;
 
 public class GameView implements ScoreObserver{
-    private GameModel model;
-    private SpriteBatch spriteBatch;
+    private final GameModel model;
+    private final SpriteBatch spriteBatch;
     private final Constants con;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private float knobPercentX, knobPercentY;
     private Touchpad touchpad;
-    private Stage stage;
+    private Stage gameStage;
     private final GameController controller;
-    private final Skin touchpadSkin, skin;
+    private final Skin skin, circularButtonSkin;
     private final Texture buttonTexture;
-    private final ImageButton circularButton;
+    private final ImageButton circularButton, menuButton;
     private final ImageButton.ImageButtonStyle buttonStyle;
     private float countdownTime = 120;
     private float elapsedTime = 0;
     private Label countdownLabel;
-    private TankMazeMayhem game;
-    private Scoreboard scoreboard;
-    private AccountService accountService;
-    private Label scoreLabel;
+    private final TankMazeMayhem game;
+    private final Scoreboard scoreboard;
+    private final AccountService accountService;
+    private final Label scoreLabel;
+    private InGameMenuScreen inGameMenuScreen;
     private boolean isMenuVisible;
 
     public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
@@ -63,24 +65,29 @@ public class GameView implements ScoreObserver{
         this.scoreboard = scoreboard;
         this.accountService = accountService;
         spriteBatch = new SpriteBatch();
+        gameStage = new Stage();
         con = Constants.getInstance();
-        touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
         buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
 
         // Create a skin for the circular button
-        skin = new Skin();
-        skin.add("circleButton", buttonTexture);
+        circularButtonSkin = new Skin();
+        circularButtonSkin.add("circleButton", buttonTexture);
 
-        // Define the style for the circular button
+        // Define the buttons and style
         buttonStyle = new ImageButton.ImageButtonStyle();
+        menuButton = new ImageButton(skin, "settings");
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
-        isMenuVisible = false;
 
         BitmapFont font = new BitmapFont();
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         scoreLabel = new Label("Score: 0", labelStyle);
         this.model.getPlayerScoreSystem().addObserver(this);
+
+        // Initiate in game menu screen and ensure it is hidden
+        inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this);
+        isMenuVisible = false;
     }
 
     public void create() {
@@ -91,19 +98,18 @@ public class GameView implements ScoreObserver{
             map = new TmxMapLoader().load("TiledMap/Map2.tmx");
         }
 
-        stage = new Stage();
-
-        Label.LabelStyle labelStyle = new Label.LabelStyle(touchpadSkin.getFont("font"), Color.WHITE);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
         countdownLabel = new Label("", labelStyle);
         countdownLabel.setPosition(con.getSWidth() * 0.5f, con.getSHeight() * 0.95f);
         countdownLabel.setFontScale(con.getTScaleF());
-        stage.addActor(countdownLabel);
+        gameStage.addActor(countdownLabel);
 
         // Initialize the camera with the screen's width and height
         camera = new OrthographicCamera();
         camera.setToOrtho(false, con.getSWidth(), con.getSHeight());
         camera.update();
 
+        // Tried to scale the map to fit all screens, but the map will only fit certain screens
         float mapWidth = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class);
         float mapHeight = map.getProperties().get("height", Integer.class) * map.getProperties().get("tileheight", Integer.class);
         float scaleFactorX = con.getSWidth() / mapWidth;
@@ -112,18 +118,16 @@ public class GameView implements ScoreObserver{
 
         renderer = new OrthogonalTiledMapRenderer(map, scaleFactor);
 
-        setButtons();
+        setButtonsLabelTouchPad();
         addListeners();
-        Gdx.input.setInputProcessor(stage);
+
+        Gdx.input.setInputProcessor(gameStage);
     }
 
     public void render() {
+        renderGame();
         if (isMenuVisible) {
-            // Menu screen is visible
             renderMenuScreen();
-        } else {
-            // Game is visible
-            renderGame();
         }
     }
 
@@ -135,32 +139,39 @@ public class GameView implements ScoreObserver{
         spriteBatch.dispose();
         map.dispose();
         renderer.dispose();
-        stage.dispose();
+        gameStage.dispose();
         model.getPlayerScoreSystem().removeObserver(this);
+        inGameMenuScreen.dispose();
     }
 
-    private void setButtons() {
+    private void setButtonsLabelTouchPad() {
         knobPercentX = 0.0f;
         knobPercentY = 0.0f;
 
-        touchpad = new Touchpad(5f, touchpadSkin);
+        touchpad = new Touchpad(5f, skin);
         touchpad.setBounds(con.getSWidth() * 0.05f, con.getSHeight() * 0.05f, con.getIBSize() * 2f, con.getIBSize() * 2f);
 
         circularButton.setPosition(con.getSWidth() * 0.85f, con.getSHeight() * 0.05f);
         circularButton.setSize(con.getIBSize() * 2f, con.getIBSize() * 2f);
 
+        menuButton.setSize(con.getIBSize(), con.getIBSize());
+        menuButton.getImageCell().expand().fill();
+        menuButton.setPosition(con.getSWidth() * 0.01f, con.getSHeight() * 0.98f - menuButton.getHeight());
+
         // Make buttons see through
         touchpad.getColor().a = 0.5f;
         circularButton.getColor().a = 0.5f;
+        menuButton.getColor().a = 0.5f;
 
         //scoreLabel
         scoreLabel.setPosition(con.getSWidth()*0.9f, Gdx.graphics.getHeight()*0.9f);
         scoreLabel.setFontScale(con.getTScaleF());
 
 
-        stage.addActor(touchpad);
-        stage.addActor(circularButton);
-        stage.addActor(scoreLabel);
+        gameStage.addActor(touchpad);
+        gameStage.addActor(circularButton);
+        gameStage.addActor(scoreLabel);
+        gameStage.addActor(menuButton);
     }
 
     private void addListeners() {
@@ -178,6 +189,14 @@ public class GameView implements ScoreObserver{
             public void clicked(InputEvent event, float x, float y) {
                 // Handle button click event here
                 controller.handleFireButton();
+            }
+        });
+        menuButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Handle button click event here
+                inGameMenuScreen.show();
+                isMenuVisible = true;
             }
         });
     }
@@ -257,15 +276,12 @@ public class GameView implements ScoreObserver{
         // End batch processing
         spriteBatch.end();
 
-        stage.act();
-        stage.draw();
+        gameStage.act();
+        gameStage.draw();
     }
 
-    public void renderMenuScreen() {
+    private void renderMenuScreen() {
         // Render the in menu screen
-    }
-
-    public void toggleMenuIsVisible() {
-        isMenuVisible = !isMenuVisible;
+        inGameMenuScreen.render(Gdx.graphics.getDeltaTime());
     }
 }
