@@ -123,7 +123,7 @@ public class LeaderboardScreen implements Screen {
 
     private void createHeadline() {
         Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
-        Label headlineLabel = new Label("Leaderboard", headlineStyle);
+        Label headlineLabel = new Label("Leaderboard (Top 5)", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
@@ -191,7 +191,8 @@ public class LeaderboardScreen implements Screen {
                     return Integer.compare(o2.getScore(), o1.getScore());
                 }
             });
-            populateLeaderBoardTable(entries);
+            ArrayList<LeaderboardEntry> topFiveEntries = new ArrayList<>(entries.subList(0, Math.min(entries.size(), 5)));
+            populateLeaderBoardTable(topFiveEntries);
         });
     }
 
@@ -199,6 +200,8 @@ public class LeaderboardScreen implements Screen {
         leaderboardTable.clearChildren();
         float columnWidth = scrollPane.getWidth() / 2f - 10f;
         for (LeaderboardEntry entry : entries) {
+            System.out.println(entry.getUsername());
+            System.out.println(entry.getScore());
             Label nameLabel = new Label(entry.getUsername(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
             Label scoreLabel = new Label(String.valueOf(entry.getScore()), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
 

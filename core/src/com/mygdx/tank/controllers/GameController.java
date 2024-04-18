@@ -21,7 +21,6 @@ public class GameController {
 
     public void handleFireButton() {
         model.handleShootAction();
-        client.sendTCP("Jeg skyter!");
     }
 }
 
