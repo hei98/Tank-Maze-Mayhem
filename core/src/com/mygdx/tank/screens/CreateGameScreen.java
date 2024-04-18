@@ -101,10 +101,8 @@ public class CreateGameScreen implements Screen {
                     if (connectedPlayers.size() != 0) {
                         Player lastPlayer = (Player) connectedPlayers.values().toArray()[connectedPlayers.size() - 1];
                         String lastPlayerName = lastPlayer.getPlayerName();
-                        System.out.println(lastPlayerName);
                         int lastPlayerNumber = Integer.parseInt(lastPlayerName.substring(lastPlayerName.length() -1 ));
                         String newUsername = "Player" + (lastPlayerNumber + 1);
-                        System.out.println(newUsername + "has been given to the new connected Player");
                         Player player = (Player) object;
                         player.setPlayerName(newUsername);
                         connectedPlayers.put(connection.getID(), player);
@@ -119,8 +117,6 @@ public class CreateGameScreen implements Screen {
         server.addListener(new Listener() {
             @Override
             public void disconnected(Connection connection) {
-
-                /*[  [  1, Player1  ],   [  3, Player2  ],    [  2, Player3  ]    ] */
                 int lastConnection = (int) connectedPlayers.keySet().toArray()[connectedPlayers.size() - 1];
                 if (lastConnection != connection.getID()) {
                     List<Map.Entry<Integer, Player>> entryList = new ArrayList<>(connectedPlayers.entrySet());
@@ -146,11 +142,6 @@ public class CreateGameScreen implements Screen {
                     }
                 }
                 connectedPlayers.remove(connection.getID());
-
-                System.out.println("HashMap content:");
-                for (Map.Entry<Integer, Player> entry : connectedPlayers.entrySet()) {
-                    System.out.println(entry.getKey() + " : " + entry.getValue().getPlayerName());
-                }
 
                 List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
                 populatePlayerTable(connectedPlayersList);
