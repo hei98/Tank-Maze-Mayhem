@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
@@ -36,8 +37,8 @@ import java.util.Map;
 
 public class GameView{
     private final GameModel model;
-    private final SpriteBatch spriteBatch;
-    private final Constants con;
+    private SpriteBatch spriteBatch;
+    private Constants con;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
@@ -45,15 +46,16 @@ public class GameView{
     private Touchpad touchpad;
     private Stage stage;
     private final GameController controller;
-    private final Skin touchpadSkin, skin;
-    private final ImageButton circularButton;
-    private final float countdownTime = 120;
+    private Skin touchpadSkin, skin;
+    private ImageButton circularButton;
+    private final float countdownTime = 20;
     private float elapsedTime = 0;
     private Label countdownLabel;
     private final TankMazeMayhem game;
     private final Scoreboard scoreboard;
     private final AccountService accountService;
-    private final Label scoreLabel;
+    private Label scoreLabel;
+    private Server server;
 
     public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
         this.model = model;
@@ -61,6 +63,26 @@ public class GameView{
         this.game = game;
         this.scoreboard = scoreboard;
         this.accountService = accountService;
+    }
+
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Server server) {
+        this.model = model;
+        this.controller = controller;
+        this.game = game;
+        this.scoreboard = scoreboard;
+        this.accountService = accountService;
+        this.server = server;
+    }
+
+    public void create() {
+        // Can remove the first map later since we only run on android
+        if (Gdx.app.getType() == ApplicationType.Desktop) {
+            map = new TmxMapLoader().load("TiledMap/Map.tmx");
+        } else {
+            map = new TmxMapLoader().load("TiledMap/Map2.tmx");
+        }
+
+        stage = new Stage();
         spriteBatch = new SpriteBatch();
         con = Constants.getInstance();
         touchpadSkin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
@@ -78,19 +100,7 @@ public class GameView{
         BitmapFont font = new BitmapFont();
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         scoreLabel = new Label("Score: 0", labelStyle);
-    }
 
-    public void create() {
-        // Can remove the first map later since we only run on android
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            map = new TmxMapLoader().load("TiledMap/Map.tmx");
-        } else {
-            map = new TmxMapLoader().load("TiledMap/Map2.tmx");
-        }
-
-        stage = new Stage();
-
-        Label.LabelStyle labelStyle = new Label.LabelStyle(touchpadSkin.getFont("font"), Color.WHITE);
         countdownLabel = new Label("", labelStyle);
         countdownLabel.setPosition(con.getSWidth() * 0.5f, con.getSHeight() * 0.95f);
         countdownLabel.setFontScale(con.getTScaleF());
@@ -139,6 +149,10 @@ public class GameView{
                 Integer score = entry.getValue();
                 game.getFirebaseInterface().updateLeaderboard(userName, score);
             }
+            if (server != null) {
+                server.close();
+            }
+
             game.setScreen(new GameOverScreen(game, accountService, scoreboard));
         }
 
