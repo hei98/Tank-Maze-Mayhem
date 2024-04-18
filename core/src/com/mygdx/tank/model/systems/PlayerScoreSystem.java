@@ -1,41 +1,19 @@
 package com.mygdx.tank.model.systems;
 
-import com.badlogic.gdx.Gdx;
-import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Player;
-import com.mygdx.tank.ScoreObserver;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.PlayerScoreComponent;
 
-import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class PlayerScoreSystem {
-    private AccountService accountService;
-    private List<ScoreObserver> observers = new ArrayList<>();
-    private Scoreboard scoreboard;
+    private final Scoreboard scoreboard;
 
-    public PlayerScoreSystem(AccountService accountService, Scoreboard scoreboard) {
-        this.accountService = accountService;
+    public PlayerScoreSystem(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
-    }
-    public void addObserver(ScoreObserver observer) {
-        observers.add(observer);
-    }
-
-    public void removeObserver(ScoreObserver observer) {
-        observers.remove(observer);
-    }
-
-    private void notifyObservers(String playerId, int newScore) {
-        for (ScoreObserver observer : observers) {
-            observer.scoreUpdated(playerId, newScore);
-        }
     }
 
 
@@ -59,8 +37,7 @@ public class PlayerScoreSystem {
             System.out.println("Fjerner 150 poeng fra " + tankPlayer.getUserMail());
             if(tankPlayerScoreComponent.score - 150 < 0){
                 tankPlayerScoreComponent.score = 0;
-            }
-            else{
+            } else{
                 tankPlayerScoreComponent.score -= 150;
             }
             System.out.println(tankPlayer.getUserMail() + " nye poeng er " + tankPlayerScoreComponent.score);
@@ -69,6 +46,8 @@ public class PlayerScoreSystem {
             System.out.println("Fjerner 50 poeng fra " + tankPlayer.getUserMail());
             if (tankPlayerScoreComponent.score - 50 < 0){
                 tankPlayerScoreComponent.score = 0;
+            } else {
+                tankPlayerScoreComponent.score -= 50;
             }
             System.out.println(tankPlayer.getUserMail() + " nye poeng er " + tankPlayerScoreComponent.score);
             scoreboard.update(tankPlayer);

@@ -16,7 +16,6 @@ import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.TypeComponent;
-import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.mygdx.tank.model.systems.CollisionSystem;
@@ -26,29 +25,28 @@ import com.mygdx.tank.model.systems.ShootingSystem;
 import com.mygdx.tank.model.systems.PlayerScoreSystem;
 import com.mygdx.tank.model.systems.*;
 import com.mygdx.tank.model.components.tank.HealthComponent;
-import com.mygdx.tank.model.states.InvulnerabilityState;
-import com.mygdx.tank.model.components.tank.PowerupStateComponent;
+
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
 public class GameModel {
-    private List<Entity> entities;
-    private PlayerScoreSystem playerScoreSystem;
-    private MovementSystem movementSystem;
-    private ShootingSystem shootingSystem;
-    private CollisionSystem collisionSystem;
-    private PowerupSpawnSystem powerupSpawnSystem;
-    private RespawnSystem respawnSystem;
-    private GrantPowerupSystem grantPowerupSystem;
+    private final List<Entity> entities;
+    private final PlayerScoreSystem playerScoreSystem;
+    private final MovementSystem movementSystem;
+    private final ShootingSystem shootingSystem;
+    private final CollisionSystem collisionSystem;
+    private final PowerupSpawnSystem powerupSpawnSystem;
+    private final RespawnSystem respawnSystem;
+    private final GrantPowerupSystem grantPowerupSystem;
     private Entity playerTank;
-    private TiledMap map;
-    private EntityFactory tankFactory;
-    private Client client;
-    private List<Player> connectedPlayers;
-    private AccountService accountService;
-    private HashMap<String, Entity> playerTanks = new HashMap<>();
+    private final TiledMap map;
+    private final EntityFactory tankFactory;
+    private final Client client;
+    private final List<Player> connectedPlayers;
+    private final AccountService accountService;
+    private final HashMap<String, Entity> playerTanks = new HashMap<>();
 
     public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
         this.connectedPlayers = connectedPlayers;
@@ -98,7 +96,9 @@ public class GameModel {
                         for (Player player1 : connectedPlayers) {
                             if (player1.getPlayerName().equals(player.getPlayerName())) {
                                 Entity bullet = BulletFactory.createBullet(bulletStartX, bulletStartY, directionX, directionY, player1);
-                                entities.add(bullet);
+                                synchronized (entities) {
+                                    entities.add(bullet);
+                                }
                                 break;
                             }
                         }
@@ -110,7 +110,9 @@ public class GameModel {
                         float positionY = (Float) list.get(2);
                         PowerupFactory powerupFactory = new PowerupFactory();
                         Entity powerUp = powerupFactory.createSpecificPowerup(powerUpType, positionX, positionY);
-                        entities.add(powerUp);
+                        synchronized (entities) {
+                            entities.add(powerUp);
+                        }
                     }
                 }
             }
@@ -119,7 +121,7 @@ public class GameModel {
         String mapPath = (Gdx.app.getType() == Application.ApplicationType.Desktop) ? "TiledMap/Map.tmx" : "TiledMap/Map2.tmx";
         map = new TmxMapLoader().load(mapPath);
 
-        playerScoreSystem = new PlayerScoreSystem(accountService, scoreboard);
+        playerScoreSystem = new PlayerScoreSystem(scoreboard);
         grantPowerupSystem = new GrantPowerupSystem();
         collisionSystem = new CollisionSystem(map, entities, this, grantPowerupSystem, playerScoreSystem, connectedPlayers);
         movementSystem = new MovementSystem(entities, collisionSystem, client, accountService);
@@ -139,35 +141,33 @@ public class GameModel {
 
     public void removeMarkedEntities() {
         List<Entity> toKeep = new ArrayList<>();
-        for (Entity entity : entities) {
-            if (entity.isMarkedForRemoval()) {
-                TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
-                if (typeComponent != null) {
-                    switch (typeComponent.type) {
-                        case TANK:
-                            HealthComponent healthComponent = entity.getComponent(HealthComponent.class);
-                            if (healthComponent != null && !healthComponent.isAlive()) {
-                                respawnSystem.respawn(entity);
-                                continue;
-                            }
-                            break;
-                        case POWERUP:
-                            powerupSpawnSystem.powerupRemoved();
-                            break;
+        synchronized (entities) {
+            for (Entity entity : entities) {
+                if (entity.isMarkedForRemoval()) {
+                    TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
+                    if (typeComponent != null) {
+                        switch (typeComponent.type) {
+                            case TANK:
+                                HealthComponent healthComponent = entity.getComponent(HealthComponent.class);
+                                if (healthComponent != null && !healthComponent.isAlive()) {
+                                    respawnSystem.respawn(entity);
+                                    continue;
+                                }
+                                break;
+                            case POWERUP:
+                                powerupSpawnSystem.powerupRemoved();
+                                break;
+                        }
                     }
+                } else {
+                    toKeep.add(entity);
                 }
-            } else {
-                toKeep.add(entity);
             }
+            entities.clear();
+            entities.addAll(toKeep);
         }
-        entities.clear();
-        entities.addAll(toKeep);
     }
 
-    //for the observer-pattern
-    public PlayerScoreSystem getPlayerScoreSystem() {
-        return playerScoreSystem;
-    }
 
     public Entity getPlayerTank() {
         return playerTank;

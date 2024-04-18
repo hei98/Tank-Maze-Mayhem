@@ -7,14 +7,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.tank.Player;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
-import com.mygdx.tank.model.components.*;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import java.util.List;
 import java.util.Map;
-
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.components.bullet.BounceComponent;
 import com.mygdx.tank.model.components.bullet.CollisionSideComponent;
 import com.mygdx.tank.model.components.PositionComponent;
@@ -22,21 +16,17 @@ import com.mygdx.tank.model.components.SpeedComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.bullet.CollisionSide;
-import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 import com.mygdx.tank.model.components.tank.PowerupStateComponent;
-import com.mygdx.tank.model.states.MinigunState;
 import com.mygdx.tank.model.states.NormalState;
-import com.mygdx.tank.model.states.PowerupState;
-import com.mygdx.tank.model.states.ShieldState;
-import com.mygdx.tank.model.states.SpeedState;
+
 
 public class CollisionSystem {
-    private TiledMap map;
-    private List<Entity> entities;
-    private GameModel model;
-    private GrantPowerupSystem grantPowerupSystem;
-    private PlayerScoreSystem playerScoreSystem;
+    private final TiledMap map;
+    private final List<Entity> entities;
+    private final GameModel model;
+    private final GrantPowerupSystem grantPowerupSystem;
+    private final PlayerScoreSystem playerScoreSystem;
     private List<Player> connectedPlayers;
 
     public CollisionSystem(TiledMap map, List<Entity> entities, GameModel model, GrantPowerupSystem grantPowerupSystem, PlayerScoreSystem playerScoreSystem, List<Player> connectedPlayers) {
@@ -49,16 +39,19 @@ public class CollisionSystem {
     }
 
     public void update(float deltaTime, List<Player> connectedPlayers) {
-        for (Entity entity : entities) {
-            SpeedComponent speed = entity.getComponent(SpeedComponent.class);
-            if (speed != null) {
-                float deltaX = speed.speedX * deltaTime;
-                float deltaY = speed.speedY * deltaTime;
-                if (isCollisionWithWalls(entity, deltaX, deltaY)) {
-                    handleWallCollision(entity, deltaX, deltaY);
+        synchronized (entities) {
+            for (Entity entity : entities) {
+                SpeedComponent speed = entity.getComponent(SpeedComponent.class);
+                if (speed != null) {
+                    float deltaX = speed.speedX * deltaTime;
+                    float deltaY = speed.speedY * deltaTime;
+                    if (isCollisionWithWalls(entity, deltaX, deltaY)) {
+                        handleWallCollision(entity, deltaX, deltaY);
+                    }
                 }
             }
         }
+
         this.connectedPlayers = connectedPlayers;
         processEntityCollisions();
         for (Map.Entry<String, Entity> entry : model.getPlayerTanks().entrySet()) {
@@ -144,8 +137,8 @@ public class CollisionSystem {
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Walls");
         for (int y = (int) nextBoundingBox.y; y < nextBoundingBox.y + nextBoundingBox.height; y++) {
             for (int x = (int) nextBoundingBox.x; x < nextBoundingBox.x + nextBoundingBox.width; x++) {
-                int tileX = Math.floorDiv(x, (int) collisionLayer.getTileWidth());
-                int tileY = Math.floorDiv(y, (int) collisionLayer.getTileHeight());
+                int tileX = Math.floorDiv(x, collisionLayer.getTileWidth());
+                int tileY = Math.floorDiv(y, collisionLayer.getTileHeight());
                 TiledMapTileLayer.Cell cell = collisionLayer.getCell(tileX, tileY);
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey("blocked")) {
                     if (typeComponent != null && typeComponent.type == TypeComponent.EntityType.BULLET) {

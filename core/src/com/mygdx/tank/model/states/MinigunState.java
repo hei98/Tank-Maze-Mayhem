@@ -4,8 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.components.SpeedComponent;
-import com.mygdx.tank.model.components.SpriteComponent;
-import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
+
 import com.mygdx.tank.model.components.tank.HealthComponent;
 import com.mygdx.tank.model.components.tank.PowerupStateComponent;
 import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;

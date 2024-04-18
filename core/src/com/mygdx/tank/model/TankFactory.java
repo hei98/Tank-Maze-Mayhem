@@ -21,21 +21,29 @@ public class TankFactory implements EntityFactory {
 
         tank.addComponent(new SpeedComponent(300));
 
-        if (player.getPlayerName().equals("Player1")) {
-            tank.addComponent(new PositionComponent(0.0f, 0.0f));
-            tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
-        } else if (player.getPlayerName().equals("Player2")) {
-            Sprite tempSprite = new Sprite(new Texture("images/tank_orange.png"));
-            tank.addComponent(new PositionComponent(Constants.getInstance().getSWidth() - tempSprite.getWidth(), 0.0f));
-            tank.addComponent(new SpriteComponent("images/tank_orange.png"));
-        } else if (player.getPlayerName().equals("Player3")) {
-            Sprite tempSprite = new Sprite(new Texture("images/tank_blue5.png"));
-            tank.addComponent(new PositionComponent(Constants.getInstance().getSWidth() - tempSprite.getWidth(), Constants.getInstance().getSHeight() - tempSprite.getHeight()));
-            tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
-        } else if (player.getPlayerName().equals("Player4")) {
-            Sprite tempSprite = new Sprite(new Texture("images/tank_blue5.png"));
-            tank.addComponent(new PositionComponent(0, Constants.getInstance().getSHeight() - tempSprite.getHeight()));
-            tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
+        switch (player.getPlayerName()) {
+            case "Player1":
+                tank.addComponent(new PositionComponent(0.0f, 0.0f));
+                tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
+                break;
+            case "Player2": {
+                Sprite tempSprite = new Sprite(new Texture("images/tank_orange.png"));
+                tank.addComponent(new PositionComponent(Constants.getInstance().getSWidth() - tempSprite.getWidth(), 0.0f));
+                tank.addComponent(new SpriteComponent("images/tank_orange.png"));
+                break;
+            }
+            case "Player3": {
+                Sprite tempSprite = new Sprite(new Texture("images/tank_blue5.png"));
+                tank.addComponent(new PositionComponent(Constants.getInstance().getSWidth() - tempSprite.getWidth(), Constants.getInstance().getSHeight() - tempSprite.getHeight()));
+                tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
+                break;
+            }
+            case "Player4": {
+                Sprite tempSprite = new Sprite(new Texture("images/tank_blue5.png"));
+                tank.addComponent(new PositionComponent(0, Constants.getInstance().getSHeight() - tempSprite.getHeight()));
+                tank.addComponent(new SpriteComponent("images/tank_blue5.png"));
+                break;
+            }
         }
 
         Sprite sprite = tank.getComponent(SpriteComponent.class).getSprite();

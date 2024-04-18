@@ -14,9 +14,9 @@ import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.mygdx.tank.model.states.NormalState;
 
 public class RespawnSystem {
-    private List<Entity> entities;
-    private AccountService accountService;
-    private Client client;
+    private final List<Entity> entities;
+    private final AccountService accountService;
+    private final Client client;
 
     public RespawnSystem(List<Entity> entities, AccountService accountService, Client client) {
         this.entities = entities;
