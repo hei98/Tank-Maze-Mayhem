@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
@@ -37,8 +38,8 @@ import java.util.Map;
 
 public class GameView{
     private final GameModel model;
-    private final SpriteBatch spriteBatch;
-    private final Constants con;
+    private SpriteBatch spriteBatch;
+    private Constants con;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
@@ -46,18 +47,16 @@ public class GameView{
     private Touchpad touchpad;
     private Stage gameStage;
     private final GameController controller;
-    private final Skin circularButtonSkin;
-    private final Texture buttonTexture;
-    private final ImageButton circularButton, menuButton;
-    private final ImageButton.ImageButtonStyle buttonStyle;
-    private float countdownTime = 120;
+    private ImageButton circularButton, menuButton;
+    private final float countdownTime = 120;
     private float elapsedTime = 0;
     private Label countdownLabel;
     private final TankMazeMayhem game;
     private final Scoreboard scoreboard;
     private final AccountService accountService;
-    private final Label scoreLabel;
-    private final InGameMenuScreen inGameMenuScreen;
+    private Server server;
+    private Label scoreLabel;
+    private InGameMenuScreen inGameMenuScreen;
     private boolean isMenuVisible;
 
     public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
@@ -66,17 +65,36 @@ public class GameView{
         this.game = game;
         this.scoreboard = scoreboard;
         this.accountService = accountService;
-        spriteBatch = new SpriteBatch();
+    }
+
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Server server) {
+        this.model = model;
+        this.controller = controller;
+        this.game = game;
+        this.scoreboard = scoreboard;
+        this.accountService = accountService;
+        this.server = server;
+    }
+
+    public void create() {
+        // Can remove the first map later since we only run on android
+        if (Gdx.app.getType() == ApplicationType.Desktop) {
+            map = new TmxMapLoader().load("TiledMap/Map.tmx");
+        } else {
+            map = new TmxMapLoader().load("TiledMap/Map2.tmx");
+        }
+
         gameStage = new Stage();
+        spriteBatch = new SpriteBatch();
         con = Constants.getInstance();
-        buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
+        Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
 
         // Create a skin for the circular button
-        circularButtonSkin = new Skin();
+        Skin circularButtonSkin = new Skin();
         circularButtonSkin.add("circleButton", buttonTexture);
 
         // Define the buttons and style
-        buttonStyle = new ImageButton.ImageButtonStyle();
+        ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
         menuButton = new ImageButton(con.getSkin(), "settings");
         buttonStyle.up = new TextureRegionDrawable(buttonTexture);
         circularButton = new ImageButton(buttonStyle);
@@ -88,17 +106,7 @@ public class GameView{
         // Initiate in game menu screen and ensure it is hidden
         inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this);
         isMenuVisible = false;
-    }
 
-    public void create() {
-        // Can remove the first map later since we only run on android
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            map = new TmxMapLoader().load("TiledMap/Map.tmx");
-        } else {
-            map = new TmxMapLoader().load("TiledMap/Map2.tmx");
-        }
-
-        Label.LabelStyle labelStyle = new Label.LabelStyle(con.getSkin().getFont("font"), Color.WHITE);
         countdownLabel = new Label("", labelStyle);
         countdownLabel.setPosition(con.getSWidth() * 0.5f, con.getSHeight() * 0.95f);
         countdownLabel.setFontScale(con.getTScaleF());
@@ -238,7 +246,6 @@ public class GameView{
     }
 
     public void renderGame() {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         elapsedTime += Gdx.graphics.getDeltaTime();
 
@@ -261,6 +268,9 @@ public class GameView{
                 String userName = entry.getKey();
                 Integer score = entry.getValue();
                 game.getFirebaseInterface().updateLeaderboard(userName, score);
+            }
+            if (server != null) {
+                server.close();
             }
             game.setScreen(new GameOverScreen(game, accountService, scoreboard));
         }

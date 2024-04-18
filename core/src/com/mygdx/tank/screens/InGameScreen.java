@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Player;
 import com.mygdx.tank.controllers.GameController;
@@ -25,6 +26,7 @@ public class InGameScreen implements Screen {
     private final Client client;
     private Stage stage;
     private final List<Player> connectedPlayers;
+    private Server server;
     private GameView view;
     private GameModel model;
     private GameController controller;
@@ -34,6 +36,14 @@ public class InGameScreen implements Screen {
         this.accountService = accountService;
         this.client = client;
         this.connectedPlayers = connectedPlayers;
+    }
+
+    public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers, Server server) {
+        this.game = game;
+        this.accountService = accountService;
+        this.client = client;
+        this.connectedPlayers = connectedPlayers;
+        this.server = server;
     }
 
     @Override
@@ -57,7 +67,11 @@ public class InGameScreen implements Screen {
 
         model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
         controller = new GameController(model, client);
-        view = new GameView(model, controller, game, accountService, scoreboard);
+        if (server != null) {
+            view = new GameView(model, controller, game, accountService, scoreboard, server);
+        } else {
+            view = new GameView(model, controller, game, accountService, scoreboard);
+        }
 
         stage.addActor(backButton);
         backButton.setPosition(100, 100);
