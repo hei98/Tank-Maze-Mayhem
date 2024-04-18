@@ -135,7 +135,7 @@ public class CreateGameScreen implements Screen {
 
         client.addListener(listener);
         try {
-            client.connect(5000, "10.0.2.16", 54555);
+            client.connect(5000, "localhost", 54555);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

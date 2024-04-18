@@ -54,8 +54,8 @@ public class GameView{
     private final TankMazeMayhem game;
     private final Scoreboard scoreboard;
     private final AccountService accountService;
-    private Server server;
     private Label scoreLabel;
+    private Server server;
     private InGameMenuScreen inGameMenuScreen;
     private boolean isMenuVisible;
 
@@ -246,6 +246,7 @@ public class GameView{
     }
 
     public void renderGame() {
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         elapsedTime += Gdx.graphics.getDeltaTime();
 

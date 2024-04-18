@@ -115,7 +115,7 @@
         private void setButtons() {
             closeButton.setSize(con.getIBSize(), con.getIBSize());
             closeButton.setPosition(con.getSWidth() * 0.73f, con.getSHeight() * 0.78f);
-            closeButton.getColor().set(Color.RED);
+            closeButton.getColor().set(Color.BLACK);
 
             exitGameButton.setSize(con.getTBWidth(), con.getTBHeight());
             exitGameButton.getLabel().setFontScale(con.getTScaleF());
