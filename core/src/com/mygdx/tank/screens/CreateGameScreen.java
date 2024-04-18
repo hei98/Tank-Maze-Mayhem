@@ -98,8 +98,10 @@ public class CreateGameScreen implements Screen {
                     server.sendToAllExceptTCP(connection.getID(), list);
                 } else if (object instanceof Player) {
                     if (connectedPlayers.size() != 0) {
-                        String lastPlayerName = connectedPlayers.entrySet().iterator().next().getValue().getPlayerName();
-                        int lastPlayerNumber = (int) lastPlayerName.charAt(connectedPlayers.size() - 1);
+                        Player lastPlayer = (Player) connectedPlayers.values().toArray()[connectedPlayers.size() - 1];
+                        String lastPlayerName = lastPlayer.getPlayerName();
+                        System.out.println(lastPlayerName);
+                        int lastPlayerNumber = Integer.parseInt(lastPlayerName.substring(lastPlayerName.length() -1 ));
                         String newUsername = "Player" + (lastPlayerNumber + 1);
                         System.out.println(newUsername + "has been given to the new connected Player");
                         Player player = (Player) object;
