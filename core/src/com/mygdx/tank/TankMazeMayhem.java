@@ -70,9 +70,23 @@ public class TankMazeMayhem extends Game {
 		}
 	}
 
+	public void muteGameMusic(boolean mute) {
+		if (gameMusic != null) {
+			if (mute) {
+				gameMusic.stop();
+			} else {
+				gameMusic.play();
+			}
+		}
+    }
+
 	public boolean isMusicPlaying() {
 		return backgroundMusic != null && backgroundMusic.isPlaying();
 	}
+	public boolean isGameMusicPlaying() {
+		return gameMusic.isPlaying();
+	}
+
 	public void startGameMusic() {
 		if (backgroundMusic.isPlaying()) {
 			backgroundMusic.stop();

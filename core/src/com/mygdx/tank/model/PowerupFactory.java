@@ -28,13 +28,13 @@ public class PowerupFactory implements EntityFactory {
         powerup.addComponent(new PowerUpTypeComponent(randomPowerupType));
 
         List<float[]> possibleSpawnpoints = new ArrayList<>();
-        possibleSpawnpoints.add(new float[]{0.05f, 0.3f});
+        possibleSpawnpoints.add(new float[]{0.03f, 0.3f});
         possibleSpawnpoints.add(new float[]{0.9f, 0.45f});
         possibleSpawnpoints.add(new float[]{0.25f, 0.5f});
         possibleSpawnpoints.add(new float[]{0.25f, 0.9f});
         possibleSpawnpoints.add(new float[]{0.6f, 0.4f});
-        possibleSpawnpoints.add(new float[]{0.48f, 0.05f});
-        possibleSpawnpoints.add(new float[]{0.71f, 0.3f});
+        possibleSpawnpoints.add(new float[]{0.52f, 0.05f});
+        possibleSpawnpoints.add(new float[]{0.76f, 0.3f});
 
         float[] spawnPoint = possibleSpawnpoints.get(new Random().nextInt(possibleSpawnpoints.size()));
         float x = spawnPoint[0] * con.getSWidth();

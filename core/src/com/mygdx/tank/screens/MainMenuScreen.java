@@ -139,7 +139,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (accountService.hasUser()){
-                    game.setScreen(new TutorialScreen(game, new LobbyScreen(game, game.getFirebaseInterface(), accountService), accountService));;
+                    game.setScreen(new TutorialScreen(game, new LobbyScreen(game, game.getFirebaseInterface(), accountService), accountService));
                 }
             }
         });
