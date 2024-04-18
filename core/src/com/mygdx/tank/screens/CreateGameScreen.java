@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CreateGameScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
@@ -118,7 +119,39 @@ public class CreateGameScreen implements Screen {
         server.addListener(new Listener() {
             @Override
             public void disconnected(Connection connection) {
+
+                /*[  [  1, Player1  ],   [  3, Player2  ],    [  2, Player3  ]    ] */
+                int lastConnection = (int) connectedPlayers.keySet().toArray()[connectedPlayers.size() - 1];
+                if (lastConnection != connection.getID()) {
+                    List<Map.Entry<Integer, Player>> entryList = new ArrayList<>(connectedPlayers.entrySet());
+                    int index = 0;
+                    for (int i = 0; i < entryList.size(); i++) {
+                        Map.Entry<Integer, Player> entry = entryList.get(i);
+                        if (entry.getKey() == connection.getID()) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    for (int i = 0; i < entryList.size(); i++) {
+                        if (i > index) {
+                            Map.Entry<Integer, Player> entry = entryList.get(i);
+
+                            Player player = entry.getValue();
+                            String oldPlayerName = player.getPlayerName();
+                            int lastPlayerNumber = Integer.parseInt(oldPlayerName.substring(oldPlayerName.length() -1 ));
+                            String newPlayerName = "Player" + (lastPlayerNumber - 1);
+                            player.setPlayerName(newPlayerName);
+                            server.sendToTCP(entry.getKey(), player);
+                        }
+                    }
+                }
                 connectedPlayers.remove(connection.getID());
+
+                System.out.println("HashMap content:");
+                for (Map.Entry<Integer, Player> entry : connectedPlayers.entrySet()) {
+                    System.out.println(entry.getKey() + " : " + entry.getValue().getPlayerName());
+                }
+
                 List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
                 populatePlayerTable(connectedPlayersList);
                 server.sendToAllTCP(connectedPlayersList);

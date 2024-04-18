@@ -101,6 +101,11 @@ public class InPartyScreen implements Screen {
                         connectedPlayers = receivedPlayers;
                         populatePlayerTable(connectedPlayers);
                     }
+                } else if (object instanceof Player) {
+                    Player player = (Player) object;
+                    System.out.println("Ditt oppdaterte navn er " + player.getPlayerName());
+                    user = accountService.getCurrentUser();
+                    user.getPlayer().setPlayerName(player.getPlayerName());
                 }
             }
         };
