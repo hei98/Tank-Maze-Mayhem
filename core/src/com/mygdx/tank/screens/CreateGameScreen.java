@@ -28,6 +28,7 @@ import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.powerup.*;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -176,7 +177,8 @@ public class CreateGameScreen implements Screen {
 
         client.addListener(listener);
         try {
-            client.connect(5000, "localhost", 54555);
+            InetAddress IP = InetAddress.getLocalHost();
+            client.connect(5000, IP.getHostAddress(), 54555);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
