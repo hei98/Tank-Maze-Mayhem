@@ -30,6 +30,7 @@ import com.mygdx.tank.model.components.powerup.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class CreateGameScreen implements Screen {
@@ -44,7 +45,7 @@ public class CreateGameScreen implements Screen {
     private final TextButton backButton, startGameButton;
     private Server server;
     private Client client;
-    private final List<Player> connectedPlayers = new ArrayList<>();
+    private final LinkedHashMap<Integer, Player> connectedPlayers = new LinkedHashMap<>();
     private Table playersTable;
     private ScrollPane scrollPane;
     private User user;
@@ -97,14 +98,28 @@ public class CreateGameScreen implements Screen {
                     server.sendToAllExceptTCP(connection.getID(), list);
                 } else if (object instanceof Player) {
                     if (connectedPlayers.size() != 0) {
-                        String newUsername = "Player" + (connectedPlayers.size() + 1);
+                        String lastPlayerName = connectedPlayers.entrySet().iterator().next().getValue().getPlayerName();
+                        int lastPlayerNumber = (int) lastPlayerName.charAt(connectedPlayers.size() - 1);
+                        String newUsername = "Player" + (lastPlayerNumber + 1);
+                        System.out.println(newUsername + "has been given to the new connected Player");
                         Player player = (Player) object;
                         player.setPlayerName(newUsername);
-                        connectedPlayers.add(player);
-                        populatePlayerTable(connectedPlayers);
-                        server.sendToAllTCP(connectedPlayers);
+                        connectedPlayers.put(connection.getID(), player);
+                        List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
+                        populatePlayerTable(connectedPlayersList);
+                        server.sendToAllTCP(connectedPlayersList);
                     }
                 }
+            }
+        });
+
+        server.addListener(new Listener() {
+            @Override
+            public void disconnected(Connection connection) {
+                connectedPlayers.remove(connection.getID());
+                List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
+                populatePlayerTable(connectedPlayersList);
+                server.sendToAllTCP(connectedPlayersList);
             }
         });
 
@@ -142,7 +157,7 @@ public class CreateGameScreen implements Screen {
 
         user = accountService.getCurrentUser();
         Player player = new Player("Player1", user.getUserMail());
-        connectedPlayers.add(player);
+        connectedPlayers.put(1, player);
         user.setPlayer(player);
 
         setButtons();
@@ -223,7 +238,8 @@ public class CreateGameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 client.removeListener(listener);
                 client.sendTCP("GameStart");
-                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayers, server));
+                List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
+                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayersList, server));
             }
         });
     }
@@ -257,8 +273,8 @@ public class CreateGameScreen implements Screen {
         scrollPane.setPosition(playersTable.getX(), con.getSHeight() - orangeBoxStartY - orangeBoxHeight);
 
         stage.addActor(scrollPane);
-
-        populatePlayerTable(connectedPlayers);
+        List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
+        populatePlayerTable(connectedPlayersList);
     }
 
     private void populatePlayerTable(List<Player> players) {
