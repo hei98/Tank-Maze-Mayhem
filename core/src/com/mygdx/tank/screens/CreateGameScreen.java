@@ -30,12 +30,15 @@ import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.powerup.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.net.NetworkInterface;
 
 public class CreateGameScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
@@ -292,6 +295,26 @@ public class CreateGameScreen implements Screen {
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
 
+        String ip = "";
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (((Enumeration<?>) interfaces).hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                // filters out 127.0.0.1 and inactive interfaces
+                if (iface.isLoopback() || !iface.isUp())
+                    continue;
+
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while(addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+                    ip = addr.getHostAddress();
+                    System.out.println(iface.getDisplayName() + " " + ip);
+                }
+            }
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Dette er din ip: " + ip);
         InetAddress IP = InetAddress.getLocalHost();
         Label label;
         if (IP.getHostAddress().equals("127.0.0.1")) {
