@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.esotericsoftware.kryonet.Client;
 import com.mygdx.tank.AccountService;
+import com.mygdx.tank.MusicManager;
 import com.mygdx.tank.Player;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.GameModel;
@@ -23,6 +24,7 @@ public class InGameScreen implements Screen {
     private final AccountService accountService;
     private final Client client;
     private Stage stage;
+    private MusicManager musicManager;
     private final List<Player> connectedPlayers;
 
     public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers) {
@@ -71,7 +73,7 @@ public class InGameScreen implements Screen {
 
         stage.addActor(backButton);
         backButton.setPosition(100, 100);
-        game.startGameMusic();
+        game.getMusicManager().startGameMusic();
 
         Gdx.input.setInputProcessor(stage);
         view.create();
@@ -105,7 +107,7 @@ public class InGameScreen implements Screen {
 
     @Override
     public void hide() {
-        game.stopGameMusic();
+        game.getMusicManager().stopGameMusic();
         stage.dispose();
     }
 
