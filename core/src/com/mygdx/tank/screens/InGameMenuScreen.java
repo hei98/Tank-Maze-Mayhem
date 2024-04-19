@@ -21,6 +21,7 @@
     import com.mygdx.tank.AccountService;
     import com.mygdx.tank.Constants;
     import com.mygdx.tank.GameView;
+    import com.mygdx.tank.MusicManager;
     import com.mygdx.tank.TankMazeMayhem;
     import com.mygdx.tank.model.GameModel;
     import com.mygdx.tank.model.Scoreboard;
@@ -48,6 +49,7 @@
         private Client client;
         private Server server;
         private GameModel model;
+        private MusicManager musicManager;
 
 
         public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Server server) {
@@ -56,6 +58,7 @@
             this.scoreboard = scoreboard;
             this.view = view;
             this.server = server;
+            this.musicManager = game.getMusicManager();
         }
 
         public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Client client, GameModel model) {
@@ -193,12 +196,14 @@
             soundControl.setSize(con.getIBSize(), con.getIBSize());
             soundControl.getImageCell().expand().fill();
             soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.75f) - soundLabel.getPrefHeight());
-            soundControl.toggle(); //For visual correctness
+            if(musicManager.isGameMusicPlaying()){
+                soundControl.toggle(); //For visual correctness
+            }
 
             soundControl.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    game.muteGameMusic(game.isGameMusicPlaying());
+                    musicManager.muteGameMusic(musicManager.isGameMusicPlaying());
                 }
             });
             stage.addActor(soundControl);
