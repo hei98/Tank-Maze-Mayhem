@@ -22,6 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
@@ -31,6 +33,7 @@ import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.mygdx.tank.screens.GameCrashedScreen;
 import com.mygdx.tank.screens.GameOverScreen;
 import com.mygdx.tank.screens.InGameMenuScreen;
 
@@ -59,7 +62,11 @@ public class GameView{
     private Server server;
     private Client client;
     private InGameMenuScreen inGameMenuScreen;
+    private GameCrashedScreen gameCrashedScreen;
     private boolean isMenuVisible;
+    private boolean gameCrashed = false;
+    private String currentTime;
+    private boolean renderedCrashedScreen = false;
 
     public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Client client) {
         this.model = model;
@@ -106,9 +113,17 @@ public class GameView{
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         scoreLabel = new Label("Score: 0", labelStyle);
 
+        gameCrashedScreen = new GameCrashedScreen(game, accountService);
+
         // Initiate in game menu screen and ensure it is hidden
         if (client != null) {
             inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this, client, model);
+            client.addListener(new Listener() {
+                @Override
+                public void disconnected(Connection connection) {
+                    gameCrashed = true;
+                }
+            });
         } else {
             inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this, server);
         }
@@ -144,6 +159,12 @@ public class GameView{
         renderGame();
         if (isMenuVisible) {
             renderMenuScreen();
+        } else if (gameCrashed) {
+            if (!renderedCrashedScreen) {
+                gameCrashedScreen.show();
+                renderedCrashedScreen = true;
+            }
+            gameCrashedScreen.render(Gdx.graphics.getDeltaTime());
         }
     }
 
@@ -271,7 +292,7 @@ public class GameView{
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
 
-        if (remainingTime < 0) {
+        if (remainingTime < 0 && !gameCrashed) {
             HashMap<String, Integer> scores = scoreboard.getScoreboard();
             for (Map.Entry<String, Integer> entry : scores.entrySet()) {
                 String userName = entry.getKey();
@@ -289,7 +310,10 @@ public class GameView{
 
         updateEntitySprites();
         String timerText = String.format("%02d:%02d", minutes, seconds);
-        countdownLabel.setText(timerText);
+        if (!gameCrashed) {
+            currentTime = timerText;
+        }
+        countdownLabel.setText(currentTime);
 
         // End batch processing
         spriteBatch.end();
