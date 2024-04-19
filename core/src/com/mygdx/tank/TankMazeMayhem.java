@@ -20,6 +20,7 @@ public class TankMazeMayhem extends Game {
 	private Music backgroundMusic, gameMusic;
 	private FPSLogger fpsLogger;
     SpriteBatch batch;
+	private boolean showTutorial;
 
 	public TankMazeMayhem(FirebaseInterface firebaseInterface, AccountService accountService) {
 		this.firebaseInterface = firebaseInterface;
@@ -34,6 +35,8 @@ public class TankMazeMayhem extends Game {
 		backgroundMusic.play();
 
 		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/44 End Credits.mp3"));
+		showTutorial = !accountService.hasUser();
+
 		// Set the initial screen to the main menu
 		setScreen(new MainMenuScreen(this, accountService));
 		fpsLogger = new FPSLogger();
@@ -100,6 +103,14 @@ public class TankMazeMayhem extends Game {
 			gameMusic.stop();
 		}
 		backgroundMusic.play(); // Resume background music
+	}
+
+	public boolean getShowTutorial() {
+		return this.showTutorial;
+	}
+
+	public void setShowTutorial(boolean bool) {
+		this.showTutorial = bool;
 	}
 
 

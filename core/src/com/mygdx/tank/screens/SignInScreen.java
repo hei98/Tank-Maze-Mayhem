@@ -163,6 +163,7 @@ public class SignInScreen implements Screen {
                 errorLabel.setText("");
                 try {
                     signInController.onSignInClick();
+                    game.setShowTutorial(false);
                     game.setScreen(new MainMenuScreen(game, accountService));
                 } catch (Exception e) {
                     errorLabel.setText("Login failed: " + e.getLocalizedMessage()); // Display the error message
