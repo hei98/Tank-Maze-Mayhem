@@ -28,7 +28,10 @@ import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.powerup.*;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -295,32 +298,13 @@ public class CreateGameScreen implements Screen {
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
 
-        String ip = "";
-        try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (((Enumeration<?>) interfaces).hasMoreElements()) {
-                NetworkInterface iface = interfaces.nextElement();
-                // filters out 127.0.0.1 and inactive interfaces
-                if (iface.isLoopback() || !iface.isUp())
-                    continue;
+        String ip = getIpAddress();
 
-                Enumeration<InetAddress> addresses = iface.getInetAddresses();
-                while(addresses.hasMoreElements()) {
-                    InetAddress addr = addresses.nextElement();
-                    ip = addr.getHostAddress();
-                    System.out.println(iface.getDisplayName() + " " + ip);
-                }
-            }
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("Dette er din ip: " + ip);
-        InetAddress IP = InetAddress.getLocalHost();
         Label label;
-        if (IP.getHostAddress().equals("127.0.0.1")) {
+        if (ip.equals("10.0.2.15")) {
             label = new Label("Your IP-address is: 10.0.2.2, port 5000", labelStyle);
         } else {
-            label = new Label("Your IP-address is: " + IP.getHostAddress() + ", port 54555", labelStyle);
+            label = new Label("Your IP-address is: " + ip + ", port 54555", labelStyle);
         }
 
         label.setAlignment(Align.center);
@@ -330,6 +314,28 @@ public class CreateGameScreen implements Screen {
 
         stage.addActor(label);
         stage.addActor(headlineLabel);
+    }
+
+    public String getIpAddress() {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                if (iface.isLoopback() || !iface.isUp() || iface.isVirtual() || iface.isPointToPoint())
+                    continue;
+
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+
+                    final String ip = addr.getHostAddress();
+                    if (Inet4Address.class == addr.getClass()) return ip;
+                }
+            }
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     private void createPlayersTable() {
