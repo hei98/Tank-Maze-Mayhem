@@ -138,8 +138,11 @@ public class MainMenuScreen implements Screen {
         multiplayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (accountService.hasUser()){
+                if (accountService.hasUser() && game.getShowTutorial()){
+                    game.setShowTutorial(false);
                     game.setScreen(new TutorialScreen(game, new LobbyScreen(game, game.getFirebaseInterface(), accountService), accountService));
+                } else if (accountService.hasUser()) {
+                    game.setScreen(new LobbyScreen(game, game.getFirebaseInterface(), accountService));
                 }
             }
         });
