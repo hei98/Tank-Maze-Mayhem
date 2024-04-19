@@ -36,16 +36,20 @@ public class MovementSystem {
 
                     if (!collisionSystem.isCollisionWithWalls(entity, proposedDeltaX, proposedDeltaY)) {
                         // No collision apply movement
+                        float oldPositionX = position.x;
+                        float oldPositionY = position.y;
                         position.x += proposedDeltaX;
                         position.y += proposedDeltaY;
                         TypeComponent typeComponent = entity.getComponent(TypeComponent.class);
                         if (typeComponent.type == TypeComponent.EntityType.TANK) {
                             PlayerComponent playerComponent = entity.getComponent(PlayerComponent.class);
                             if (playerComponent.player.getPlayerName().equals(accountService.getCurrentUser().getPlayer().getPlayerName())) {
-                                List<Object> list = new ArrayList<>();
-                                list.add(accountService.getCurrentUser().getPlayer());
-                                list.add(position);
-                                client.sendTCP(list);
+                                if (oldPositionX != position.x && oldPositionY != position.y) {
+                                    List<Object> list = new ArrayList<>();
+                                    list.add(accountService.getCurrentUser().getPlayer());
+                                    list.add(position);
+                                    client.sendTCP(list);
+                                }
                             }
                         }
                     } else {
