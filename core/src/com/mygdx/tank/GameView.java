@@ -31,6 +31,7 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
+import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.mygdx.tank.screens.GameCrashedScreen;
@@ -52,7 +53,7 @@ public class GameView{
     private Stage gameStage;
     private final GameController controller;
     private ImageButton circularButton, menuButton;
-    private final float countdownTime = 20;
+    private final float countdownTime = 120;
     private float elapsedTime = 0;
     private Label countdownLabel;
     private final TankMazeMayhem game;
@@ -97,7 +98,7 @@ public class GameView{
         gameStage = new Stage();
         spriteBatch = new SpriteBatch();
         con = Constants.getInstance();
-        Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
+        Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage5.png"));
 
         // Create a skin for the circular button
         Skin circularButtonSkin = new Skin();
@@ -315,7 +316,7 @@ public class GameView{
         if (!gameCrashed) {
             currentTime = timerText;
         }
-        if (seconds <= 10) {
+        if (seconds <= 10 && minutes == 0) {
             countdownLabel.getColor().set(Color.RED);
             if (seconds <= 3) {
                 if (seconds % 2 == 0) {
@@ -326,6 +327,36 @@ public class GameView{
             }
         }
         countdownLabel.setText(currentTime);
+
+        Entity playerTank = model.getPlayerTank();
+        ShootingCooldownComponent shootingCooldownComponent = playerTank.getComponent(ShootingCooldownComponent.class);
+        System.out.println(shootingCooldownComponent.cooldown);
+        if (shootingCooldownComponent.cooldown > 1.2f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage1.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        } else if (shootingCooldownComponent.cooldown > 0.9f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage2.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        } else if (shootingCooldownComponent.cooldown > 0.6f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage3.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        } else if (shootingCooldownComponent.cooldown > 0.3f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage4.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        } else if (shootingCooldownComponent.cooldown >= 0.0f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage5.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        }
 
         // End batch processing
         spriteBatch.end();
