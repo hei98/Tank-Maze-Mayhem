@@ -52,7 +52,7 @@ public class GameView{
     private Stage gameStage;
     private final GameController controller;
     private ImageButton circularButton, menuButton;
-    private final float countdownTime = 120;
+    private final float countdownTime = 20;
     private float elapsedTime = 0;
     private Label countdownLabel;
     private final TankMazeMayhem game;
@@ -314,6 +314,16 @@ public class GameView{
         String timerText = String.format("%02d:%02d", minutes, seconds);
         if (!gameCrashed) {
             currentTime = timerText;
+        }
+        if (seconds <= 10) {
+            countdownLabel.getColor().set(Color.RED);
+            if (seconds <= 3) {
+                if (seconds % 2 == 0) {
+                    countdownLabel.getColor().set(Color.RED);
+                } else {
+                    countdownLabel.getColor().set(Color.WHITE);
+                }
+            }
         }
         countdownLabel.setText(currentTime);
 

@@ -301,7 +301,7 @@ public class CreateGameScreen implements Screen {
         String ip = getIpAddress();
 
         Label label;
-        if (ip.equals("10.0.2.15")) {
+        if (ip.equals("10.0.2.15") || ip.equals("10.0.2.16")) {
             label = new Label("Your IP-address is: 10.0.2.2, port 5000", labelStyle);
         } else {
             label = new Label("Your IP-address is: " + ip + ", port 54555", labelStyle);
