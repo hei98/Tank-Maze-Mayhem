@@ -121,7 +121,9 @@ public class GameView{
             client.addListener(new Listener() {
                 @Override
                 public void disconnected(Connection connection) {
-                    gameCrashed = true;
+                    if ( Integer.parseInt(currentTime.split(":")[0]) != 0 && Integer.parseInt(currentTime.split(":")[1]) != 0) {
+                        gameCrashed = true;
+                    }
                 }
             });
         } else {

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -29,6 +30,7 @@ import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.powerup.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -192,7 +194,11 @@ public class CreateGameScreen implements Screen {
         user.setPlayer(player);
 
         setButtons();
-        createHeadline();
+        try {
+            createHeadline();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
         createPlayersTable();
         addListeners();
 
@@ -276,13 +282,25 @@ public class CreateGameScreen implements Screen {
         });
     }
 
-    private void createHeadline() {
+    private void createHeadline() throws UnknownHostException {
         Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Party", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
         headlineLabel.setWidth(con.getSWidth());
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+
+        InetAddress IP = InetAddress.getLocalHost();
+        Label label = new Label("Your IP-address is: " + IP.getHostAddress() + ", port 54555", labelStyle);
+
+        label.setAlignment(Align.center);
+        label.setY(con.getSHeight() * 0.2f);
+        label.setFontScale(con.getTScaleF());
+        label.setWidth(con.getSWidth());
+
+        stage.addActor(label);
         stage.addActor(headlineLabel);
     }
 
