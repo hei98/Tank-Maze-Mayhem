@@ -330,7 +330,6 @@ public class GameView{
 
         Entity playerTank = model.getPlayerTank();
         ShootingCooldownComponent shootingCooldownComponent = playerTank.getComponent(ShootingCooldownComponent.class);
-        System.out.println(shootingCooldownComponent.cooldown);
         if (shootingCooldownComponent.cooldown > 1.2f) {
             Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage1.png"));
             ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
