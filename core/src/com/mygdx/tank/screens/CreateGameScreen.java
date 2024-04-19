@@ -293,7 +293,12 @@ public class CreateGameScreen implements Screen {
         Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
 
         InetAddress IP = InetAddress.getLocalHost();
-        Label label = new Label("Your IP-address is: " + IP.getHostAddress() + ", port 54555", labelStyle);
+        Label label;
+        if (IP.getHostAddress().equals("127.0.0.1")) {
+            label = new Label("Your IP-address is: 10.0.2.2, port 5000", labelStyle);
+        } else {
+            label = new Label("Your IP-address is: " + IP.getHostAddress() + ", port 54555", labelStyle);
+        }
 
         label.setAlignment(Align.center);
         label.setY(con.getSHeight() * 0.2f);
