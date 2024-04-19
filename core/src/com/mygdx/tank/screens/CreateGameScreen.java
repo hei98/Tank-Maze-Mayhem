@@ -4,6 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -28,9 +29,13 @@ import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.powerup.*;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CreateGameScreen implements Screen {
     private final FirebaseInterface firebaseInterface;
@@ -44,11 +49,12 @@ public class CreateGameScreen implements Screen {
     private final TextButton backButton, startGameButton;
     private Server server;
     private Client client;
-    private final List<Player> connectedPlayers = new ArrayList<>();
+    private final LinkedHashMap<Integer, Player> connectedPlayers = new LinkedHashMap<>();
     private Table playersTable;
     private ScrollPane scrollPane;
     private User user;
     private Listener listener;
+    private Listener serverListener;
 
     public CreateGameScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
@@ -97,16 +103,57 @@ public class CreateGameScreen implements Screen {
                     server.sendToAllExceptTCP(connection.getID(), list);
                 } else if (object instanceof Player) {
                     if (connectedPlayers.size() != 0) {
-                        String newUsername = "Player" + (connectedPlayers.size() + 1);
+                        Player lastPlayer = (Player) connectedPlayers.values().toArray()[connectedPlayers.size() - 1];
+                        String lastPlayerName = lastPlayer.getPlayerName();
+                        int lastPlayerNumber = Integer.parseInt(lastPlayerName.substring(lastPlayerName.length() -1 ));
+                        String newUsername = "Player" + (lastPlayerNumber + 1);
                         Player player = (Player) object;
                         player.setPlayerName(newUsername);
-                        connectedPlayers.add(player);
-                        populatePlayerTable(connectedPlayers);
-                        server.sendToAllTCP(connectedPlayers);
+                        connectedPlayers.put(connection.getID(), player);
+                        List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
+                        populatePlayerTable(connectedPlayersList);
+                        server.sendToAllTCP(connectedPlayersList);
                     }
                 }
             }
         });
+
+        serverListener = new Listener() {
+            @Override
+            public void disconnected(Connection connection) {
+                int lastConnection = (int) connectedPlayers.keySet().toArray()[connectedPlayers.size() - 1];
+                if (lastConnection != connection.getID()) {
+                    List<Map.Entry<Integer, Player>> entryList = new ArrayList<>(connectedPlayers.entrySet());
+                    int index = 0;
+                    for (int i = 0; i < entryList.size(); i++) {
+                        Map.Entry<Integer, Player> entry = entryList.get(i);
+                        if (entry.getKey() == connection.getID()) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    for (int i = 0; i < entryList.size(); i++) {
+                        if (i > index) {
+                            Map.Entry<Integer, Player> entry = entryList.get(i);
+
+                            Player player = entry.getValue();
+                            String oldPlayerName = player.getPlayerName();
+                            int lastPlayerNumber = Integer.parseInt(oldPlayerName.substring(oldPlayerName.length() -1 ));
+                            String newPlayerName = "Player" + (lastPlayerNumber - 1);
+                            player.setPlayerName(newPlayerName);
+                            server.sendToTCP(entry.getKey(), player);
+                        }
+                    }
+                }
+                connectedPlayers.remove(connection.getID());
+
+                List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
+                populatePlayerTable(connectedPlayersList);
+                server.sendToAllTCP(connectedPlayersList);
+            }
+        };
+
+        server.addListener(serverListener);
 
         client = new Client();
         client.start();
@@ -135,18 +182,23 @@ public class CreateGameScreen implements Screen {
 
         client.addListener(listener);
         try {
-            client.connect(5000, "10.0.2.16", 54555);
+            InetAddress IP = InetAddress.getLocalHost();
+            client.connect(5000, IP.getHostAddress(), 54555);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         user = accountService.getCurrentUser();
         Player player = new Player("Player1", user.getUserMail());
-        connectedPlayers.add(player);
+        connectedPlayers.put(1, player);
         user.setPlayer(player);
 
         setButtons();
-        createHeadline();
+        try {
+            createHeadline();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
         createPlayersTable();
         addListeners();
 
@@ -222,19 +274,38 @@ public class CreateGameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 client.removeListener(listener);
+                server.removeListener(serverListener);
                 client.sendTCP("GameStart");
-                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayers));
+                List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
+                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayersList, server));
             }
         });
     }
 
-    private void createHeadline() {
+    private void createHeadline() throws UnknownHostException {
         Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Party", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
         headlineLabel.setWidth(con.getSWidth());
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+
+        InetAddress IP = InetAddress.getLocalHost();
+        Label label;
+        if (IP.getHostAddress().equals("127.0.0.1")) {
+            label = new Label("Your IP-address is: 10.0.2.2, port 5000", labelStyle);
+        } else {
+            label = new Label("Your IP-address is: " + IP.getHostAddress() + ", port 54555", labelStyle);
+        }
+
+        label.setAlignment(Align.center);
+        label.setY(con.getSHeight() * 0.2f);
+        label.setFontScale(con.getTScaleF());
+        label.setWidth(con.getSWidth());
+
+        stage.addActor(label);
         stage.addActor(headlineLabel);
     }
 
@@ -257,8 +328,8 @@ public class CreateGameScreen implements Screen {
         scrollPane.setPosition(playersTable.getX(), con.getSHeight() - orangeBoxStartY - orangeBoxHeight);
 
         stage.addActor(scrollPane);
-
-        populatePlayerTable(connectedPlayers);
+        List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
+        populatePlayerTable(connectedPlayersList);
     }
 
     private void populatePlayerTable(List<Player> players) {

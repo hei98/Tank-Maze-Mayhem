@@ -22,6 +22,7 @@ public class TankMazeMayhem extends Game {
 	private MusicManager musicManager;
 	private FPSLogger fpsLogger;
     SpriteBatch batch;
+	private boolean showTutorial;
 
 	public TankMazeMayhem(FirebaseInterface firebaseInterface, AccountService accountService) {
 		this.firebaseInterface = firebaseInterface;
@@ -32,6 +33,8 @@ public class TankMazeMayhem extends Game {
 	public void create() {
 		batch = new SpriteBatch();
 		musicManager = new MusicManager();
+		showTutorial = !accountService.hasUser();
+
 		// Set the initial screen to the main menu
 		setScreen(new MainMenuScreen(this, accountService));
 		fpsLogger = new FPSLogger();
@@ -66,6 +69,14 @@ public class TankMazeMayhem extends Game {
 	}
 
 
+
+	public boolean getShowTutorial() {
+		return this.showTutorial;
+	}
+
+	public void setShowTutorial(boolean bool) {
+		this.showTutorial = bool;
+	}
 
 
 	@Override

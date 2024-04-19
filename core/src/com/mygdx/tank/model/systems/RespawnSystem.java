@@ -3,6 +3,7 @@ package com.mygdx.tank.model.systems;
 import com.esotericsoftware.kryonet.Client;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.model.Entity;
+import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.tank.HealthComponent;
 
 import java.util.ArrayList;
@@ -40,10 +41,6 @@ public class RespawnSystem {
             entity.getComponent(PowerupStateComponent.class).setState(new NormalState());
             position.resetPosition();
             direction.angle = 0;
-            List<Object> list = new ArrayList<>();
-            list.add(accountService.getCurrentUser().getPlayer());
-            list.add(direction);
-            client.sendTCP(list);
         }
 
         HealthComponent health = entity.getComponent(HealthComponent.class);

@@ -11,7 +11,8 @@ public class MusicManager {
     private Music currentTrack;
     private Music gameMusic;
     private String currentTrackName;
-    private boolean isPlaying = true;
+    private boolean isMenuMusicPlaying = true;
+    private boolean isGameMusicPlaying = true;
 
     public MusicManager() {
         initializeTracks();
@@ -34,15 +35,15 @@ public class MusicManager {
     }
 
     public MusicMemento saveToMemento() {
-        return new MusicMemento(currentTrackName, isPlaying);
+        return new MusicMemento(currentTrackName, isMenuMusicPlaying);
     }
 
     public void restoreFromMemento(MusicMemento memento) {
-        if (currentTrackName != memento.getTrack()){
+        if (!currentTrackName.equals(memento.getTrack())){
             changeTrack(memento.getTrack());
         }
-        if (memento.isPlaying() != this.isPlaying) {
-            muteMusic(!memento.isPlaying());
+        if (memento.isPlaying() != this.isMenuMusicPlaying) {
+            muteMenuMusic(!memento.isPlaying());
         }
     }
 
@@ -52,20 +53,32 @@ public class MusicManager {
         }
         currentTrack = tracks.get(track);
         currentTrackName = track;
-        if (isPlaying && currentTrack != null) {
+        if (isMenuMusicPlaying && currentTrack != null) {
             currentTrack.setLooping(true);
             currentTrack.play();
         }
     }
 
-    public void muteMusic(boolean playing) {
+    public void muteMenuMusic(boolean playing) {
         if (currentTrack != null) {
             if (playing) {
-                isPlaying = false;
+                isMenuMusicPlaying = false;
                 currentTrack.pause();
             } else {
-                isPlaying = true;
+                isMenuMusicPlaying = true;
                 currentTrack.play();
+            }
+        }
+    }
+
+    public void muteGameMusic(boolean playing) {
+        if (gameMusic != null) {
+            if (playing) {
+                isGameMusicPlaying = false;
+                gameMusic.pause();
+            } else {
+                isGameMusicPlaying = true;
+                gameMusic.play();
             }
         }
     }
@@ -85,8 +98,12 @@ public class MusicManager {
         currentTrack.play(); // Resume background music
     }
 
-    public boolean isMusicPlaying() {
-        return currentTrack != null && isPlaying;
+    public boolean isMenuMusicPlaying() {
+        return currentTrack != null && isMenuMusicPlaying;
+    }
+
+    public boolean isGameMusicPlaying(){
+        return isGameMusicPlaying;
     }
 
     public String getCurrentTrackName(){return currentTrackName;}

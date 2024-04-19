@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.MusicManager;
 import com.mygdx.tank.Player;
@@ -16,6 +17,7 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.GameView;
 import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.model.Scoreboard;
+
 import java.util.List;
 
 public class InGameScreen implements Screen {
@@ -26,6 +28,10 @@ public class InGameScreen implements Screen {
     private Stage stage;
     private MusicManager musicManager;
     private final List<Player> connectedPlayers;
+    private Server server;
+    private GameView view;
+    private GameModel model;
+    private GameController controller;
 
     public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers) {
         this.game = game;
@@ -34,22 +40,16 @@ public class InGameScreen implements Screen {
         this.connectedPlayers = connectedPlayers;
     }
 
-    private GameView view;
-    private GameModel model;
-    private GameController controller;
-
+    public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers, Server server) {
+        this.game = game;
+        this.accountService = accountService;
+        this.client = client;
+        this.connectedPlayers = connectedPlayers;
+        this.server = server;
+    }
 
     @Override
     public void show() {
-        /*
-        if (!tutorialShown) {
-            // Show the tutorial first
-            game.setScreen(new TutorialScreen(game, this));
-            tutorialShown = true;
-            return; // Skip the rest of the setup until after the tutorial is done
-        }
-
-         */
         stage = new Stage();
 
         TextButton backButton = new TextButton("Back", game.getButtonStyle());
@@ -69,7 +69,11 @@ public class InGameScreen implements Screen {
 
         model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
         controller = new GameController(model, client);
-        view = new GameView(model, controller, game, accountService, scoreboard);
+        if (server != null) {
+            view = new GameView(model, controller, game, accountService, scoreboard, server);
+        } else {
+            view = new GameView(model, controller, game, accountService, scoreboard, client);
+        }
 
         stage.addActor(backButton);
         backButton.setPosition(100, 100);
@@ -81,6 +85,7 @@ public class InGameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();

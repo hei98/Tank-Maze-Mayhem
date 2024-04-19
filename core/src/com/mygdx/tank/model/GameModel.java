@@ -3,6 +3,7 @@ package com.mygdx.tank.model;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
@@ -10,11 +11,14 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
+import com.mygdx.tank.Constants;
 import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.Player;
 import com.mygdx.tank.User;
+import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
+import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
@@ -47,6 +51,10 @@ public class GameModel {
     private final List<Player> connectedPlayers;
     private final AccountService accountService;
     private final HashMap<String, Entity> playerTanks = new HashMap<>();
+    private PowerUpTypeComponent.PowerupType spawnedPowerupType;
+    private boolean updatedPowerupSprite;
+    private Entity spawnedPowerup;
+    private final Constants con;
 
     public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
         this.connectedPlayers = connectedPlayers;
@@ -54,6 +62,7 @@ public class GameModel {
         this.client = client;
         entities = new ArrayList<>();
         tankFactory = new TankFactory();
+        con = Constants.getInstance();
         User user = accountService.getCurrentUser();
         for (Player player : connectedPlayers) {
             Entity tank = tankFactory.createEntity(player);
@@ -110,8 +119,21 @@ public class GameModel {
                         float positionY = (Float) list.get(2);
                         PowerupFactory powerupFactory = new PowerupFactory();
                         Entity powerUp = powerupFactory.createSpecificPowerup(powerUpType, positionX, positionY);
+                        spawnedPowerupType = powerUpType;
+                        updatedPowerupSprite = false;
+                        spawnedPowerup = powerUp;
                         synchronized (entities) {
                             entities.add(powerUp);
+                        }
+                    }
+                } else if (object instanceof String) {
+                    String playerName = (String) object;
+                    for (Entity entity : entities)  {
+                        PlayerComponent playerComponent = entity.getComponent(PlayerComponent.class);
+                        if (playerComponent != null) {
+                            if (playerComponent.player.getPlayerName().equals(playerName)) {
+                                entity.markForRemoval(true);
+                            }
                         }
                     }
                 }
@@ -137,6 +159,23 @@ public class GameModel {
         powerupSpawnSystem.update(deltaTime);
         respawnSystem.update(deltaTime);
         removeMarkedEntities();
+        if (spawnedPowerupType != null && !updatedPowerupSprite) {
+            String imagePath;
+            if (spawnedPowerupType == PowerUpTypeComponent.PowerupType.Shield) {
+                imagePath = "images/ShieldPowerup.png";
+            } else if (spawnedPowerupType == PowerUpTypeComponent.PowerupType.Minigun) {
+                imagePath = "images/MachineGunPowerup.png";
+            } else if (spawnedPowerupType == PowerUpTypeComponent.PowerupType.Speed) {
+                imagePath = "images/SpeedPowerup.png";
+            } else {
+                imagePath = "images/ShieldPowerup.png";
+            }
+            spawnedPowerup.removeComponent(SpriteComponent.class);
+            spawnedPowerup.addComponent(new SpriteComponent(imagePath));
+            Sprite sprite = spawnedPowerup.getComponent(SpriteComponent.class).getSprite();
+            sprite.setSize(con.getIBSize() * 0.7f, con.getIBSize() * 0.7f);
+            updatedPowerupSprite = true;
+        }
     }
 
     public void removeMarkedEntities() {
@@ -215,6 +254,10 @@ public class GameModel {
 
     public HashMap<String, Entity> getPlayerTanks() {
         return this.playerTanks;
+    }
+
+    public void playerDisconnected(String playerName) {
+        client.sendTCP(playerName);
     }
 }
 

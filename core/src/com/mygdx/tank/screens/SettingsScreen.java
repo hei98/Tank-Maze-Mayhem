@@ -160,14 +160,14 @@ public class SettingsScreen implements Screen {
         soundControl.setSize(con.getIBSize(), con.getIBSize());
         soundControl.getImageCell().expand().fill();
         soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
-        if(musicManager.isMusicPlaying()){
+        if(musicManager.isMenuMusicPlaying()){
             soundControl.toggle(); //For visual correctness
         }
 
         soundControl.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                musicManager.muteMusic(musicManager.isMusicPlaying());
+                musicManager.muteMenuMusic(musicManager.isMenuMusicPlaying());
             }
         });
 
@@ -183,7 +183,7 @@ public class SettingsScreen implements Screen {
         undoButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(initialMusicSettings.isPlaying() != musicManager.isMusicPlaying()){
+                if(initialMusicSettings.isPlaying() != musicManager.isMenuMusicPlaying()){
                     soundControl.toggle(); //For visual correctness
                 }
                 musicManager.restoreFromMemento(initialMusicSettings);
