@@ -14,9 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
+import com.mygdx.tank.IView;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.MenuScreens.MenuModel;
 
-public class SettingsView implements Screen {
+public class SettingsView implements Screen, IView {
 
     private final TankMazeMayhem game;
     private final AccountService accountService;
@@ -122,6 +124,11 @@ public class SettingsView implements Screen {
         soundControlButton.toggle(); //For visual correctness
 
         stage.addActor(soundControlButton);
+
+    }
+
+    @Override
+    public void updateView(MenuModel model) {
 
     }
 }
