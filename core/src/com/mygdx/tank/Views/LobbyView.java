@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -27,11 +27,10 @@ import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 import java.io.IOException;
 
-public class LobbyScreen implements Screen {
+public class LobbyView implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final Constants con;
     private final TankMazeMayhem game;
@@ -44,7 +43,7 @@ public class LobbyScreen implements Screen {
     private final TextField IPaddressField, portField;
     private Label errorLabel;
 
-    public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public LobbyView(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
@@ -151,13 +150,13 @@ public class LobbyScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
+                game.setScreen(new MainMenuView(game, accountService));
             }
         });
         createPartyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new CreateGameScreen(game, firebaseInterface, accountService));
+                game.setScreen(new CreateGameView(game, firebaseInterface, accountService));
             }
         });
         joinPartyButton.addListener(new ClickListener() {
@@ -181,7 +180,7 @@ public class LobbyScreen implements Screen {
                 int port = Integer.parseInt(portField.getText());
                 try {
                     client.connect(2500, IPaddress, port);
-                    game.setScreen(new InPartyScreen(game, firebaseInterface, accountService, client));
+                    game.setScreen(new InPartyView(game, firebaseInterface, accountService, client));
                 } catch (IOException e) {
                     errorLabel.setText("Unable to connect to: /" + IPaddress + ":" + port); // Display the error message
                 }

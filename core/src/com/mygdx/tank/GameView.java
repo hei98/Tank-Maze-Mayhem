@@ -33,9 +33,9 @@ import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
-import com.mygdx.tank.screens.GameCrashedScreen;
-import com.mygdx.tank.screens.GameOverScreen;
-import com.mygdx.tank.screens.InGameMenuScreen;
+import com.mygdx.tank.Views.GameCrashedView;
+import com.mygdx.tank.Views.GameOverView;
+import com.mygdx.tank.Views.InGameMenuView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,8 +61,8 @@ public class GameView{
     private Label scoreLabel;
     private Server server;
     private Client client;
-    private InGameMenuScreen inGameMenuScreen;
-    private GameCrashedScreen gameCrashedScreen;
+    private InGameMenuView inGameMenuScreen;
+    private GameCrashedView gameCrashedScreen;
     private boolean isMenuVisible;
     private boolean gameCrashed = false;
     private String currentTime;
@@ -113,11 +113,11 @@ public class GameView{
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         scoreLabel = new Label("Score: 0", labelStyle);
 
-        gameCrashedScreen = new GameCrashedScreen(game, accountService);
+        gameCrashedScreen = new GameCrashedView(game, accountService);
 
         // Initiate in game menu screen and ensure it is hidden
         if (client != null) {
-            inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this, client, model);
+            inGameMenuScreen = new InGameMenuView(game, accountService, scoreboard, this, client, model);
             client.addListener(new Listener() {
                 @Override
                 public void disconnected(Connection connection) {
@@ -125,7 +125,7 @@ public class GameView{
                 }
             });
         } else {
-            inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this, server);
+            inGameMenuScreen = new InGameMenuView(game, accountService, scoreboard, this, server);
         }
 
         isMenuVisible = false;
@@ -302,7 +302,7 @@ public class GameView{
             if (server != null) {
                 server.close();
             }
-            game.setScreen(new GameOverScreen(game, accountService, scoreboard));
+            game.setScreen(new GameOverView(game, accountService, scoreboard));
         }
 
         // Start batch processing

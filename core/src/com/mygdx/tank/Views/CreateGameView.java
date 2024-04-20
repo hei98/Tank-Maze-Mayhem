@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -35,7 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CreateGameScreen implements Screen {
+public class CreateGameView implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final Constants con;
     private final TankMazeMayhem game;
@@ -54,7 +54,7 @@ public class CreateGameScreen implements Screen {
     private Listener listener;
     private Listener serverListener;
 
-    public CreateGameScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public CreateGameView(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
@@ -260,7 +260,7 @@ public class CreateGameScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game,firebaseInterface, accountService));
+                game.setScreen(new LobbyView(game,firebaseInterface, accountService));
                 server.close();
             }
         });
@@ -271,7 +271,7 @@ public class CreateGameScreen implements Screen {
                 server.removeListener(serverListener);
                 client.sendTCP("GameStart");
                 List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
-                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayersList, server));
+                game.setScreen(new InGameView(game, accountService, client, connectedPlayersList, server));
             }
         });
     }

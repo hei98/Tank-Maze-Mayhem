@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -17,7 +17,7 @@ import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
 
-public class TutorialScreen implements Screen {
+public class TutorialView implements Screen {
     private final TankMazeMayhem game;
     private final AccountService accountService;
     private final Constants con;
@@ -35,7 +35,7 @@ public class TutorialScreen implements Screen {
     };
     private final Screen returnScreen;
 
-    public TutorialScreen(TankMazeMayhem game, Screen returnScreen, AccountService accountService) {
+    public TutorialView(TankMazeMayhem game, Screen returnScreen, AccountService accountService) {
         this.game = game;
         this.returnScreen = returnScreen;
         this.accountService = accountService;
@@ -131,7 +131,7 @@ public class TutorialScreen implements Screen {
                     currentPageIndex--;
                     tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
                 } else {
-                    game.setScreen(new MainMenuScreen(game, accountService));
+                    game.setScreen(new MainMenuView(game, accountService));
                 }
             }
         });

@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -19,35 +19,34 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.controllers.SignInController;
+import com.mygdx.tank.controllers.SignUpController;
 import com.mygdx.tank.TankMazeMayhem;
 
-public class SignInScreen implements Screen {
+public class SignUpView implements Screen {
     private final TankMazeMayhem game;
     private final Constants con;
     private final AccountService accountService;
-    private final SignInController signInController;
+    private final SignUpController signUpController;
     private Stage stage;
     private SpriteBatch batch;
     private final Texture background;
     private final Skin skin;
-    private final TextField emailTextField, passwordTextField;
-    private final TextButton signInButton, signUpButton, backButton;
+    private final TextField emailTextField, passwordTextField, confirmPasswordTextField;
+    private final TextButton signUpButton, backButton;
     private Label errorLabel;
 
-
-    public SignInScreen(TankMazeMayhem game, AccountService accountService) {
+    public SignUpView(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         this.accountService = accountService;
-        this.signInController = new SignInController(accountService);
+        this.signUpController = new SignUpController(accountService);
         con = Constants.getInstance();
         skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
         background = new Texture("Backgrounds/main-menu.JPG");
 
-        //Create TextFields and buttons
+        // Create text fields and buttons
         emailTextField = new TextField("", skin);
         passwordTextField = new TextField("", skin);
-        signInButton = new TextButton("Sign In", skin);
+        confirmPasswordTextField = new TextField("", skin);
         signUpButton = new TextButton("Sign Up", skin);
         backButton = new TextButton("Back", skin);
     }
@@ -78,7 +77,7 @@ public class SignInScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+
     }
 
     @Override
@@ -121,67 +120,66 @@ public class SignInScreen implements Screen {
     }
 
     private void setButtonsAndFields() {
-        // Set bounds and font scale for buttons and TextFields, and set message for TextFields
-        emailTextField.setBounds(con.getCenterTB(), con.getSHeight() * (0.6f), con.getTBWidth(), con.getTBHeight());
-        emailTextField.setMessageText("Email");
+        emailTextField.setBounds(con.getCenterTB(), con.getSHeight() * 0.6f, con.getTBWidth(), con.getTBHeight());
+        emailTextField.setMessageText("Enter Email");
 
         passwordTextField.setBounds(con.getCenterTB(), con.getSHeight() * (0.6f - 0.12f), con.getTBWidth(), con.getTBHeight());
-        passwordTextField.setMessageText("Password");
+        passwordTextField.setMessageText("Enter Password");
         passwordTextField.setPasswordMode(true);
         passwordTextField.setPasswordCharacter('*');
+
+        confirmPasswordTextField.setBounds(con.getCenterTB(), con.getSHeight() * (0.6f - 0.24f), con.getTBWidth(), con.getTBHeight());
+        confirmPasswordTextField.setMessageText("Confirm Password");
+        confirmPasswordTextField.setPasswordMode(true);
+        confirmPasswordTextField.setPasswordCharacter('*');
 
         // Set font scale for email and password text fields
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle(emailTextField.getStyle());
         textFieldStyle.font.getData().setScale(con.getTScaleF()); // Set the font scale
         emailTextField.setStyle(textFieldStyle);
         passwordTextField.setStyle(textFieldStyle);
+        confirmPasswordTextField.setStyle(textFieldStyle);
 
-        signInButton.setBounds(con.getCenterTB(), con.getSHeight() * (0.6f - 0.24f), con.getTBWidth(), con.getTBHeight());
-        signInButton.getLabel().setFontScale(con.getTScaleF());
-        signUpButton.setBounds(con.getCenterTB(), con.getSHeight()*0.2f, con.getTBWidth(), con.getTBHeight());
+        signUpButton.setBounds(con.getCenterTB(), con.getSHeight() * 0.2f, con.getTBWidth(), con.getTBHeight());
         signUpButton.getLabel().setFontScale(con.getTScaleF());
-
-        backButton.setBounds(con.getCenterTB(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
+        backButton.setBounds(con.getCenterTB(), con.getSHeight() * 0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
 
-        // Add actors to the stage
+        // Add actors to stage
         stage.addActor(emailTextField);
         stage.addActor(passwordTextField);
-        stage.addActor(signInButton);
+        stage.addActor(confirmPasswordTextField);
         stage.addActor(signUpButton);
         stage.addActor(backButton);
     }
 
     private void addListeners() {
-        signInButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                String email = emailTextField.getText();
-                String password = passwordTextField.getText();
-                signInController.updateEmail(email);
-                signInController.updatePassword(password);
-                errorLabel.setText("");
-                try {
-                    signInController.onSignInClick();
-                    game.setShowTutorial(false);
-                    game.setScreen(new MainMenuScreen(game, accountService));
-                } catch (Exception e) {
-                    errorLabel.setText("Login failed: " + e.getLocalizedMessage()); // Display the error message
-                }
-
-            }
-        });
+        // Add listeners to buttons
         signUpButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SignUpScreen(game, accountService));
+                try {
+                    String email = emailTextField.getText();
+                    String password = passwordTextField.getText();
+                    String confirmPassword = confirmPasswordTextField.getText();
+                    signUpController.updateEmail(email);
+                    signUpController.updatePassword(password);
+                    signUpController.updateConfirmPassword(confirmPassword);
+                    signUpController.onSignUpClick();
+                    errorLabel.setText("");
+                    game.setScreen(new MainMenuView(game, accountService));
+                } catch (Exception e) {
+                    errorLabel.setText("Sign up failed: " + e.getLocalizedMessage());
+                }
             }
         });
+
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
+                game.setScreen(new SignInView(game, accountService));
             }
         });
     }
+
 }

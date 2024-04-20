@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -27,7 +27,7 @@ import com.mygdx.tank.LeaderboardEntry;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
 
-public class LeaderboardScreen implements Screen {
+public class LeaderboardView implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final Constants con;
     private final TankMazeMayhem game;
@@ -41,7 +41,7 @@ public class LeaderboardScreen implements Screen {
     private Table leaderboardTable;
     private ScrollPane scrollPane;
 
-    public LeaderboardScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public LeaderboardView(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
@@ -135,13 +135,13 @@ public class LeaderboardScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
+                game.setScreen(new MainMenuView(game, accountService));
             }
         });
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game, accountService));
+                game.setScreen(new SettingsView(game, accountService));
             }
         });
     }

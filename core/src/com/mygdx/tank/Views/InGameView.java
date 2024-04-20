@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -19,7 +19,7 @@ import com.mygdx.tank.model.Scoreboard;
 
 import java.util.List;
 
-public class InGameScreen implements Screen {
+public class InGameView implements Screen {
 
     private final TankMazeMayhem game;
     private final AccountService accountService;
@@ -31,14 +31,14 @@ public class InGameScreen implements Screen {
     private GameModel model;
     private GameController controller;
 
-    public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers) {
+    public InGameView(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers) {
         this.game = game;
         this.accountService = accountService;
         this.client = client;
         this.connectedPlayers = connectedPlayers;
     }
 
-    public InGameScreen(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers, Server server) {
+    public InGameView(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers, Server server) {
         this.game = game;
         this.accountService = accountService;
         this.client = client;
@@ -54,7 +54,7 @@ public class InGameScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
+                game.setScreen(new MainMenuView(game, accountService));
             }
         });
 

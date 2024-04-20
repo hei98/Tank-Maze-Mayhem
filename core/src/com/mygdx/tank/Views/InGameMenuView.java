@@ -1,4 +1,4 @@
-    package com.mygdx.tank.screens;
+    package com.mygdx.tank.Views;
 
     import com.badlogic.gdx.Gdx;
     import com.badlogic.gdx.Screen;
@@ -23,6 +23,7 @@
     import com.mygdx.tank.GameView;
     import com.mygdx.tank.TankMazeMayhem;
     import com.mygdx.tank.model.GameModel;
+    import com.mygdx.tank.model.MenuScreens.MenuModel;
     import com.mygdx.tank.model.Scoreboard;
 
     import java.util.ArrayList;
@@ -32,7 +33,7 @@
     import java.util.List;
     import java.util.Map;
 
-    public class InGameMenuScreen implements Screen {
+    public class InGameMenuView implements Screen {
         private final TankMazeMayhem game;
         private final AccountService accountService;
         private final GameView view;
@@ -47,24 +48,27 @@
         private final Scoreboard scoreboard;
         private Client client;
         private Server server;
-        private GameModel model;
+        private GameModel gameModel;
+        private MenuModel mainMenuModel;
 
 
-        public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Server server) {
+        public InGameMenuView(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, MenuModel mainMenuModel, Server server) {
             this.game = game;
             this.accountService = accountService;
             this.scoreboard = scoreboard;
             this.view = view;
             this.server = server;
+            this.mainMenuModel = mainMenuModel;
         }
 
-        public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Client client, GameModel model) {
+        public InGameMenuView(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Client client, MenuModel mainMenuModel, GameModel model) {
             this.game = game;
             this.accountService = accountService;
             this.scoreboard = scoreboard;
             this.view = view;
             this.client = client;
-            this.model = model;
+            this.mainMenuModel = mainMenuModel;
+            this.gameModel = model;
         }
 
         @Override
@@ -171,12 +175,12 @@
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (client != null) {
-                        model.playerDisconnected(accountService.getCurrentUser().getPlayer().getPlayerName());
+                        gameModel.playerDisconnected(accountService.getCurrentUser().getPlayer().getPlayerName());
                         client.close();
                     } else if (server != null) {
                         server.close();
                     }
-                    game.setScreen(new MainMenuScreen(game, accountService));
+                    game.setScreen(new MainMenuView(game, accountService, mainMenuModel));
                 }
             });
         }

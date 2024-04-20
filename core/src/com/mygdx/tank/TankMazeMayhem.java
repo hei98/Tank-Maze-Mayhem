@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.tank.controllers.GameController;
+import com.mygdx.tank.controllers.MainMenuController;
 import com.mygdx.tank.model.GameModel;
-import com.mygdx.tank.screens.MainMenuScreen;
+import com.mygdx.tank.model.MenuScreens.MenuModel;
+import com.mygdx.tank.Views.MainMenuView;
 
 public class TankMazeMayhem extends Game {
 	private final AccountService accountService;
@@ -38,7 +40,10 @@ public class TankMazeMayhem extends Game {
 		showTutorial = !accountService.hasUser();
 
 		// Set the initial screen to the main menu
-		setScreen(new MainMenuScreen(this, accountService));
+		MenuModel mainMenuModel = new MenuModel();
+		MainMenuView mainMenuScreen = new MainMenuView(this, accountService, mainMenuModel);
+		setScreen(mainMenuScreen);
+		MainMenuController mainMenuController = new MainMenuController(mainMenuModel, mainMenuScreen, this, accountService);
 		fpsLogger = new FPSLogger();
 	}
 

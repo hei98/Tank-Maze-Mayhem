@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -16,7 +16,7 @@ import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
 
-public class SettingsScreen implements Screen {
+public class SettingsView implements Screen {
 
     private final TankMazeMayhem game;
     private final AccountService accountService;
@@ -24,14 +24,16 @@ public class SettingsScreen implements Screen {
     private Stage stage;
     private final Texture background;
     private final TextButton backButton;
+    private final ImageButton soundControlButton;
     private SpriteBatch batch;
 
-    public SettingsScreen(TankMazeMayhem game, AccountService accountService) {
+    public SettingsView(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         this.accountService = accountService;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         backButton = new TextButton("Back", con.getSkin(), "default");
+        soundControlButton = new ImageButton(con.getSkin(), "music");
     }
 
     @Override
@@ -42,13 +44,6 @@ public class SettingsScreen implements Screen {
         setButtonLayout();
         createHeadline();
         createSoundControl();
-
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
-            }
-        });
 
         stage.addActor(backButton);
 
@@ -90,6 +85,14 @@ public class SettingsScreen implements Screen {
         stage.dispose();
     }
 
+    public TextButton getBackButton() {
+        return this.backButton;
+    }
+
+    public ImageButton getSoundControlButton() {
+        return this.soundControlButton;
+    }
+
     private void setButtonLayout() {
         backButton.setBounds(con.getCenterTB(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
@@ -113,23 +116,12 @@ public class SettingsScreen implements Screen {
         soundLabel.setY((con.getSHeight()*0.63f) - soundLabel.getPrefHeight());
         stage.addActor(soundLabel);
 
-        ImageButton soundControl = new ImageButton(con.getSkin(), "music");
-        soundControl.setSize(con.getIBSize(), con.getIBSize());
-        soundControl.getImageCell().expand().fill();
-        soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
-        soundControl.toggle(); //For visual correctness
+        soundControlButton.setSize(con.getIBSize(), con.getIBSize());
+        soundControlButton.getImageCell().expand().fill();
+        soundControlButton.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
+        soundControlButton.toggle(); //For visual correctness
 
-        soundControl.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("InfoTag", "MuteButton pressed");
-                boolean isPlaying = game.isMusicPlaying();
-                Gdx.app.log("InfoTag", "isPlaying?" + isPlaying);
-                game.muteMusic(isPlaying);
-            }
-        });
-
-        stage.addActor(soundControl);
+        stage.addActor(soundControlButton);
 
     }
 }

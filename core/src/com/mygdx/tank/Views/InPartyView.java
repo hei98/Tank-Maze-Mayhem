@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InPartyScreen implements Screen {
+public class InPartyView implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final Constants con;
     private final TankMazeMayhem game;
@@ -46,7 +46,7 @@ public class InPartyScreen implements Screen {
     private boolean startGame;
     private Listener listener;
 
-    public InPartyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService, Client client) {
+    public InPartyView(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService, Client client) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
@@ -124,7 +124,7 @@ public class InPartyScreen implements Screen {
 
         if (startGame) {
             client.removeListener(listener);
-            game.setScreen(new InGameScreen(game, accountService, client, connectedPlayers));
+            game.setScreen(new InGameView(game, accountService, client, connectedPlayers));
         }
 
         batch.begin();
@@ -179,7 +179,7 @@ public class InPartyScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game,firebaseInterface, accountService));
+                game.setScreen(new LobbyView(game,firebaseInterface, accountService));
                 client.close();
             }
         });

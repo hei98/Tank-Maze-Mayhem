@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -8,32 +8,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.GameView;
 import com.mygdx.tank.TankMazeMayhem;
-import com.mygdx.tank.model.GameModel;
-import com.mygdx.tank.model.Scoreboard;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class GameCrashedScreen implements Screen {
+public class GameCrashedView implements Screen {
     private final TankMazeMayhem game;
     private final AccountService accountService;
     private Constants con;
@@ -42,7 +26,7 @@ public class GameCrashedScreen implements Screen {
     private TextButton exitGameButton;
     private SpriteBatch batch;
 
-    public GameCrashedScreen(TankMazeMayhem game, AccountService accountService) {
+    public GameCrashedView(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         this.accountService = accountService;
     }
@@ -138,7 +122,7 @@ public class GameCrashedScreen implements Screen {
         exitGameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
+                game.setScreen(new MainMenuView(game, accountService));
             }
         });
     }
