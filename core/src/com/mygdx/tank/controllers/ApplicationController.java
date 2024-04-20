@@ -57,8 +57,8 @@ public class ApplicationController {
 
     public void switchToMainMenu() {
         game.setScreen(mainMenuController.getView());
-        mainMenuController.updateModelView();
         mainMenuController.addListeners();
+        mainMenuController.updateModelView();
     }
 
     public void switchToSettings() {
@@ -69,38 +69,39 @@ public class ApplicationController {
 
     public void switchToLeaderboard() {
         game.setScreen(leaderboardController.getView());
-        leaderboardController.updateModelView();
         leaderboardController.addListeners();
+
+        leaderboardController.updateModelView();
     }
 
     public void switchToSignIn() {
         game.setScreen(signInController.getView());
-        signInController.updateModelView();
         signInController.addListeners();
+        signInController.updateModelView();
     }
 
     public void switchToSignUp() {
         game.setScreen(signUpController.getView());
-        signUpController.updateModelView();
         signUpController.addListeners();
+        signUpController.updateModelView();
     }
 
     public void switchToTutorial() {
         game.setScreen(tutorialController.getView());
-        tutorialController.updateModelView();
         tutorialController.addListeners();
+        tutorialController.updateModelView();
     }
 
     public void switchToLobby() {
         game.setScreen(lobbyController.getView());
-        lobbyController.updateModelView();
         lobbyController.addListeners();
+        lobbyController.updateModelView();
     }
 
     public void switchToInParty(Client client) {
         inPartyController = new InPartyController(model, new InPartyView(game), game, accountService, client);
         game.setScreen(inPartyController.getView());
-        inPartyController.updateModelView();
         inPartyController.addListeners();
+        inPartyController.updateModelView();
     }
 }

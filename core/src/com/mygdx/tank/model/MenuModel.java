@@ -15,6 +15,11 @@ public class MenuModel implements IModel {
     private int tutorialPageIndex = 0;
     private List<Player> connectedPlayers = new ArrayList<>();
 
+    public MenuModel() {
+        leaderboardEntries = new ArrayList<>();
+        connectedPlayers = new ArrayList<>();
+    }
+
     public boolean isLoggedIn() {
         return isLoggedIn;
     }

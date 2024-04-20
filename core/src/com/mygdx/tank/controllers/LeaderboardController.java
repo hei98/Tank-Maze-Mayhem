@@ -37,8 +37,12 @@ public class LeaderboardController implements IController{
     public void updateModelView() {
         // Get leaderboard entries and update the model
         fetchLeaderboardData();
-        // Update view
-        view.updateView(model);
+        // Safely check for non-empty before updating the view
+        if (model.getLeaderboardEntries() != null && !model.getLeaderboardEntries().isEmpty()) {
+            view.updateView(model);
+        } else {
+            Gdx.app.log("Error", "Leaderboard data is empty or not initialized");
+        }
     }
 
     @Override

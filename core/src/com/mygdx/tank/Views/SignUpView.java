@@ -116,7 +116,7 @@ public class SignUpView implements Screen, IView {
         TextureRegionDrawable errorBackgroundDrawable = new TextureRegionDrawable(new TextureRegion(errorBackground));
         Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
         labelStyle.background = errorBackgroundDrawable;
-        errorLabel = new Label(model.getErrorLabel(), labelStyle);
+        errorLabel = new Label("", labelStyle);
 
         errorLabel.setWrap(true);
         errorLabel.setAlignment(Align.center);
@@ -162,6 +162,8 @@ public class SignUpView implements Screen, IView {
 
     @Override
     public void updateView(MenuModel model) {
-        errorLabel.setText(model.getErrorLabel());
+        if(errorLabel != null){
+            errorLabel.setText(model.getErrorLabel());
+        }
     }
 }

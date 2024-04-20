@@ -23,6 +23,7 @@
     import com.mygdx.tank.GameView;
     import com.mygdx.tank.MusicManager;
     import com.mygdx.tank.TankMazeMayhem;
+    import com.mygdx.tank.controllers.ApplicationController;
     import com.mygdx.tank.model.GameModel;
     import com.mygdx.tank.model.MenuModel;
     import com.mygdx.tank.model.Scoreboard;
@@ -183,7 +184,7 @@
                     } else if (server != null) {
                         server.close();
                     }
-                    game.setScreen(new MainMenuView(game, menuModel));
+                    ApplicationController.getInstance(game, accountService).switchToMainMenu();
                 }
             });
         }

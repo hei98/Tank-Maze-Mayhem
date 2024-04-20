@@ -1,5 +1,6 @@
 package com.mygdx.tank.controllers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -59,10 +60,11 @@ public class MainMenuController implements IController{
             public void clicked(InputEvent event, float x, float y) {
                 if (accountService.hasUser() && game.getShowTutorial()){
                     game.setShowTutorial(false);
+//                    Gdx.app.log("");
                     ApplicationController.getInstance(game, accountService).switchToTutorial();
 //                    game.setScreen(new TutorialView(game, new LobbyView(game, game.getFirebaseInterface(), accountService), accountService));
                 } else if (accountService.hasUser()) {
-                    ApplicationController.getInstance(game, accountService).switchToMainMenu();
+                    ApplicationController.getInstance(game, accountService).switchToLobby();
 //                    game.setScreen(new LobbyView(game, game.getFirebaseInterface(), accountService));
                 }
             }
