@@ -42,15 +42,7 @@ public class PowerupFactory implements EntityFactory {
         powerup.addComponent(new PositionComponent(x, y));
 
         String imagePath;
-        if (randomPowerupType == PowerUpTypeComponent.PowerupType.Shield) {
-            imagePath = "images/ShieldPowerup.png";
-        } else if (randomPowerupType == PowerUpTypeComponent.PowerupType.Minigun) {
-            imagePath = "images/MachineGunPowerup.png";
-        } else if (randomPowerupType == PowerUpTypeComponent.PowerupType.Speed) {
-            imagePath = "images/SpeedPowerup.png";
-        } else {
-            imagePath = "images/ShieldPowerup.png";
-        }
+        imagePath = "images/Unknown.png";
         powerup.addComponent(new SpriteComponent(imagePath));
         Sprite sprite = powerup.getComponent(SpriteComponent.class).getSprite();
         sprite.setSize(con.getIBSize() * 0.7f, con.getIBSize() * 0.7f);

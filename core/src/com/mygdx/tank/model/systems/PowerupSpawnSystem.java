@@ -21,7 +21,7 @@ public class PowerupSpawnSystem {
     private final Client client;
 
     public PowerupSpawnSystem(GameModel model, AccountService accountService, Client client) {
-        this.timer = 10.0f;
+        this.timer = 0f;
         this.spawnedPowerup = false;
         this.powerupFactory = new PowerupFactory();
         this.model = model;
@@ -30,19 +30,19 @@ public class PowerupSpawnSystem {
     }
 
     public void update(float deltaTime) {
-        if (timer == 0.0f && !spawnedPowerup) {
+        if (timer == 0.0f) {
             Entity powerUp = powerupFactory.createEntity(accountService.getCurrentUser().getPlayer());
             List<Object> list = new ArrayList<>();
             PowerUpTypeComponent powerUpType = powerUp.getComponent(PowerUpTypeComponent.class);
             PositionComponent position = powerUp.getComponent(PositionComponent.class);
             if (accountService.getCurrentUser().getPlayer().getPlayerName().equals("Player1")) {
                 // only player1 can spawn a powerup. After spawning it on client-side, it sends it to server
-                // this is to ensure only one powerup is present at a time
                 list.add(powerUpType.powerupType);
                 list.add(position.x);
                 list.add(position.y);
                 model.addEntity(powerUp);
                 client.sendTCP(list);
+                this.timer = 5f;
             }
             spawnedPowerup = true;
         } else if (timer > 0) {
@@ -56,6 +56,5 @@ public class PowerupSpawnSystem {
 
     public void powerupRemoved() {
         this.spawnedPowerup = false;
-        this.timer = 10.0f;
     }
 }
