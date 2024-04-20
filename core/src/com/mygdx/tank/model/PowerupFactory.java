@@ -1,6 +1,7 @@
 package com.mygdx.tank.model;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.Player;
@@ -10,6 +11,7 @@ import com.mygdx.tank.model.components.TypeComponent;
 import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -21,6 +23,7 @@ public class PowerupFactory implements EntityFactory {
         powerup.addComponent(new TypeComponent(TypeComponent.EntityType.POWERUP));
 
         PowerUpTypeComponent.PowerupType[] powerupTypes = PowerUpTypeComponent.PowerupType.values();
+        Gdx.app.log("InfoTag", "powerups:" + Arrays.toString(powerupTypes));
         // Get a random index
         int randomIndex = new Random().nextInt(powerupTypes.length);
         // Use the random index to select a random enum constant
@@ -48,8 +51,11 @@ public class PowerupFactory implements EntityFactory {
             imagePath = "images/MachineGunPowerup.png";
         } else if (randomPowerupType == PowerUpTypeComponent.PowerupType.Speed) {
             imagePath = "images/SpeedPowerup.png";
-        } else {
-            imagePath = "images/ShieldPowerup.png";
+        } else if(randomPowerupType == PowerUpTypeComponent.PowerupType.Godmode){
+            imagePath = "images/Godmode.png";
+        }
+        else {
+            imagePath = "images/ShieldPowerup.png"; //Skal shield være default bilde? Finne et bilde med spørsmålstegn eln?
         }
         powerup.addComponent(new SpriteComponent(imagePath));
         Sprite sprite = powerup.getComponent(SpriteComponent.class).getSprite();

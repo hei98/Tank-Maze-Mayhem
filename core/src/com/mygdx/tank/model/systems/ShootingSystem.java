@@ -62,7 +62,7 @@ public class ShootingSystem {
             client.sendTCP(list);
 
             PowerupStateComponent powerupStateComponent = playerTank.getComponent(PowerupStateComponent.class);
-            if (!powerupStateComponent.getState().getPowerupType().equals("Minigun")) {
+            if (!powerupStateComponent.getState().getPowerupType().equals("Minigun") && !powerupStateComponent.getState().getPowerupType().equals(("Godmode"))) {
                 shootingCooldownComponent.cooldown = 1.5f;
             }
         }
