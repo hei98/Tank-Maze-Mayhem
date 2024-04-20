@@ -14,4 +14,5 @@ public interface AccountService {
     void deleteAccount() throws Exception;
     void registerAndroidServer(Server server);
     void registerAndroidClient(Client client);
+    void resetInstance();
 }

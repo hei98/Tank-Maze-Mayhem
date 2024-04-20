@@ -31,6 +31,7 @@ public class SignUpController {
             }
             accountService.signUp(email, password);
             accountService.signIn(email, password);
+            accountService.resetInstance();
         }
         catch(Exception e){
             String error = e.getMessage();
