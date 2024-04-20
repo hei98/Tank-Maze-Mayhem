@@ -201,7 +201,7 @@ public class GameView{
 
         // Make buttons see through
         touchpad.getColor().a = 0.5f;
-        circularButton.getColor().a = 0.5f;
+        circularButton.getColor().a = 0.6f;
         menuButton.getColor().a = 0.5f;
 
         //scoreLabel
