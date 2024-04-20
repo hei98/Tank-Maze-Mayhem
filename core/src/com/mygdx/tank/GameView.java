@@ -28,6 +28,7 @@ import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
+import com.mygdx.tank.model.MenuModel;
 import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
@@ -58,6 +59,7 @@ public class GameView{
     private Label countdownLabel;
     private final TankMazeMayhem game;
     private final Scoreboard scoreboard;
+    private MenuModel menuModel;
     private final AccountService accountService;
     private Label scoreLabel;
     private Server server;
@@ -69,22 +71,24 @@ public class GameView{
     private String currentTime;
     private boolean renderedCrashedScreen = false;
 
-    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Client client) {
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Client client, MenuModel menuModel) {
         this.model = model;
         this.controller = controller;
         this.game = game;
         this.scoreboard = scoreboard;
         this.accountService = accountService;
         this.client = client;
+        this.menuModel = menuModel;
     }
 
-    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Server server) {
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Server server, MenuModel menuModel) {
         this.model = model;
         this.controller = controller;
         this.game = game;
         this.scoreboard = scoreboard;
         this.accountService = accountService;
         this.server = server;
+        this.menuModel = menuModel;
     }
 
     public void create() {
@@ -118,7 +122,7 @@ public class GameView{
 
         // Initiate in game menu screen and ensure it is hidden
         if (client != null) {
-            inGameMenuScreen = new InGameMenuView(game, accountService, scoreboard, this, client, model);
+            inGameMenuScreen = new InGameMenuView(game, accountService, scoreboard, this, client, menuModel, model);
             client.addListener(new Listener() {
                 @Override
                 public void disconnected(Connection connection) {
@@ -128,7 +132,7 @@ public class GameView{
                 }
             });
         } else {
-            inGameMenuScreen = new InGameMenuView(game, accountService, scoreboard, this, server);
+            inGameMenuScreen = new InGameMenuView(game, accountService, scoreboard, this, menuModel, server);
         }
 
         isMenuVisible = false;

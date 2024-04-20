@@ -39,7 +39,7 @@ public class ApplicationController {
 
     public static synchronized ApplicationController getInstance(TankMazeMayhem game, AccountService accountService) {
         if(instance == null) {
-            new ApplicationController(game, accountService);
+            instance = new ApplicationController(game, accountService);
         }
         return instance;
     }

@@ -14,7 +14,6 @@ public class MenuModel implements IModel {
     private String errorLabel = "";
     private int tutorialPageIndex = 0;
     private List<Player> connectedPlayers = new ArrayList<>();
-    private boolean startGame;
 
     public boolean isLoggedIn() {
         return isLoggedIn;

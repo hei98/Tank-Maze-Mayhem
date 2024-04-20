@@ -1,4 +1,4 @@
-    package com.mygdx.tank.screens;
+    package com.mygdx.tank.Views;
 
     import com.badlogic.gdx.Gdx;
     import com.badlogic.gdx.Screen;
@@ -23,7 +23,6 @@
     import com.mygdx.tank.GameView;
     import com.mygdx.tank.MusicManager;
     import com.mygdx.tank.TankMazeMayhem;
-    import com.mygdx.tank.Views.MainMenuView;
     import com.mygdx.tank.model.GameModel;
     import com.mygdx.tank.model.MenuModel;
     import com.mygdx.tank.model.Scoreboard;

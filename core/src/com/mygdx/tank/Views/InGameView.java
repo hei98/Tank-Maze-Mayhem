@@ -12,10 +12,12 @@ import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.MusicManager;
 import com.mygdx.tank.Player;
+import com.mygdx.tank.controllers.ApplicationController;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.GameView;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.MenuModel;
 import com.mygdx.tank.model.Scoreboard;
 
 import java.util.List;
@@ -31,21 +33,24 @@ public class InGameView implements Screen {
     private Server server;
     private GameView view;
     private GameModel model;
+    private MenuModel menuModel;
     private GameController controller;
 
-    public InGameView(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers) {
+    public InGameView(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers, MenuModel menuModel) {
         this.game = game;
         this.accountService = accountService;
         this.client = client;
         this.connectedPlayers = connectedPlayers;
+        this.menuModel = menuModel;
     }
 
-    public InGameView(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers, Server server) {
+    public InGameView(TankMazeMayhem game, AccountService accountService, Client client, List<Player> connectedPlayers, Server server, MenuModel menuModel) {
         this.game = game;
         this.accountService = accountService;
         this.client = client;
         this.connectedPlayers = connectedPlayers;
         this.server = server;
+        this.menuModel = menuModel;
     }
 
     @Override
@@ -56,7 +61,7 @@ public class InGameView implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuView(game, accountService));
+                ApplicationController.getInstance(game, accountService).switchToMainMenu();
             }
         });
 
@@ -70,9 +75,9 @@ public class InGameView implements Screen {
         model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
         controller = new GameController(model, client);
         if (server != null) {
-            view = new GameView(model, controller, game, accountService, scoreboard, server);
+            view = new GameView(model, controller, game, accountService, scoreboard, server, menuModel);
         } else {
-            view = new GameView(model, controller, game, accountService, scoreboard, client);
+            view = new GameView(model, controller, game, accountService, scoreboard, client, menuModel);
         }
 
         stage.addActor(backButton);

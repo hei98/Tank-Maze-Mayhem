@@ -103,6 +103,6 @@ public class InPartyController implements IController{
 
     private void startGame() {
         client.removeListener(listener);
-        game.setScreen(new InGameView(game, accountService, client, model.getConnectedPlayers()));
+        game.setScreen(new InGameView(game, accountService, client, model.getConnectedPlayers(), model));
     }
 }

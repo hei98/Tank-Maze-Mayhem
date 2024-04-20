@@ -47,7 +47,7 @@ public class LobbyController implements IController{
         view.getCreatePartyButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new CreateGameView(game, game.getFirebaseInterface(), accountService));
+                game.setScreen(new CreateGameView(game, game.getFirebaseInterface(), accountService, model));
             }
         });
         view.getJoinPartyButton().addListener(new ClickListener() {
