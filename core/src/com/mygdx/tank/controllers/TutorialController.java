@@ -31,8 +31,8 @@ public class TutorialController implements IController{
         view.getBackButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (view.getCurrentPageIndex() > 0) {
-                    view.setCurrentPageIndex(view.getCurrentPageIndex() - 1);
+                if (model.getTutorialPageIndex() > 0) {
+                    model.setTutorialPageIndex(model.getTutorialPageIndex() - 1);
                     updateModelView();
                 } else {
                     ApplicationController.getInstance(game, accountService).switchToMainMenu();
@@ -42,8 +42,8 @@ public class TutorialController implements IController{
         view.getNextButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                view.setCurrentPageIndex(view.getCurrentPageIndex()+1);
-                if (view.getCurrentPageIndex() >= view.getPagesLength()) {
+                model.setTutorialPageIndex(model.getTutorialPageIndex()+1);
+                if (model.getTutorialPageIndex() >= view.getPagesLength()) {
                     endTutorial(); // No more pages, end tutorial
                 } else {
                     updateModelView();

@@ -25,11 +25,11 @@ import com.mygdx.tank.Player;
 import com.mygdx.tank.TankMazeMayhem;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.tank.User;
+import com.mygdx.tank.controllers.ApplicationController;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.powerup.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -108,7 +108,7 @@ public class CreateGameView implements Screen {
                     List<Object> list = (List<Object>) object;
                     server.sendToAllExceptTCP(connection.getID(), list);
                 } else if (object instanceof Player) {
-                    if (connectedPlayers.size() != 0) {
+                    if (!connectedPlayers.isEmpty()) {
                         Player lastPlayer = (Player) connectedPlayers.values().toArray()[connectedPlayers.size() - 1];
                         String lastPlayerName = lastPlayer.getPlayerName();
                         int lastPlayerNumber = Integer.parseInt(lastPlayerName.substring(lastPlayerName.length() -1 ));
@@ -272,7 +272,7 @@ public class CreateGameView implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyView(game,firebaseInterface, accountService));
+                ApplicationController.getInstance(game, accountService).switchToLobby();
                 server.close();
             }
         });

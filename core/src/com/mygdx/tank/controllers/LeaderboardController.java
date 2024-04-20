@@ -46,13 +46,13 @@ public class LeaderboardController implements IController{
         view.getBackButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuView(game, model));
+                ApplicationController.getInstance(game, accountService).switchToMainMenu();
             }
         });
         view.getSettingsButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsView(game, model));
+                ApplicationController.getInstance(game, accountService).switchToSettings();
             }
         });
     }

@@ -1,8 +1,12 @@
 package com.mygdx.tank.controllers;
 
+import com.esotericsoftware.kryonet.Client;
+
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.Views.InPartyView;
 import com.mygdx.tank.Views.LeaderboardView;
+import com.mygdx.tank.Views.LobbyView;
 import com.mygdx.tank.Views.MainMenuView;
 import com.mygdx.tank.Views.SettingsView;
 import com.mygdx.tank.Views.SignInView;
@@ -12,9 +16,9 @@ import com.mygdx.tank.model.MenuModel;
 
 public class ApplicationController {
     private static ApplicationController instance;
-    private TankMazeMayhem game;
-    private AccountService accountService;
-    private MenuModel model;
+    private final TankMazeMayhem game;
+    private final AccountService accountService;
+    private final MenuModel model;
 
     private InPartyController inPartyController;
     private LeaderboardController leaderboardController;
@@ -23,7 +27,7 @@ public class ApplicationController {
     private SettingsController settingsController;
     private SignInController signInController;
     private SignUpController signUpController;
-    private TutorialController tutuorialController;
+    private TutorialController tutorialController;
 
     private ApplicationController(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
@@ -41,14 +45,14 @@ public class ApplicationController {
     }
 
     private void initializeControllers() {
-        inPartyController = new InPartyController();
+//        inPartyController = new InPartyController(model, new InPartyView(game), game, accountService);
         leaderboardController = new LeaderboardController(model, new LeaderboardView(game), game, accountService, game.getFirebaseInterface());
-        lobbyController = new LobbyController();
+        lobbyController = new LobbyController(model, new LobbyView(game, model), game, accountService);
         mainMenuController = new MainMenuController(model, new MainMenuView(game, model), game, accountService);
         settingsController = new SettingsController(model, new SettingsView(game, model), game, accountService);
         signInController = new SignInController(model, new SignInView(game, model), game, accountService);
         signUpController = new SignUpController(model, new SignUpView(game, model), game, accountService);
-        tutuorialController = new TutorialController(model, new TutorialView(game), game, accountService);
+        tutorialController = new TutorialController(model, new TutorialView(game, model), game, accountService);
     }
 
     public void switchToMainMenu() {
@@ -82,9 +86,9 @@ public class ApplicationController {
     }
 
     public void switchToTutorial() {
-        game.setScreen(tutuorialController.getView());
-        tutuorialController.updateModelView();
-        tutuorialController.addListeners();
+        game.setScreen(tutorialController.getView());
+        tutorialController.updateModelView();
+        tutorialController.addListeners();
     }
 
     public void switchToLobby() {
@@ -93,9 +97,10 @@ public class ApplicationController {
         lobbyController.addListeners();
     }
 
-    public void switchToInParty() {
-        game.setScreen(lobbyController.getView());
-        lobbyController.updateModelView();
-        lobbyController.addListeners();
+    public void switchToInParty(Client client) {
+        inPartyController = new InPartyController(model, new InPartyView(game), game, accountService, client);
+        game.setScreen(inPartyController.getView());
+        inPartyController.updateModelView();
+        inPartyController.addListeners();
     }
 }

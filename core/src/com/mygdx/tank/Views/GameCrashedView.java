@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.controllers.ApplicationController;
 
 public class GameCrashedView implements Screen {
     private final TankMazeMayhem game;
@@ -122,7 +123,7 @@ public class GameCrashedView implements Screen {
         exitGameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuView(game, accountService));
+                ApplicationController.getInstance(game, accountService).switchToMainMenu();
             }
         });
     }

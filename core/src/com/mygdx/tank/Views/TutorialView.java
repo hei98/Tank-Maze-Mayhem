@@ -6,14 +6,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.IView;
 import com.mygdx.tank.TankMazeMayhem;
@@ -21,11 +17,11 @@ import com.mygdx.tank.model.MenuModel;
 
 public class TutorialView implements Screen, IView {
     private final TankMazeMayhem game;
+    private final MenuModel model;
     private final Constants con;
     private Stage stage;
     private final Image tutorialImage;
     private final TextButton skipButton, nextButton, backButton;
-    private int currentPageIndex = 0;
     private final Texture[] pages = new Texture[]{
             new Texture(Gdx.files.internal("Backgrounds/tutorial_1.JPG")),
             new Texture(Gdx.files.internal("Backgrounds/tutorial_2.JPG")),
@@ -35,16 +31,17 @@ public class TutorialView implements Screen, IView {
             new Texture(Gdx.files.internal("Backgrounds/tutorial_6.png")),
     };
 
-    public TutorialView(TankMazeMayhem game) {
+    public TutorialView(TankMazeMayhem game, MenuModel model) {
         this.game = game;
+        this.model = model;
 
-        Skin skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
         con = Constants.getInstance();
-        tutorialImage = new Image(pages[currentPageIndex]);
+        model.setTutorialPageIndex(0);
+        tutorialImage = new Image(pages[model.getTutorialPageIndex()]);
 
-        skipButton = new TextButton("Skip Tutorial", skin);
-        nextButton = new TextButton("Next", skin);
-        backButton = new TextButton("Back", skin);
+        skipButton = new TextButton("Skip Tutorial", con.getSkin());
+        nextButton = new TextButton("Next", con.getSkin());
+        backButton = new TextButton("Back", con.getSkin());
     }
 
     @Override
@@ -108,14 +105,6 @@ public class TutorialView implements Screen, IView {
         return this.nextButton;
     }
 
-    public int getCurrentPageIndex() {
-        return currentPageIndex;
-    }
-
-    public void setCurrentPageIndex(int currentPageIndex) {
-        this.currentPageIndex = currentPageIndex;
-    }
-
     public int getPagesLength() {
         return pages.length;
     }
@@ -140,6 +129,6 @@ public class TutorialView implements Screen, IView {
 
     @Override
     public void updateView(MenuModel model) {
-        tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
+        tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[model.getTutorialPageIndex()])));
     }
 }
