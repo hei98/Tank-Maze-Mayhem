@@ -25,7 +25,7 @@
     import com.mygdx.tank.TankMazeMayhem;
     import com.mygdx.tank.Views.MainMenuView;
     import com.mygdx.tank.model.GameModel;
-    import com.mygdx.tank.model.MenuScreens.MenuModel;
+    import com.mygdx.tank.model.MenuModel;
     import com.mygdx.tank.model.Scoreboard;
 
     import java.util.ArrayList;

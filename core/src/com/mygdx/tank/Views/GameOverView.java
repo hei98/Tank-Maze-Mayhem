@@ -136,13 +136,13 @@ public class GameOverView implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuView(game, accountService));
+                game.setScreen(new MainMenuView(game, model));
             }
         });
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsView(game, accountService));
+                game.setScreen(new SettingsView(game, model));
             }
         });
     }

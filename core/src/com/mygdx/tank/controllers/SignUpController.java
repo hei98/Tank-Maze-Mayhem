@@ -1,14 +1,28 @@
 package com.mygdx.tank.controllers;
 
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.tank.AccountService;
+import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.Views.SignUpView;
+import com.mygdx.tank.model.MenuModel;
 
-public class SignUpController {
+import java.util.ArrayList;
+
+public class SignUpController implements IController {
+    private final MenuModel model;
+    private final SignUpView view;
+    private final TankMazeMayhem game;
     private final AccountService accountService;
     private String email = "";
     private String password = "";
     private String confirmPassword = "";
 
-    public SignUpController(AccountService accountService) {
+    public SignUpController(MenuModel model, SignUpView view, TankMazeMayhem game, AccountService accountService) {
+        this.model = model;
+        this.view = view;
+        this.game = game;
         this.accountService = accountService;
     }
 
@@ -54,5 +68,45 @@ public class SignUpController {
             }
 
         }
+    }
+
+    @Override
+    public void updateModelView() {
+        view.updateView(model);
+    }
+
+    @Override
+    public void addListeners() {
+        // Add listeners to buttons
+        view.getSignUpButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                try {
+                    ArrayList<String> emailPass = view.getEmailPass();
+                    updateEmail(emailPass.get(0));
+                    updatePassword(emailPass.get(1));
+                    updateConfirmPassword(emailPass.get(2));
+                    onSignUpClick();
+                    model.updateErrorLabel("");
+                    updateModelView();
+                    ApplicationController.getInstance(game, accountService).switchToMainMenu();
+                } catch (Exception e) {
+                    model.updateErrorLabel("Sign up failed: " + e.getLocalizedMessage());
+                    updateModelView();
+                }
+            }
+        });
+
+        view.getBackButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ApplicationController.getInstance(game, accountService).switchToSignIn();
+            }
+        });
+    }
+
+    @Override
+    public Screen getView() {
+        return null;
     }
 }

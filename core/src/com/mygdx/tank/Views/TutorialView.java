@@ -15,11 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
+import com.mygdx.tank.IView;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.MenuModel;
 
-public class TutorialView implements Screen {
+public class TutorialView implements Screen, IView {
     private final TankMazeMayhem game;
-    private final AccountService accountService;
     private final Constants con;
     private Stage stage;
     private final Image tutorialImage;
@@ -33,12 +34,9 @@ public class TutorialView implements Screen {
             new Texture(Gdx.files.internal("Backgrounds/tutorial_5.JPG")),
             new Texture(Gdx.files.internal("Backgrounds/tutorial_6.png")),
     };
-    private final Screen returnScreen;
 
-    public TutorialView(TankMazeMayhem game, Screen returnScreen, AccountService accountService) {
+    public TutorialView(TankMazeMayhem game) {
         this.game = game;
-        this.returnScreen = returnScreen;
-        this.accountService = accountService;
 
         Skin skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
         con = Constants.getInstance();
@@ -49,10 +47,6 @@ public class TutorialView implements Screen {
         backButton = new TextButton("Back", skin);
     }
 
-    private void endTutorial() {
-        game.setScreen(returnScreen);
-    }
-
     @Override
     public void show() {
         stage = new Stage();
@@ -61,7 +55,6 @@ public class TutorialView implements Screen {
         stage.addActor(tutorialImage);
 
         setupButtons();
-        addListeners();
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -105,6 +98,28 @@ public class TutorialView implements Screen {
         stage.dispose();
     }
 
+    public TextButton getBackButton() {
+        return this.backButton;
+    }
+    public TextButton getSkipButton() {
+        return this.skipButton;
+    }
+    public TextButton getNextButton() {
+        return this.nextButton;
+    }
+
+    public int getCurrentPageIndex() {
+        return currentPageIndex;
+    }
+
+    public void setCurrentPageIndex(int currentPageIndex) {
+        this.currentPageIndex = currentPageIndex;
+    }
+
+    public int getPagesLength() {
+        return pages.length;
+    }
+
     private void setupButtons() {
         skipButton.setBounds(con.getSWidth() * 0.02f, con.getSHeight() * 0.87f, con.getTBWidth() / 2, con.getTBHeight());
         skipButton.getLabel().setFontScale(con.getTScaleF());
@@ -123,35 +138,8 @@ public class TutorialView implements Screen {
         stage.addActor(backButton);
     }
 
-    private void addListeners() {
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (currentPageIndex > 0) {
-                    currentPageIndex--;
-                    tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
-                } else {
-                    game.setScreen(new MainMenuView(game, accountService));
-                }
-            }
-        });
-        nextButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                currentPageIndex++;
-                if (currentPageIndex >= pages.length) {
-                    endTutorial(); // No more pages, end tutorial
-                } else {
-                    tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
-                }
-            }
-        });
-        skipButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                endTutorial();
-            }
-        });
-        stage.addActor(skipButton);
+    @Override
+    public void updateView(MenuModel model) {
+        tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
     }
 }

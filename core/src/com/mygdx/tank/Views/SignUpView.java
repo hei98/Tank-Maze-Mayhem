@@ -10,45 +10,40 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.controllers.SignUpController;
+import com.mygdx.tank.IView;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.MenuModel;
 
-public class SignUpView implements Screen {
+import java.util.ArrayList;
+
+public class SignUpView implements Screen, IView {
     private final TankMazeMayhem game;
+    private MenuModel model;
     private final Constants con;
-    private final AccountService accountService;
-    private final SignUpController signUpController;
     private Stage stage;
     private SpriteBatch batch;
     private final Texture background;
-    private final Skin skin;
     private final TextField emailTextField, passwordTextField, confirmPasswordTextField;
     private final TextButton signUpButton, backButton;
     private Label errorLabel;
 
-    public SignUpView(TankMazeMayhem game, AccountService accountService) {
+    public SignUpView(TankMazeMayhem game, MenuModel model) {
         this.game = game;
-        this.accountService = accountService;
-        this.signUpController = new SignUpController(accountService);
+        this.model = model;
         con = Constants.getInstance();
-        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
         background = new Texture("Backgrounds/main-menu.JPG");
 
         // Create text fields and buttons
-        emailTextField = new TextField("", skin);
-        passwordTextField = new TextField("", skin);
-        confirmPasswordTextField = new TextField("", skin);
-        signUpButton = new TextButton("Sign Up", skin);
-        backButton = new TextButton("Back", skin);
+        emailTextField = new TextField("", con.getSkin());
+        passwordTextField = new TextField("", con.getSkin());
+        confirmPasswordTextField = new TextField("", con.getSkin());
+        signUpButton = new TextButton("Sign Up", con.getSkin());
+        backButton = new TextButton("Back", con.getSkin());
     }
 
     @Override
@@ -58,7 +53,6 @@ public class SignUpView implements Screen {
 
         setErrorLabel();
         setButtonsAndFields();
-        addListeners();
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -99,8 +93,21 @@ public class SignUpView implements Screen {
     public void dispose() {
         stage.dispose();
         batch.dispose();
-        skin.dispose();
         background.dispose();
+    }
+
+    public TextButton getBackButton() {
+        return this.backButton;
+    }
+    public TextButton getSignUpButton() {
+        return this.signUpButton;
+    }
+    public ArrayList<String> getEmailPass() {
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add(emailTextField.getText());
+        temp.add(passwordTextField.getText());
+        temp.add(confirmPasswordTextField.getText());
+        return temp;
     }
 
     private void setErrorLabel() {
@@ -109,7 +116,7 @@ public class SignUpView implements Screen {
         TextureRegionDrawable errorBackgroundDrawable = new TextureRegionDrawable(new TextureRegion(errorBackground));
         Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
         labelStyle.background = errorBackgroundDrawable;
-        errorLabel = new Label("", labelStyle);
+        errorLabel = new Label(model.getErrorLabel(), labelStyle);
 
         errorLabel.setWrap(true);
         errorLabel.setAlignment(Align.center);
@@ -153,33 +160,8 @@ public class SignUpView implements Screen {
         stage.addActor(backButton);
     }
 
-    private void addListeners() {
-        // Add listeners to buttons
-        signUpButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                try {
-                    String email = emailTextField.getText();
-                    String password = passwordTextField.getText();
-                    String confirmPassword = confirmPasswordTextField.getText();
-                    signUpController.updateEmail(email);
-                    signUpController.updatePassword(password);
-                    signUpController.updateConfirmPassword(confirmPassword);
-                    signUpController.onSignUpClick();
-                    errorLabel.setText("");
-                    game.setScreen(new MainMenuView(game, accountService));
-                } catch (Exception e) {
-                    errorLabel.setText("Sign up failed: " + e.getLocalizedMessage());
-                }
-            }
-        });
-
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SignInView(game, accountService));
-            }
-        });
+    @Override
+    public void updateView(MenuModel model) {
+        errorLabel.setText(model.getErrorLabel());
     }
-
 }

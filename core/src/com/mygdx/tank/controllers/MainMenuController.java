@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.Views.MainMenuView;
-import com.mygdx.tank.model.MenuScreens.MenuModel;
+import com.mygdx.tank.model.MenuModel;
 
 public class MainMenuController implements IController{
     private MenuModel model;

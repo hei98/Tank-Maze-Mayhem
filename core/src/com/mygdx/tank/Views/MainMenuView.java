@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.IView;
 import com.mygdx.tank.TankMazeMayhem;
-import com.mygdx.tank.model.MenuScreens.MenuModel;
+import com.mygdx.tank.model.MenuModel;
 
 public class MainMenuView implements Screen, IView {
     private final TankMazeMayhem game;
