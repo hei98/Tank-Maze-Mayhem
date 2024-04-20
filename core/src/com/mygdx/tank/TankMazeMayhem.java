@@ -13,13 +13,15 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.MenuScreens.MenuModel;
 import com.mygdx.tank.Views.MainMenuView;
 
+import java.util.HashMap;
+
 public class TankMazeMayhem extends Game {
 	private final AccountService accountService;
     private final FirebaseInterface firebaseInterface;
     private GameModel model;
     private GameView view;
     private GameController controller;
-	private Music backgroundMusic, gameMusic;
+	private MusicManager musicManager;
 	private FPSLogger fpsLogger;
     SpriteBatch batch;
 	private boolean showTutorial;
@@ -32,11 +34,7 @@ public class TankMazeMayhem extends Game {
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
-		backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/09 - Fortunate Son.mp3"));
-		backgroundMusic.setLooping(true);
-		backgroundMusic.play();
-
-		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/44 End Credits.mp3"));
+		musicManager = new MusicManager();
 		showTutorial = !accountService.hasUser();
 
 		// Set the initial screen to the main menu
@@ -68,47 +66,14 @@ public class TankMazeMayhem extends Game {
 		return firebaseInterface;
 	}
 
-	public void muteMusic(boolean mute) {
-		if (backgroundMusic != null) {
-			if (mute) {
-				backgroundMusic.stop();
-			} else {
-				backgroundMusic.play();
-			}
-		}
+	//Music handling
+
+
+	public MusicManager getMusicManager(){
+		return musicManager;
 	}
 
-	public void muteGameMusic(boolean mute) {
-		if (gameMusic != null) {
-			if (mute) {
-				gameMusic.stop();
-			} else {
-				gameMusic.play();
-			}
-		}
-    }
 
-	public boolean isMusicPlaying() {
-		return backgroundMusic != null && backgroundMusic.isPlaying();
-	}
-	public boolean isGameMusicPlaying() {
-		return gameMusic.isPlaying();
-	}
-
-	public void startGameMusic() {
-		if (backgroundMusic.isPlaying()) {
-			backgroundMusic.stop();
-		}
-		gameMusic.setLooping(true);
-		gameMusic.play();
-	}
-
-	public void stopGameMusic() {
-		if (gameMusic.isPlaying()) {
-			gameMusic.stop();
-		}
-		backgroundMusic.play(); // Resume background music
-	}
 
 	public boolean getShowTutorial() {
 		return this.showTutorial;
@@ -122,7 +87,6 @@ public class TankMazeMayhem extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		backgroundMusic.dispose();
-		gameMusic.dispose();
+		musicManager.dispose();
 	}
 }

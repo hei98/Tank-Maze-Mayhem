@@ -4,6 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -27,13 +28,20 @@ import com.mygdx.tank.User;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.powerup.*;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.net.NetworkInterface;
 
 public class CreateGameView implements Screen {
     private final FirebaseInterface firebaseInterface;
@@ -192,7 +200,11 @@ public class CreateGameView implements Screen {
         user.setPlayer(player);
 
         setButtons();
-        createHeadline();
+        try {
+            createHeadline();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
         createPlayersTable();
         addListeners();
 
@@ -276,14 +288,54 @@ public class CreateGameView implements Screen {
         });
     }
 
-    private void createHeadline() {
+    private void createHeadline() throws UnknownHostException {
         Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Party", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
         headlineLabel.setWidth(con.getSWidth());
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+
+        String ip = getIpAddress();
+
+        Label label;
+        if (ip.equals("10.0.2.15") || ip.equals("10.0.2.16")) {
+            label = new Label("Your IP-address is: 10.0.2.2, port 5000", labelStyle);
+        } else {
+            label = new Label("Your IP-address is: " + ip + ", port 54555", labelStyle);
+        }
+
+        label.setAlignment(Align.center);
+        label.setY(con.getSHeight() * 0.2f);
+        label.setFontScale(con.getTScaleF());
+        label.setWidth(con.getSWidth());
+
+        stage.addActor(label);
         stage.addActor(headlineLabel);
+    }
+
+    public String getIpAddress() {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                if (iface.isLoopback() || !iface.isUp() || iface.isVirtual() || iface.isPointToPoint())
+                    continue;
+
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+
+                    final String ip = addr.getHostAddress();
+                    if (Inet4Address.class == addr.getClass()) return ip;
+                }
+            }
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     private void createPlayersTable() {

@@ -31,6 +31,7 @@ import com.mygdx.tank.model.GameModel;
 import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
+import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.mygdx.tank.Views.GameCrashedView;
@@ -97,7 +98,7 @@ public class GameView{
         gameStage = new Stage();
         spriteBatch = new SpriteBatch();
         con = Constants.getInstance();
-        Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton.png"));
+        Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage5.png"));
 
         // Create a skin for the circular button
         Skin circularButtonSkin = new Skin();
@@ -121,7 +122,9 @@ public class GameView{
             client.addListener(new Listener() {
                 @Override
                 public void disconnected(Connection connection) {
-                    gameCrashed = true;
+                    if ( Integer.parseInt(currentTime.split(":")[0]) != 0 && Integer.parseInt(currentTime.split(":")[1]) != 0) {
+                        gameCrashed = true;
+                    }
                 }
             });
         } else {
@@ -198,7 +201,7 @@ public class GameView{
 
         // Make buttons see through
         touchpad.getColor().a = 0.5f;
-        circularButton.getColor().a = 0.5f;
+        circularButton.getColor().a = 0.6f;
         menuButton.getColor().a = 0.5f;
 
         //scoreLabel
@@ -313,7 +316,46 @@ public class GameView{
         if (!gameCrashed) {
             currentTime = timerText;
         }
+        if (seconds <= 10 && minutes == 0) {
+            countdownLabel.getColor().set(Color.RED);
+            if (seconds <= 3) {
+                if (seconds % 2 == 0) {
+                    countdownLabel.getColor().set(Color.RED);
+                } else {
+                    countdownLabel.getColor().set(Color.WHITE);
+                }
+            }
+        }
         countdownLabel.setText(currentTime);
+
+        Entity playerTank = model.getPlayerTank();
+        ShootingCooldownComponent shootingCooldownComponent = playerTank.getComponent(ShootingCooldownComponent.class);
+        if (shootingCooldownComponent.cooldown > 1.2f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage1.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        } else if (shootingCooldownComponent.cooldown > 0.9f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage2.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        } else if (shootingCooldownComponent.cooldown > 0.6f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage3.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        } else if (shootingCooldownComponent.cooldown > 0.3f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage4.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        } else if (shootingCooldownComponent.cooldown >= 0.0f) {
+            Texture buttonTexture = new Texture(Gdx.files.internal("images/fireButton_stage5.png"));
+            ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
+            buttonStyle.up = new TextureRegionDrawable(buttonTexture);
+            circularButton.setStyle(buttonStyle);
+        }
 
         // End batch processing
         spriteBatch.end();

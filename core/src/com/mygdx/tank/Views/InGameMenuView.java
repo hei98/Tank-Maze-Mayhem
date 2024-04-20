@@ -1,4 +1,4 @@
-    package com.mygdx.tank.Views;
+    package com.mygdx.tank.screens;
 
     import com.badlogic.gdx.Gdx;
     import com.badlogic.gdx.Screen;
@@ -21,7 +21,9 @@
     import com.mygdx.tank.AccountService;
     import com.mygdx.tank.Constants;
     import com.mygdx.tank.GameView;
+    import com.mygdx.tank.MusicManager;
     import com.mygdx.tank.TankMazeMayhem;
+    import com.mygdx.tank.Views.MainMenuView;
     import com.mygdx.tank.model.GameModel;
     import com.mygdx.tank.model.MenuScreens.MenuModel;
     import com.mygdx.tank.model.Scoreboard;
@@ -48,8 +50,9 @@
         private final Scoreboard scoreboard;
         private Client client;
         private Server server;
+        private MusicManager musicManager;
         private GameModel gameModel;
-        private MenuModel mainMenuModel;
+        private MenuModel menuModel;
 
 
         public InGameMenuView(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, MenuModel mainMenuModel, Server server) {
@@ -58,7 +61,8 @@
             this.scoreboard = scoreboard;
             this.view = view;
             this.server = server;
-            this.mainMenuModel = mainMenuModel;
+            this.musicManager = game.getMusicManager();
+            this.menuModel = mainMenuModel;
         }
 
         public InGameMenuView(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Client client, MenuModel mainMenuModel, GameModel model) {
@@ -67,7 +71,7 @@
             this.scoreboard = scoreboard;
             this.view = view;
             this.client = client;
-            this.mainMenuModel = mainMenuModel;
+            this.menuModel = mainMenuModel;
             this.gameModel = model;
         }
 
@@ -180,7 +184,7 @@
                     } else if (server != null) {
                         server.close();
                     }
-                    game.setScreen(new MainMenuView(game, accountService, mainMenuModel));
+                    game.setScreen(new MainMenuView(game, menuModel));
                 }
             });
         }
@@ -197,12 +201,14 @@
             soundControl.setSize(con.getIBSize(), con.getIBSize());
             soundControl.getImageCell().expand().fill();
             soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.75f) - soundLabel.getPrefHeight());
-            soundControl.toggle(); //For visual correctness
+            if(musicManager.isGameMusicPlaying()){
+                soundControl.toggle(); //For visual correctness
+            }
 
             soundControl.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    game.muteGameMusic(game.isGameMusicPlaying());
+                    musicManager.muteGameMusic(musicManager.isGameMusicPlaying());
                 }
             });
             stage.addActor(soundControl);
