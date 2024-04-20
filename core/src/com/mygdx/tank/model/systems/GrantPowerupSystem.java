@@ -20,10 +20,13 @@ public class GrantPowerupSystem {
 
         PowerupStateComponent powerupStateComponent = tank.getComponent(PowerupStateComponent.class);
         if (powerup.getComponent(PowerUpTypeComponent.class).powerupType == PowerUpTypeComponent.PowerupType.Shield) {
+            powerupStateComponent.setPrevState(powerupStateComponent.getState().getPowerupType());
             powerupStateComponent.setState( new ShieldState());
         } else if (powerup.getComponent(PowerUpTypeComponent.class).powerupType == PowerUpTypeComponent.PowerupType.Speed) {
+            powerupStateComponent.setPrevState(powerupStateComponent.getState().getPowerupType());
             powerupStateComponent.setState( new SpeedState());
         } else if (powerup.getComponent(PowerUpTypeComponent.class).powerupType == PowerUpTypeComponent.PowerupType.Minigun) {
+            powerupStateComponent.setPrevState(powerupStateComponent.getState().getPowerupType());
             powerupStateComponent.setState( new MinigunState());
         }
 

@@ -21,7 +21,9 @@ public class NormalState implements PowerupState {
 
         tank.getComponent(HealthComponent.class).resetHealth();
 
-        tank.getComponent(ShootingCooldownComponent.class).cooldown = 1.5f;
+        if (!powerupStateComponent.getPrevState().equals("Invulnerable")) {
+            tank.getComponent(ShootingCooldownComponent.class).cooldown = 1.5f;
+        }
 
         powerupStateComponent.inPowerupMode = false;
         powerupStateComponent.timer = 8f;

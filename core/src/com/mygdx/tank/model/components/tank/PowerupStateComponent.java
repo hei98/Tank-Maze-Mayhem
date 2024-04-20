@@ -5,6 +5,7 @@ import com.mygdx.tank.model.states.PowerupState;
 
 public class PowerupStateComponent implements Component {
     private PowerupState state;
+    private String prevState;
     public boolean inPowerupMode;
 
     public float timer;
@@ -13,6 +14,7 @@ public class PowerupStateComponent implements Component {
         this.state = state;
         inPowerupMode = false;
         timer = 8f;
+        prevState = state.getPowerupType();
     }
 
     public PowerupState getState() {
@@ -21,5 +23,11 @@ public class PowerupStateComponent implements Component {
 
     public void setState(PowerupState state) {
         this.state = state;
+    }
+    public void setPrevState(String prevState) {
+        this.prevState = prevState;
+    }
+    public String getPrevState() {
+        return this.prevState;
     }
 }

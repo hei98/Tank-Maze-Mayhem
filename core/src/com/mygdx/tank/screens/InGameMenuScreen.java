@@ -68,6 +68,7 @@
             this.view = view;
             this.client = client;
             this.model = model;
+            this.musicManager = game.getMusicManager();
         }
 
         @Override

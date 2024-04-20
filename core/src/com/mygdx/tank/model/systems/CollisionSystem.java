@@ -60,6 +60,7 @@ public class CollisionSystem {
             if (powerupStateComponent.inPowerupMode) {
                 powerupStateComponent.timer = (powerupStateComponent.timer - deltaTime < 0) ? 0.0f : powerupStateComponent.timer - deltaTime;
                 if (powerupStateComponent.timer == 0.0f) {
+                    powerupStateComponent.setPrevState(powerupStateComponent.getState().getPowerupType());
                     powerupStateComponent.setState(new NormalState());
                     powerupStateComponent.getState().doAction(playerTank);
                 }
