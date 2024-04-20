@@ -9,6 +9,7 @@ import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import java.util.Map;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.bullet.BounceComponent;
 import com.mygdx.tank.model.components.bullet.CollisionSideComponent;
 import com.mygdx.tank.model.components.PositionComponent;
@@ -110,6 +111,12 @@ public class CollisionSystem {
         if (health != null) {
             if (health.getHealth() == 1) {
                 playerScoreSystem.updateScore(bullet, tank, connectedPlayers);
+                    bullet.getComponent(PlayerComponent.class).player.getKillDeathComponent().kills += 1;
+                    bullet.getComponent(PlayerComponent.class).player.getKillDeathComponent().ratio = (float) bullet.getComponent(PlayerComponent.class).player.getKillDeathComponent().kills /bullet.getComponent(PlayerComponent.class).player.getKillDeathComponent().deaths;
+                    tank.getComponent(PlayerComponent.class).player.getKillDeathComponent().deaths += 1;
+                    tank.getComponent(PlayerComponent.class).player.getKillDeathComponent().ratio = (float) tank.getComponent(PlayerComponent.class).player.getKillDeathComponent().kills /tank.getComponent(PlayerComponent.class).player.getKillDeathComponent().deaths;
+                    Gdx.app.log("InfoTag", "Player:" + bullet.getComponent(PlayerComponent.class).player.getPlayerName() + "Kills:" + bullet.getComponent(PlayerComponent.class).player.getKillDeathComponent().kills + "Deaths:" + bullet.getComponent(PlayerComponent.class).player.getKillDeathComponent().deaths + "K/D" + bullet.getComponent(PlayerComponent.class).player.getKillDeathComponent().ratio);
+
             }
             health.takeDamage();
             // Do not mark the tank for removal here; let GameModel handle it based on health status
