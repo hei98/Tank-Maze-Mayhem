@@ -60,4 +60,15 @@ public class PlayerScoreSystem {
 
         System.out.println(scoreboard.getScoreboard());
     }
+    public void mineSteppedOn(Entity mine, Entity tank, List<Player> connectedPlayers){
+        Player tankPlayer = new Player();
+        for (Player player : connectedPlayers) {
+            if (player.getPlayerName().equals(tank.getComponent(PlayerComponent.class).player.getPlayerName())) {
+                tankPlayer = player;
+            }
+        }
+        PlayerScoreComponent tankPlayerScoreComponent = tankPlayer.getPlayerScoreComponent();
+        tankPlayerScoreComponent.score -= 100;
+        scoreboard.update(tankPlayer);
+    }
 }

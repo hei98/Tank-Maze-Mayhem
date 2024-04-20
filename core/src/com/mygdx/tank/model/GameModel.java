@@ -44,6 +44,7 @@ public class GameModel {
     private final PowerupSpawnSystem powerupSpawnSystem;
     private final RespawnSystem respawnSystem;
     private final GrantPowerupSystem grantPowerupSystem;
+    private final MineSpawnSystem mineSpawnSystem;
     private Entity playerTank;
     private final TiledMap map;
     private final EntityFactory tankFactory;
@@ -125,7 +126,14 @@ public class GameModel {
                         synchronized (entities) {
                             entities.add(powerUp);
                         }
-                    }
+                    } else if (firstElement == TypeComponent.EntityType.MINE && secondElement instanceof Player){
+                        Player player = (Player) secondElement;
+                        EntityFactory mineFactory = new MineFactory();
+                        Entity mine = mineFactory.createEntity(player);
+                        synchronized (entities) {
+                            entities.add(mine);
+                        }
+                    };
                 } else if (object instanceof String) {
                     String playerName = (String) object;
                     for (Entity entity : entities)  {
@@ -150,6 +158,7 @@ public class GameModel {
         shootingSystem = new ShootingSystem(this, accountService, client);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService, client);
         respawnSystem = new RespawnSystem(entities, accountService, client);
+        mineSpawnSystem = new MineSpawnSystem(this, accountService, client);
     }
 
     public void update(float deltaTime) {
@@ -158,6 +167,7 @@ public class GameModel {
         shootingSystem.update(deltaTime); // Ensure this is being executed
         powerupSpawnSystem.update(deltaTime);
         respawnSystem.update(deltaTime);
+        mineSpawnSystem.update(deltaTime);
         removeMarkedEntities();
         if (spawnedPowerupType != null && !updatedPowerupSprite) {
             String imagePath;
@@ -195,6 +205,9 @@ public class GameModel {
                                 break;
                             case POWERUP:
                                 powerupSpawnSystem.powerupRemoved();
+                                break;
+                            case MINE:
+                                mineSpawnSystem.mineRemoved();
                                 break;
                         }
                     }

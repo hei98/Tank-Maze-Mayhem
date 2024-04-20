@@ -101,6 +101,10 @@ public class CollisionSystem {
             grantPowerupSystem.givePlayertankPowerup(e2, e1);
         } else if (type2.type == TypeComponent.EntityType.POWERUP && type1.type == TypeComponent.EntityType.TANK) {
             grantPowerupSystem.givePlayertankPowerup(e1, e2);
+        } else if (type1.type == TypeComponent.EntityType.MINE && type2.type == TypeComponent.EntityType.TANK) {
+            markMineForRemovalAndDamageTank(e1, e2);
+        } else if (type2.type == TypeComponent.EntityType.MINE && type1.type == TypeComponent.EntityType.TANK) {
+            markMineForRemovalAndDamageTank(e2, e1);
         }
     }
 
@@ -113,6 +117,15 @@ public class CollisionSystem {
             }
             health.takeDamage();
             // Do not mark the tank for removal here; let GameModel handle it based on health status
+        }
+    }
+
+    private void markMineForRemovalAndDamageTank(Entity mine, Entity tank){
+        mine.markForRemoval(true);
+        HealthComponent health = tank.getComponent(HealthComponent.class);
+        if (health != null){
+            playerScoreSystem.mineSteppedOn(mine, tank, connectedPlayers);
+            health.takeMineDamage();
         }
     }
 

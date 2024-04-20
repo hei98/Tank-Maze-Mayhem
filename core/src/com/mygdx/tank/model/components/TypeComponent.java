@@ -2,7 +2,7 @@ package com.mygdx.tank.model.components;
 
 public class TypeComponent implements Component {
     public enum EntityType {
-        TANK, BULLET, POWERUP
+        TANK, BULLET, POWERUP, MINE
     }
 
     public EntityType type;

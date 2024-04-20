@@ -13,6 +13,7 @@ public class HealthComponent implements Component {
     public void takeDamage() {
         health -= 1;
     }
+    public void takeMineDamage(){ health = 0; }
 
     public void resetHealth() {
         health = maxHealth;
