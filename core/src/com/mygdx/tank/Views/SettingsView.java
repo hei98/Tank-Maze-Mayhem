@@ -56,8 +56,6 @@ public class SettingsView implements Screen, IView {
         createSoundControl();
         createMusicSelection();
 
-        stage.addActor(backButton);
-
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -117,6 +115,9 @@ public class SettingsView implements Screen, IView {
         soundControlButton.setSize(con.getIBSize(), con.getIBSize());
         soundControlButton.getImageCell().expand().fill();
         soundControlButton.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
+        if(musicManager.isMenuMusicPlaying()){
+            soundControlButton.toggle(); //For visual correctness
+        }
 
         undoButton.setBounds(con.getSWidth()*0.6f, con.getSHeight()*0.2f, con.getTBWidth()*0.5f, con.getTBHeight()*0.5f);
         undoButton.getLabel().setFontScale(con.getTScaleF());
@@ -150,6 +151,7 @@ public class SettingsView implements Screen, IView {
         musicSelect.setSelected(musicManager.getCurrentTrackName());
         musicSelect.setSize(con.getTBWidth()*0.75f, con.getTBHeight()*0.75f);
         musicSelect.setPosition(con.getSWidth() * 0.6f, con.getSHeight() * 0.47f - selectionLabel.getPrefHeight());
+        musicSelect.getStyle().font.getData().setScale(con.getTScaleF());
         stage.addActor(musicSelect);
     }
 
@@ -158,10 +160,6 @@ public class SettingsView implements Screen, IView {
         soundLabel.setX(con.getSWidth() * 0.4f);
         soundLabel.setY((con.getSHeight()*0.63f) - soundLabel.getPrefHeight());
         stage.addActor(soundLabel);
-
-        if(musicManager.isMenuMusicPlaying()){
-            soundControlButton.toggle(); //For visual correctness
-        }
     }
 
     @Override

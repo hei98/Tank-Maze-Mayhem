@@ -88,7 +88,7 @@ public class SignUpController implements IController {
                     updateConfirmPassword(emailPass.get(2));
                     onSignUpClick();
                     model.updateErrorLabel("");
-                    updateModelView();
+//                    updateModelView();
                     ApplicationController.getInstance(game, accountService).switchToMainMenu();
                 } catch (Exception e) {
                     model.updateErrorLabel("Sign up failed: " + e.getLocalizedMessage());
@@ -107,6 +107,6 @@ public class SignUpController implements IController {
 
     @Override
     public Screen getView() {
-        return null;
+        return view;
     }
 }

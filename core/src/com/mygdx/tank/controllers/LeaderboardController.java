@@ -37,12 +37,6 @@ public class LeaderboardController implements IController{
     public void updateModelView() {
         // Get leaderboard entries and update the model
         fetchLeaderboardData();
-        // Safely check for non-empty before updating the view
-        if (model.getLeaderboardEntries() != null && !model.getLeaderboardEntries().isEmpty()) {
-            view.updateView(model);
-        } else {
-            Gdx.app.log("Error", "Leaderboard data is empty or not initialized");
-        }
     }
 
     @Override
@@ -90,6 +84,11 @@ public class LeaderboardController implements IController{
             });
             ArrayList<LeaderboardEntry> topFiveEntries = new ArrayList<>(entries.subList(0, Math.min(entries.size(), 5)));
             model.updateLeaderboard(topFiveEntries);
+            if (model.getLeaderboardEntries() != null && !model.getLeaderboardEntries().isEmpty()) {
+                view.updateView(model);
+            } else {
+                Gdx.app.log("Error", "Leaderboard data is empty or not initialized");
+            }
         });
     }
 }

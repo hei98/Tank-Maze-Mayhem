@@ -94,6 +94,7 @@ public class SignInController implements IController{
         view.getSignUpButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("SignUp", "Sign Up button clicked");
                 ApplicationController.getInstance(game, accountService).switchToSignUp();
             }
         });

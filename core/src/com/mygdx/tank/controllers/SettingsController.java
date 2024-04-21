@@ -31,10 +31,7 @@ public class SettingsController implements IController{
 
     @Override
     public void updateModelView() {
-        if(initialMusicSettings.isPlaying() != musicManager.isMenuMusicPlaying()){
-            view.updateView(model);
-//            view.getSoundControlButton().toggle(); //For visual correctness
-        }
+        view.updateView(model);
     }
 
     @Override
@@ -55,7 +52,9 @@ public class SettingsController implements IController{
         view.getUndoButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                updateModelView();
+                if(initialMusicSettings.isPlaying() != musicManager.isMenuMusicPlaying()){
+                    updateModelView(); // for visual correctness
+                }
                 musicManager.restoreFromMemento(initialMusicSettings);
                 view.getMusicSelect().setSelected(musicManager.getCurrentTrackName());
             }

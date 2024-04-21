@@ -34,7 +34,7 @@ public class ApplicationController {
         this.accountService = accountService;
         this.model = new MenuModel();
 
-        initializeControllers();
+//        initializeControllers();
     }
 
     public static synchronized ApplicationController getInstance(TankMazeMayhem game, AccountService accountService) {
@@ -56,52 +56,58 @@ public class ApplicationController {
     }
 
     public void switchToMainMenu() {
+        mainMenuController = new MainMenuController(model, new MainMenuView(game, model), game, accountService);
         game.setScreen(mainMenuController.getView());
         mainMenuController.addListeners();
         mainMenuController.updateModelView();
     }
 
     public void switchToSettings() {
+        settingsController = new SettingsController(model, new SettingsView(game, model), game, accountService);
         game.setScreen(settingsController.getView());
-        settingsController.updateModelView();
+//        settingsController.updateModelView();
         settingsController.addListeners();
     }
 
     public void switchToLeaderboard() {
+        leaderboardController = new LeaderboardController(model, new LeaderboardView(game), game, accountService, game.getFirebaseInterface());
         game.setScreen(leaderboardController.getView());
-        leaderboardController.addListeners();
-
         leaderboardController.updateModelView();
+        leaderboardController.addListeners();
     }
 
     public void switchToSignIn() {
+        signInController = new SignInController(model, new SignInView(game, model), game, accountService);
         game.setScreen(signInController.getView());
         signInController.addListeners();
-        signInController.updateModelView();
+//        signInController.updateModelView();
     }
 
     public void switchToSignUp() {
+        signUpController = new SignUpController(model, new SignUpView(game, model), game, accountService);
         game.setScreen(signUpController.getView());
         signUpController.addListeners();
-        signUpController.updateModelView();
+//        signUpController.updateModelView();
     }
 
     public void switchToTutorial() {
+        tutorialController = new TutorialController(model, new TutorialView(game, model), game, accountService);
         game.setScreen(tutorialController.getView());
         tutorialController.addListeners();
         tutorialController.updateModelView();
     }
 
     public void switchToLobby() {
+        lobbyController = new LobbyController(model, new LobbyView(game, model), game, accountService);
         game.setScreen(lobbyController.getView());
         lobbyController.addListeners();
-        lobbyController.updateModelView();
+//        lobbyController.updateModelView();
     }
 
     public void switchToInParty(Client client) {
         inPartyController = new InPartyController(model, new InPartyView(game), game, accountService, client);
         game.setScreen(inPartyController.getView());
         inPartyController.addListeners();
-        inPartyController.updateModelView();
+//        inPartyController.updateModelView();
     }
 }
