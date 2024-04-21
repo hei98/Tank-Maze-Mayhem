@@ -105,7 +105,7 @@ public class ApplicationController {
     }
 
     public void switchToInParty(Client client) {
-        inPartyController = new InPartyController(model, new InPartyView(game), game, accountService, client);
+        inPartyController = new InPartyController(model, new InPartyView(game, model), game, accountService, client);
         game.setScreen(inPartyController.getView());
         inPartyController.addListeners();
 //        inPartyController.updateModelView();

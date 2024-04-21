@@ -73,6 +73,7 @@
             this.client = client;
             this.menuModel = mainMenuModel;
             this.gameModel = model;
+            this.musicManager = game.getMusicManager();
         }
 
         @Override

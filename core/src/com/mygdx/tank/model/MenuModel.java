@@ -1,5 +1,6 @@
 package com.mygdx.tank.model;
 
+import com.esotericsoftware.kryonet.Client;
 import com.mygdx.tank.IModel;
 import com.mygdx.tank.LeaderboardEntry;
 import com.mygdx.tank.Player;
@@ -14,10 +15,14 @@ public class MenuModel implements IModel {
     private String errorLabel = "";
     private int tutorialPageIndex = 0;
     private List<Player> connectedPlayers = new ArrayList<>();
+    private boolean startGame;
+    private Client client;
 
     public MenuModel() {
         leaderboardEntries = new ArrayList<>();
         connectedPlayers = new ArrayList<>();
+        client = new Client();
+        startGame = false;
     }
 
     public boolean isLoggedIn() {
@@ -62,5 +67,20 @@ public class MenuModel implements IModel {
 
     public void setConnectedPlayers(List<Player> players) {
         connectedPlayers = players;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public boolean startGame() {
+        return startGame;
+    }
+    public void setStartGame(boolean startGame) {
+        this.startGame = startGame;
     }
 }

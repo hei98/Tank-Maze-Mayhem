@@ -48,6 +48,8 @@ public class InPartyController implements IController{
             }
         });
 
+        model.setClient(client);
+        model.setStartGame(false);
         listener = new Listener() {
             @Override
             public void received(Connection connection, Object object) {
@@ -92,8 +94,10 @@ public class InPartyController implements IController{
             }
         };
 
-        client.addListener(listener);
-        client.sendTCP(new Player("Player1", accountService.getCurrentUser().getUserMail())); // need to create a random Player-object, the correct one is sent back
+//        client.addListener(listener);
+        model.getClient().addListener(listener);
+        model.getClient().sendTCP(new Player("Player1", accountService.getCurrentUser().getUserMail())); // need to create a random Player-object, the correct one is sent back
+//        client.sendTCP(new Player("Player1", accountService.getCurrentUser().getUserMail())); // need to create a random Player-object, the correct one is sent back
     }
 
     @Override
@@ -102,7 +106,8 @@ public class InPartyController implements IController{
     }
 
     private void startGame() {
-        client.removeListener(listener);
-        game.setScreen(new InGameView(game, accountService, client, model.getConnectedPlayers(), model));
+        model.getClient().removeListener(listener);
+        model.setStartGame(true);
+//        client.removeListener(listener);
     }
 }

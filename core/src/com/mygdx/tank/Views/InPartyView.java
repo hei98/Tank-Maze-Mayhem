@@ -18,11 +18,13 @@ import com.mygdx.tank.Player;
 import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.model.MenuModel;
 
+import java.io.IOException;
 import java.util.List;
 
 public class InPartyView implements Screen, IView {
     private final Constants con;
     private final TankMazeMayhem game;
+    private MenuModel model;
     private final Texture background;
     private SpriteBatch batch;
     private Stage stage;
@@ -30,8 +32,9 @@ public class InPartyView implements Screen, IView {
     private Table playersTable;
     private ScrollPane scrollPane;
 
-    public InPartyView(TankMazeMayhem game) {
+    public InPartyView(TankMazeMayhem game, MenuModel model) {
         this.game = game;
+        this.model = model;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
 
@@ -53,6 +56,10 @@ public class InPartyView implements Screen, IView {
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 0, 0, 1);
+
+        if (model.startGame()) {
+            game.setScreen(new InGameView(game, game.getAccountService(), model.getClient(), model.getConnectedPlayers(), model));
+        }
 
         batch.begin();
         batch.draw(background, 0, 0, con.getSWidth(), con.getSHeight());
@@ -87,6 +94,11 @@ public class InPartyView implements Screen, IView {
         stage.dispose();
         background.dispose();
         batch.dispose();
+        try {
+            model.getClient().dispose();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public TextButton getBackButton() {
