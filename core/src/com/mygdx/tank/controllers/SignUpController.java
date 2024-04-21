@@ -46,6 +46,7 @@ public class SignUpController implements IController {
             accountService.signUp(email, password);
             game.setShowTutorial(true);
             accountService.signIn(email, password);
+            accountService.resetInstance();
         }
         catch(Exception e){
             String error = e.getMessage();

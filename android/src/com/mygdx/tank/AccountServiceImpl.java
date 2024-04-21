@@ -75,4 +75,9 @@ public class AccountServiceImpl implements AccountService {
         client.getKryo().register(AssetManager.class);
     }
 
+    @Override
+    public void resetInstance() {
+        this.userInstance = null;
+    }
+
 }

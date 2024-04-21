@@ -42,6 +42,7 @@ public class SignInController implements IController{
     public void onSignInClick() throws Exception {
         try {
             accountService.signIn(email, password);
+            accountService.resetInstance();
         }
         catch(Exception e){
             String error = e.getMessage();
