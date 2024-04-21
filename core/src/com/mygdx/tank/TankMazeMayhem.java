@@ -1,7 +1,6 @@
 package com.mygdx.tank;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -17,7 +16,6 @@ public class TankMazeMayhem extends Game {
     private GameView view;
     private GameController controller;
 	private MusicManager musicManager;
-	private FPSLogger fpsLogger;
     SpriteBatch batch;
 	private boolean showTutorial;
 
@@ -34,13 +32,11 @@ public class TankMazeMayhem extends Game {
 
 		// Set the initial screen to the main menu
 		ApplicationController.getInstance(this, accountService).switchToMainMenu();
-		fpsLogger = new FPSLogger();
 	}
 
 	@Override
 	public void render() {
 		super.render(); // Delegates rendering to the current screen
-		fpsLogger.log();
 	}
 
 	public BitmapFont getFont() {
