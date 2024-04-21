@@ -129,6 +129,7 @@ public class LobbyView implements Screen, IView {
         IPaddressField.setBounds(con.getCenterTB() - con.getTBWidth() * 0.2f, con.getSHeight() * 0.5f, con.getTBWidth() * 0.8f, con.getTBHeight());
         IPaddressField.setText("10.0.2.2");
 
+
         portField.setBounds(con.getCenterTB() + con.getTBWidth() * 0.75f, con.getSHeight() * 0.5f, con.getTBWidth() * 0.4f, con.getTBHeight());
         portField.setText("5000");
 
