@@ -1,5 +1,6 @@
 package com.mygdx.tank.Views;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -71,7 +72,8 @@ public class InGameView implements Screen {
             scoreboard.addPlayer(player);
         }
 
-        model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
+        model = GameModel.getInstance(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
+//        model = new GameModel(game.getFirebaseInterface(), accountService, client, connectedPlayers, scoreboard);
         controller = new GameController(model, client);
         if (server != null) {
             view = new GameView(model, controller, game, accountService, scoreboard, server, menuModel);

@@ -13,6 +13,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.FirebaseInterface;
+import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.controllers.ApplicationController;
 import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class GameModel {
+    private static GameModel instance;
     private final List<Entity> entities;
     private final PlayerScoreSystem playerScoreSystem;
     private final MovementSystem movementSystem;
@@ -54,7 +57,7 @@ public class GameModel {
     private Entity spawnedPowerup;
     private final Constants con;
 
-    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
+    private GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
         this.connectedPlayers = connectedPlayers;
         this.accountService = accountService;
         this.client = client;
@@ -148,6 +151,13 @@ public class GameModel {
         shootingSystem = new ShootingSystem(this, accountService, client);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService, client);
         respawnSystem = new RespawnSystem(entities, accountService, client);
+    }
+
+    public static synchronized GameModel getInstance(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
+        if(instance == null) {
+            instance = new GameModel(firebaseInterface, accountService, client, connectedPlayers, scoreboard);
+        }
+        return instance;
     }
 
     public void update(float deltaTime) {

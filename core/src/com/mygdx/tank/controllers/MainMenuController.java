@@ -1,6 +1,5 @@
 package com.mygdx.tank.controllers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -25,22 +24,6 @@ public class MainMenuController implements IController{
     public Screen getView() {
         return view;
     }
-
-//    public void setModel(MenuModel newModel) {
-//        this.model = newModel;
-//        this.view.updateView(model);
-//    }
-
-//    public void setView(MainMenuView newView) {
-//        this.view = newView;
-//        this.view.updateView(model);
-//        addListeners();
-//    }
-
-//    public void updateModelBasedOnLoginStatus(boolean isLoggedIn, String userEmail) {
-//        model.update(isLoggedIn, userEmail);
-//        view.updateView(model);
-//    }
 
     public void updateModelView() {
         // Check if the user is logged in from accountservice
