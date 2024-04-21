@@ -57,7 +57,7 @@ public class GameModel {
     private Entity spawnedPowerup;
     private final Constants con;
 
-    private GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
+    public GameModel(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
         this.connectedPlayers = connectedPlayers;
         this.accountService = accountService;
         this.client = client;
@@ -151,13 +151,6 @@ public class GameModel {
         shootingSystem = new ShootingSystem(this, accountService, client);
         powerupSpawnSystem = new PowerupSpawnSystem(this, accountService, client);
         respawnSystem = new RespawnSystem(entities, accountService, client);
-    }
-
-    public static synchronized GameModel getInstance(FirebaseInterface firebaseInterface, AccountService accountService, Client client, List<Player> connectedPlayers, Scoreboard scoreboard) {
-        if(instance == null) {
-            instance = new GameModel(firebaseInterface, accountService, client, connectedPlayers, scoreboard);
-        }
-        return instance;
     }
 
     public void update(float deltaTime) {
