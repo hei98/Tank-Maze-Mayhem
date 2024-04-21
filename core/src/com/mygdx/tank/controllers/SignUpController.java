@@ -44,6 +44,7 @@ public class SignUpController implements IController {
                 throw new Exception("passwords doesn't match");
             }
             accountService.signUp(email, password);
+            game.setShowTutorial(true);
             accountService.signIn(email, password);
         }
         catch(Exception e){
