@@ -1,11 +1,15 @@
 package com.mygdx.tank.model;
 
 import com.esotericsoftware.kryonet.Client;
+import com.mygdx.tank.AccountService;
+import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.controllers.ApplicationController;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MenuModel implements IModel {
+    private static MenuModel instance;
     private boolean isLoggedIn;
     private String userEmail;
     private ArrayList<LeaderboardEntry> leaderboardEntries;
@@ -15,11 +19,18 @@ public class MenuModel implements IModel {
     private boolean startGame;
     private Client client;
 
-    public MenuModel() {
+    private MenuModel() {
         leaderboardEntries = new ArrayList<>();
         connectedPlayers = new ArrayList<>();
         client = new Client();
         startGame = false;
+    }
+
+    public static synchronized MenuModel getInstance() {
+        if(instance == null) {
+            instance = new MenuModel();
+        }
+        return instance;
     }
 
     public boolean isLoggedIn() {

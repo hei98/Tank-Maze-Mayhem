@@ -32,9 +32,7 @@ public class ApplicationController {
     private ApplicationController(TankMazeMayhem game, AccountService accountService) {
         this.game = game;
         this.accountService = accountService;
-        this.model = new MenuModel();
-
-//        initializeControllers();
+        this.model = MenuModel.getInstance();
     }
 
     public static synchronized ApplicationController getInstance(TankMazeMayhem game, AccountService accountService) {
@@ -42,17 +40,6 @@ public class ApplicationController {
             instance = new ApplicationController(game, accountService);
         }
         return instance;
-    }
-
-    private void initializeControllers() {
-//        inPartyController = new InPartyController(model, new InPartyView(game), game, accountService);
-        leaderboardController = new LeaderboardController(model, new LeaderboardView(game), game, accountService, game.getFirebaseInterface());
-        lobbyController = new LobbyController(model, new LobbyView(game, model), game, accountService);
-        mainMenuController = new MainMenuController(model, new MainMenuView(game, model), game, accountService);
-        settingsController = new SettingsController(model, new SettingsView(game, model), game, accountService);
-        signInController = new SignInController(model, new SignInView(game, model), game, accountService);
-        signUpController = new SignUpController(model, new SignUpView(game, model), game, accountService);
-        tutorialController = new TutorialController(model, new TutorialView(game, model), game, accountService);
     }
 
     public void switchToMainMenu() {
@@ -65,7 +52,6 @@ public class ApplicationController {
     public void switchToSettings() {
         settingsController = new SettingsController(model, new SettingsView(game, model), game, accountService);
         game.setScreen(settingsController.getView());
-//        settingsController.updateModelView();
         settingsController.addListeners();
     }
 
@@ -80,14 +66,12 @@ public class ApplicationController {
         signInController = new SignInController(model, new SignInView(game, model), game, accountService);
         game.setScreen(signInController.getView());
         signInController.addListeners();
-//        signInController.updateModelView();
     }
 
     public void switchToSignUp() {
         signUpController = new SignUpController(model, new SignUpView(game, model), game, accountService);
         game.setScreen(signUpController.getView());
         signUpController.addListeners();
-//        signUpController.updateModelView();
     }
 
     public void switchToTutorial() {
@@ -101,13 +85,11 @@ public class ApplicationController {
         lobbyController = new LobbyController(model, new LobbyView(game, model), game, accountService);
         game.setScreen(lobbyController.getView());
         lobbyController.addListeners();
-//        lobbyController.updateModelView();
     }
 
     public void switchToInParty(Client client) {
         inPartyController = new InPartyController(model, new InPartyView(game, model), game, accountService, client);
         game.setScreen(inPartyController.getView());
         inPartyController.addListeners();
-//        inPartyController.updateModelView();
     }
 }

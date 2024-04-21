@@ -38,9 +38,6 @@ import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
-import com.mygdx.tank.Views.GameCrashedView;
-import com.mygdx.tank.Views.GameOverView;
-import com.mygdx.tank.Views.InGameMenuView;
 
 import java.util.HashMap;
 import java.util.Map;
