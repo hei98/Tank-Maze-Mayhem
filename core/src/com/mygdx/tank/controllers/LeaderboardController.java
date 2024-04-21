@@ -7,11 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.FirebaseDataListener;
 import com.mygdx.tank.FirebaseInterface;
-import com.mygdx.tank.LeaderboardEntry;
+import com.mygdx.tank.model.LeaderboardEntry;
 import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.Views.LeaderboardView;
-import com.mygdx.tank.Views.MainMenuView;
-import com.mygdx.tank.Views.SettingsView;
 import com.mygdx.tank.model.MenuModel;
 
 import java.util.ArrayList;

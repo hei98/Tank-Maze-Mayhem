@@ -15,8 +15,7 @@ import com.badlogic.gdx.utils.Align;
 
 import java.util.ArrayList;
 
-import com.mygdx.tank.IView;
-import com.mygdx.tank.LeaderboardEntry;
+import com.mygdx.tank.model.LeaderboardEntry;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.model.MenuModel;

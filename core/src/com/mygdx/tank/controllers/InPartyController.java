@@ -7,10 +7,9 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
-import com.mygdx.tank.Player;
+import com.mygdx.tank.model.Player;
 import com.mygdx.tank.TankMazeMayhem;
-import com.mygdx.tank.User;
-import com.mygdx.tank.Views.InGameView;
+import com.mygdx.tank.model.User;
 import com.mygdx.tank.Views.InPartyView;
 import com.mygdx.tank.model.MenuModel;
 

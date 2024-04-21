@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.IView;
 import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.model.MenuModel;
 

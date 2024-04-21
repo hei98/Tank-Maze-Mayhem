@@ -20,7 +20,6 @@
     import com.esotericsoftware.kryonet.Server;
     import com.mygdx.tank.AccountService;
     import com.mygdx.tank.Constants;
-    import com.mygdx.tank.GameView;
     import com.mygdx.tank.MusicManager;
     import com.mygdx.tank.TankMazeMayhem;
     import com.mygdx.tank.controllers.ApplicationController;

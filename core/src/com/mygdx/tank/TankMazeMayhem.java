@@ -5,12 +5,10 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.mygdx.tank.Views.GameView;
 import com.mygdx.tank.controllers.ApplicationController;
 import com.mygdx.tank.controllers.GameController;
-import com.mygdx.tank.controllers.MainMenuController;
 import com.mygdx.tank.model.GameModel;
-import com.mygdx.tank.model.MenuModel;
-import com.mygdx.tank.Views.MainMenuView;
 
 public class TankMazeMayhem extends Game {
 	private final AccountService accountService;

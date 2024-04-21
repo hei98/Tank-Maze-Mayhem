@@ -1,9 +1,6 @@
 package com.mygdx.tank.model;
 
 import com.esotericsoftware.kryonet.Client;
-import com.mygdx.tank.IModel;
-import com.mygdx.tank.LeaderboardEntry;
-import com.mygdx.tank.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +11,7 @@ public class MenuModel implements IModel {
     private ArrayList<LeaderboardEntry> leaderboardEntries;
     private String errorLabel = "";
     private int tutorialPageIndex = 0;
-    private List<Player> connectedPlayers = new ArrayList<>();
+    private List<Player> connectedPlayers;
     private boolean startGame;
     private Client client;
 

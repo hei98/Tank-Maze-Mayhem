@@ -1,4 +1,4 @@
-package com.mygdx.tank;
+package com.mygdx.tank.model;
 
 public interface IModel {
     boolean isLoggedIn();

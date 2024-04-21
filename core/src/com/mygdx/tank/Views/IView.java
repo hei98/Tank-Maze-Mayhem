@@ -1,4 +1,4 @@
-package com.mygdx.tank;
+package com.mygdx.tank.Views;
 
 import com.mygdx.tank.model.MenuModel;
 

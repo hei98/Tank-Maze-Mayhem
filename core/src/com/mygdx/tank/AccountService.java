@@ -2,6 +2,7 @@ package com.mygdx.tank;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
+import com.mygdx.tank.model.User;
 
 public interface AccountService {
     User getCurrentUser();

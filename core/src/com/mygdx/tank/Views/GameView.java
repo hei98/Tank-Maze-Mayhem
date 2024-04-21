@@ -1,4 +1,4 @@
-package com.mygdx.tank;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.Color;
@@ -25,6 +25,9 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.mygdx.tank.AccountService;
+import com.mygdx.tank.Constants;
+import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;

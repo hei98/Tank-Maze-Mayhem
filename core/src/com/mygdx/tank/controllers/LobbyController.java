@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.esotericsoftware.kryonet.Client;
 import com.mygdx.tank.AccountService;
-import com.mygdx.tank.Player;
+import com.mygdx.tank.model.Player;
 import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.Views.CreateGameView;
 import com.mygdx.tank.Views.LobbyView;
