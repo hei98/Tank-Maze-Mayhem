@@ -38,7 +38,7 @@ public class SettingsView implements Screen, IView {
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         backButton = new TextButton("Back", con.getSkin(), "default");
-        undoButton = new TextButton("undo", con.getSkin());
+        undoButton = new TextButton("Undo", con.getSkin());
         soundControlButton = new ImageButton(con.getSkin(), "music");
 
         Label.LabelStyle soundStyle = new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK);
@@ -110,6 +110,7 @@ public class SettingsView implements Screen, IView {
     private void setButtonLayout() {
         backButton.setBounds(con.getCenterTB(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
+        backButton.getColor().set(Color.BLACK);
 
         soundControlButton.setSize(con.getIBSize(), con.getIBSize());
         soundControlButton.getImageCell().expand().fill();
@@ -118,8 +119,10 @@ public class SettingsView implements Screen, IView {
             soundControlButton.toggle(); //For visual correctness
         }
 
-        undoButton.setBounds(con.getSWidth()*0.6f, con.getSHeight()*0.2f, con.getTBWidth()*0.5f, con.getTBHeight()*0.5f);
+        undoButton.setBounds(con.getSWidth()*0.6f, con.getSHeight()*0.22f, con.getTBWidth()*0.5f, con.getTBHeight());
         undoButton.getLabel().setFontScale(con.getTScaleF());
+        undoButton.getColor().set(Color.BROWN);
+        undoButton.getColor().a = 0.5f;
 
         stage.addActor(undoButton);
         stage.addActor(soundControlButton);
