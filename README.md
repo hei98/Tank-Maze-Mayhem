@@ -67,21 +67,21 @@ instead of the host-machine's router, meaning they are <ins>not</ins> connected 
 1. Turn on the emulator that will be the party leader. Ensure no other emulators are active.
 2. Open Control Panel → Programs → Turn Windows features on or off
 3. Navigate to Telnet Client and ensure this feature is activated
-4. In a terminal of your choice, type “telnet localhost 5554”. 5554 is a reference to the emulator you just turned on.
-5. You will be prompted to authenticate yourself. Navigate to C:\Users\<your_user>\.emulator_console_auth_token and copy the auth token in the file. Go back to the terminal and type “auth <auth_token>.
-6. We now need to set up a redirection between localhost and your emulator. Type “redir add tcp:5000:54555” in the terminal. This will redirect all TCP messages sent to port 5000 on localhost (127.0.0.1) to port 54555 on the emulator.
-7. To exit the shell, type “quit”.
+4. In a terminal of your choice, type `telnet localhost 5554`. 5554 is a reference to the emulator you just turned on.
+5. You will be prompted to authenticate yourself. Navigate to C:\Users\<your_user>\.emulator_console_auth_token and copy the auth token in the file. Go back to the terminal and type `auth <auth_token>`.
+6. We now need to set up a redirection between localhost and your emulator. Type `redir add tcp:5000:54555` in the terminal. This will redirect all TCP messages sent to port 5000 on localhost (127.0.0.1) to port 54555 on the emulator.
+7. To exit the shell, type `quit`.
 
 - ##### MacOS
 
 1. Turn on the emulator that will be the party leader. Ensure no other emulators are active.
 2. If you already have Homebrew installed, skip to step 3.
-    - Open a zsh terminal and type /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)". Homebrew is used to download packages that didn’t come with MacOS.
+    - Open a zsh terminal and type `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`. Homebrew is used to download packages that didn’t come with MacOS.
     - Open a zsh terminal and type “brew install telnet”.
-3. After the installation has finished, type “telnet localhost 5554”. 5554 is a reference to the emulator you just turned on.
-4. You will be prompted to authenticate yourself. Open the file the shell tells you to, and copy the auth token. Then, in the terminal, type “auth <auth_token>”.
-5. We now need to set up a redirection between localhost and your emulator. Type “redir add tcp:5000:54555” in the terminal. This will redirect all TCP messages sent to port 5000 on localhost (127.0.0.1) to port 54555 on the emulator.
-6. To exit the shell, type “quit”.
+3. After the installation has finished, type `telnet localhost 5554`. 5554 is a reference to the emulator you just turned on.
+4. You will be prompted to authenticate yourself. Open the file the shell tells you to, and copy the auth token. Then, in the terminal, type `auth <auth_token>`.
+5. We now need to set up a redirection between localhost and your emulator. Type `redir add tcp:5000:54555` in the terminal. This will redirect all TCP messages sent to port 5000 on localhost (127.0.0.1) to port 54555 on the emulator.
+6. To exit the shell, type `quit`.
 
 Now other emulators on your device are able to communicate with the emulator we just configured! It is important that the emulator we just configured is the party leader for the game,
 or else you won't be able to connect to the lobby. Now go ahead, test the game with 2 or more emulators!
