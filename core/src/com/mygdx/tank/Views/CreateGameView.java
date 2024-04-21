@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -21,15 +20,16 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.FirebaseInterface;
-import com.mygdx.tank.Player;
+import com.mygdx.tank.model.Player;
 import com.mygdx.tank.TankMazeMayhem;
 import com.esotericsoftware.kryonet.Server;
-import com.mygdx.tank.User;
+import com.mygdx.tank.model.User;
+import com.mygdx.tank.controllers.ApplicationController;
+import com.mygdx.tank.model.MenuModel;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.tank.*;
 import com.mygdx.tank.model.components.powerup.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.net.NetworkInterface;
 
-public class CreateGameScreen implements Screen {
+public class CreateGameView implements Screen {
     private final FirebaseInterface firebaseInterface;
     private final Constants con;
     private final TankMazeMayhem game;
@@ -51,7 +51,6 @@ public class CreateGameScreen implements Screen {
     private final Texture background;
     private SpriteBatch batch;
     private Stage stage;
-    private final Skin skin;
     private final TextButton backButton, startGameButton;
     private Server server;
     private Client client;
@@ -61,17 +60,18 @@ public class CreateGameScreen implements Screen {
     private User user;
     private Listener listener;
     private Listener serverListener;
+    private MenuModel menuModel;
 
-    public CreateGameScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public CreateGameView(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService, MenuModel menuModel) {
         this.game = game;
         this.firebaseInterface = firebaseInterface;
         this.accountService = accountService;
+        this.menuModel = menuModel;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
-        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
-        backButton = new TextButton("Back", skin, "default");
-        startGameButton = new TextButton("Start game", skin,"default");
+        backButton = new TextButton("Back", con.getSkin(), "default");
+        startGameButton = new TextButton("Start game", con.getSkin(),"default");
     }
 
     @Override
@@ -108,7 +108,7 @@ public class CreateGameScreen implements Screen {
                     List<Object> list = (List<Object>) object;
                     server.sendToAllExceptTCP(connection.getID(), list);
                 } else if (object instanceof Player) {
-                    if (connectedPlayers.size() != 0) {
+                    if (!connectedPlayers.isEmpty()) {
                         Player lastPlayer = (Player) connectedPlayers.values().toArray()[connectedPlayers.size() - 1];
                         String lastPlayerName = lastPlayer.getPlayerName();
                         int lastPlayerNumber = Integer.parseInt(lastPlayerName.substring(lastPlayerName.length() -1 ));
@@ -248,7 +248,6 @@ public class CreateGameScreen implements Screen {
         stage.dispose();
         background.dispose();
         batch.dispose();
-        skin.dispose();
         try {
             server.dispose();
             client.dispose();
@@ -272,7 +271,7 @@ public class CreateGameScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game,firebaseInterface, accountService));
+                ApplicationController.getInstance(game, accountService).switchToLobby();
                 server.close();
             }
         });
@@ -283,13 +282,13 @@ public class CreateGameScreen implements Screen {
                 server.removeListener(serverListener);
                 client.sendTCP("GameStart");
                 List<Player> connectedPlayersList = new ArrayList<>(connectedPlayers.values());
-                game.setScreen(new InGameScreen(game, accountService, client, connectedPlayersList, server));
+                game.setScreen(new InGameView(game, accountService, client, connectedPlayersList, server, menuModel));
             }
         });
     }
 
     private void createHeadline() throws UnknownHostException {
-        Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(con.getSkin().getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Party", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
@@ -352,7 +351,7 @@ public class CreateGameScreen implements Screen {
         playersTable.setPosition((con.getSWidth() - orangeBoxWidth) / 2, tableStartY);
 
         // Create a scroll pane for the leaderboardTable
-        scrollPane = new ScrollPane(playersTable, skin);
+        scrollPane = new ScrollPane(playersTable, con.getSkin());
         scrollPane.setSize(orangeBoxWidth, orangeBoxHeight);
         scrollPane.setPosition(playersTable.getX(), con.getSHeight() - orangeBoxStartY - orangeBoxHeight);
 
@@ -367,8 +366,8 @@ public class CreateGameScreen implements Screen {
         for (Player player : players) {
             String userMail = player.getUserMail();
             String displayName = userMail.split("@")[0];
-            Label nameLabel = new Label(displayName, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
-            Label scoreLabel = new Label("Connected", new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            Label nameLabel = new Label(displayName, new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK));
+            Label scoreLabel = new Label("Connected", new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());
             scoreLabel.setFontScale(con.getTScaleF());

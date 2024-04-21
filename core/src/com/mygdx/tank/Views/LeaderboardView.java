@@ -1,56 +1,43 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
-import com.mygdx.tank.AccountService;
-import com.mygdx.tank.FirebaseDataListener;
-import com.mygdx.tank.FirebaseInterface;
-import com.mygdx.tank.LeaderboardEntry;
+import com.mygdx.tank.model.LeaderboardEntry;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.MenuModel;
 
-public class LeaderboardScreen implements Screen {
-    private final FirebaseInterface firebaseInterface;
+public class LeaderboardView implements Screen, IView {
     private final Constants con;
     private final TankMazeMayhem game;
-    private final AccountService accountService;
     private Stage stage;
     private final Texture background;
     private final TextButton backButton;
     private final ImageButton settingsButton;
     private SpriteBatch batch;
-    private final Skin skin;
     private Table leaderboardTable;
     private ScrollPane scrollPane;
 
-    public LeaderboardScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public LeaderboardView(TankMazeMayhem game) {
         this.game = game;
-        this.firebaseInterface = firebaseInterface;
-        this.accountService = accountService;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
-        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
-        settingsButton = new ImageButton(skin, "settings");
-        backButton = new TextButton("Back", skin, "default");
+        settingsButton = new ImageButton(con.getSkin(), "settings");
+        backButton = new TextButton("Back", con.getSkin(), "default");
     }
 
     @Override
@@ -61,8 +48,6 @@ public class LeaderboardScreen implements Screen {
         setButtonLayout();
         createHeadline();
         createLeaderboardTable();
-
-        addListeners();
 
         Gdx.input.setInputProcessor(stage);
 
@@ -107,7 +92,19 @@ public class LeaderboardScreen implements Screen {
         stage.dispose();
         background.dispose();
         batch.dispose();
-        skin.dispose();
+    }
+
+    @Override
+    public void updateView(MenuModel model) {
+        populateLeaderBoardTable(model.getLeaderboardEntries());
+    }
+
+    public TextButton getBackButton() {
+        return this.backButton;
+    }
+
+    public ImageButton getSettingsButton() {
+        return this.settingsButton;
     }
 
     private void setButtonLayout() {
@@ -122,28 +119,13 @@ public class LeaderboardScreen implements Screen {
     }
 
     private void createHeadline() {
-        Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(con.getSkin().getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Leaderboard (Top 5)", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
         headlineLabel.setY((con.getSHeight()*0.8f) - headlineLabel.getPrefHeight());
         headlineLabel.setWidth(con.getSWidth());
         stage.addActor(headlineLabel);
-    }
-
-    private void addListeners() {
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
-            }
-        });
-        settingsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game, accountService));
-            }
-        });
     }
 
     private void createLeaderboardTable() {
@@ -160,40 +142,11 @@ public class LeaderboardScreen implements Screen {
         leaderboardTable.setPosition((con.getSWidth() - orangeBoxWidth) / 2, tableStartY);
 
         // Create a scroll pane for the leaderboardTable
-        scrollPane = new ScrollPane(leaderboardTable, skin);
+        scrollPane = new ScrollPane(leaderboardTable, con.getSkin());
         scrollPane.setSize(orangeBoxWidth, orangeBoxHeight);
         scrollPane.setPosition(leaderboardTable.getX(), con.getSHeight() - orangeBoxStartY - orangeBoxHeight);
 
         stage.addActor(scrollPane);
-
-        fetchLeaderboardData();
-    }
-
-    private void fetchLeaderboardData() {
-        firebaseInterface.getLeaderboardData(new FirebaseDataListener() {
-            @Override
-            public void onDataReceived(Object data) {
-                handleLeaderboardData((ArrayList<LeaderboardEntry>) data);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                Gdx.app.log("Firebase", "Error fetching leaderboard " + errorMessage);
-            }
-        });
-    }
-
-    private void handleLeaderboardData(ArrayList<LeaderboardEntry> entries) {
-        Gdx.app.postRunnable(() -> {
-            Collections.sort(entries, new Comparator<LeaderboardEntry>() {
-                @Override
-                public int compare(LeaderboardEntry o1, LeaderboardEntry o2) {
-                    return Integer.compare(o2.getScore(), o1.getScore());
-                }
-            });
-            ArrayList<LeaderboardEntry> topFiveEntries = new ArrayList<>(entries.subList(0, Math.min(entries.size(), 5)));
-            populateLeaderBoardTable(topFiveEntries);
-        });
     }
 
     private void populateLeaderBoardTable(ArrayList<LeaderboardEntry> entries) {
@@ -202,8 +155,8 @@ public class LeaderboardScreen implements Screen {
         for (LeaderboardEntry entry : entries) {
             System.out.println(entry.getUsername());
             System.out.println(entry.getScore());
-            Label nameLabel = new Label(entry.getUsername(), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
-            Label scoreLabel = new Label(String.valueOf(entry.getScore()), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            Label nameLabel = new Label(entry.getUsername(), new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK));
+            Label scoreLabel = new Label(String.valueOf(entry.getScore()), new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());
             scoreLabel.setFontScale(con.getTScaleF());

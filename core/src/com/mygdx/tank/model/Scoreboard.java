@@ -1,7 +1,5 @@
 package com.mygdx.tank.model;
 
-import com.mygdx.tank.Player;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

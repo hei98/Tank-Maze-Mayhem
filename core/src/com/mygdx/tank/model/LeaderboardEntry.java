@@ -1,4 +1,4 @@
-package com.mygdx.tank;
+package com.mygdx.tank.model;
 
 public class LeaderboardEntry {
     private String key;

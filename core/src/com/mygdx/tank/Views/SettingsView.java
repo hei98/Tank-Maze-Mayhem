@@ -1,55 +1,48 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.MusicManager;
-import com.mygdx.tank.MusicMemento;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.MenuModel;
 
-public class SettingsScreen implements Screen {
+public class SettingsView implements Screen, IView {
 
     private final TankMazeMayhem game;
-    private final AccountService accountService;
+    private MenuModel model;
     private final Constants con;
     private Stage stage;
     private final Texture background;
-    private final TextButton backButton;
-    private ImageButton soundControl;
+    private final TextButton backButton, undoButton;
     private SelectBox<String> musicSelect;
+    private final ImageButton soundControlButton;
     private SpriteBatch batch;
-    private Boolean isPlaying;
     private final MusicManager musicManager;
-    private final MusicMemento initialMusicSettings;
+    private final Label soundLabel;
 
-    public SettingsScreen(TankMazeMayhem game, AccountService accountService) {
+    public SettingsView(TankMazeMayhem game, MenuModel model) {
         this.game = game;
-        this.accountService = accountService;
+        this.model = model;
+        musicManager = game.getMusicManager();
+
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
         backButton = new TextButton("Back", con.getSkin(), "default");
-        musicManager = game.getMusicManager();
-        initialMusicSettings = musicManager.saveToMemento();
+        undoButton = new TextButton("undo", con.getSkin());
+        soundControlButton = new ImageButton(con.getSkin(), "music");
+
+        Label.LabelStyle soundStyle = new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK);
+        soundLabel = new Label("Mute/unmute", soundStyle);
     }
 
     @Override
@@ -61,16 +54,6 @@ public class SettingsScreen implements Screen {
         createHeadline();
         createSoundControl();
         createMusicSelection();
-        addUndoButton();
-
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
-            }
-        });
-
-        stage.addActor(backButton);
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -110,9 +93,37 @@ public class SettingsScreen implements Screen {
         stage.dispose();
     }
 
+    public TextButton getBackButton() {
+        return this.backButton;
+    }
+    public TextButton getUndoButton() {
+        return this.undoButton;
+    }
+    public SelectBox<String> getMusicSelect() {
+        return this.musicSelect;
+    }
+
+    public ImageButton getSoundControlButton() {
+        return this.soundControlButton;
+    }
+
     private void setButtonLayout() {
         backButton.setBounds(con.getCenterTB(), con.getSHeight()*0.05f, con.getTBWidth(), con.getTBHeight());
         backButton.getLabel().setFontScale(con.getTScaleF());
+
+        soundControlButton.setSize(con.getIBSize(), con.getIBSize());
+        soundControlButton.getImageCell().expand().fill();
+        soundControlButton.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
+        if(musicManager.isMenuMusicPlaying()){
+            soundControlButton.toggle(); //For visual correctness
+        }
+
+        undoButton.setBounds(con.getSWidth()*0.6f, con.getSHeight()*0.2f, con.getTBWidth()*0.5f, con.getTBHeight()*0.5f);
+        undoButton.getLabel().setFontScale(con.getTScaleF());
+
+        stage.addActor(undoButton);
+        stage.addActor(soundControlButton);
+        stage.addActor(backButton);
     }
 
     private void createHeadline() {
@@ -137,61 +148,21 @@ public class SettingsScreen implements Screen {
         musicSelect = new SelectBox<>(con.getSkin());
         musicSelect.setItems(trackNames);
         musicSelect.setSelected(musicManager.getCurrentTrackName());
-        musicSelect.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                musicManager.changeTrack(musicSelect.getSelected());
-            }
-        });
         musicSelect.setSize(con.getTBWidth()*0.75f, con.getTBHeight()*0.75f);
         musicSelect.setPosition(con.getSWidth() * 0.6f, con.getSHeight() * 0.47f - selectionLabel.getPrefHeight());
+        musicSelect.getStyle().font.getData().setScale(con.getTScaleF());
         stage.addActor(musicSelect);
     }
 
     private void createSoundControl() {
-        Label.LabelStyle soundStyle = new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK);
-        Label soundLabel = new Label("Mute/unmute", soundStyle);
         soundLabel.setFontScale(con.getTScaleF()* 1.5f);
         soundLabel.setX(con.getSWidth() * 0.4f);
         soundLabel.setY((con.getSHeight()*0.63f) - soundLabel.getPrefHeight());
         stage.addActor(soundLabel);
-
-        soundControl = new ImageButton(con.getSkin(), "music");
-        soundControl.setSize(con.getIBSize(), con.getIBSize());
-        soundControl.getImageCell().expand().fill();
-        soundControl.setPosition(con.getSWidth() * 0.6f, (con.getSHeight()*0.6f) - soundLabel.getPrefHeight());
-        if(musicManager.isMenuMusicPlaying()){
-            soundControl.toggle(); //For visual correctness
-        }
-
-        soundControl.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                musicManager.muteMenuMusic(musicManager.isMenuMusicPlaying());
-            }
-        });
-
-        stage.addActor(soundControl);
-
     }
 
-    private void addUndoButton(){
-        TextButton undoButton = new TextButton("undo", con.getSkin());
-        undoButton.setBounds(con.getSWidth()*0.6f, con.getSHeight()*0.2f, con.getTBWidth()*0.5f, con.getTBHeight()*0.5f);
-        undoButton.getLabel().setFontScale(con.getTScaleF());
-
-        undoButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if(initialMusicSettings.isPlaying() != musicManager.isMenuMusicPlaying()){
-                    soundControl.toggle(); //For visual correctness
-                }
-                musicManager.restoreFromMemento(initialMusicSettings);
-                musicSelect.setSelected(musicManager.getCurrentTrackName());
-
-
-            }
-        });
-        stage.addActor(undoButton);
+    @Override
+    public void updateView(MenuModel model) {
+        soundControlButton.toggle();
     }
 }

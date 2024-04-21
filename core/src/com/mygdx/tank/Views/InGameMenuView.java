@@ -1,4 +1,4 @@
-    package com.mygdx.tank.screens;
+    package com.mygdx.tank.Views;
 
     import com.badlogic.gdx.Gdx;
     import com.badlogic.gdx.Screen;
@@ -20,10 +20,11 @@
     import com.esotericsoftware.kryonet.Server;
     import com.mygdx.tank.AccountService;
     import com.mygdx.tank.Constants;
-    import com.mygdx.tank.GameView;
     import com.mygdx.tank.MusicManager;
     import com.mygdx.tank.TankMazeMayhem;
+    import com.mygdx.tank.controllers.ApplicationController;
     import com.mygdx.tank.model.GameModel;
+    import com.mygdx.tank.model.MenuModel;
     import com.mygdx.tank.model.Scoreboard;
 
     import java.util.ArrayList;
@@ -33,7 +34,7 @@
     import java.util.List;
     import java.util.Map;
 
-    public class InGameMenuScreen implements Screen {
+    public class InGameMenuView implements Screen {
         private final TankMazeMayhem game;
         private final AccountService accountService;
         private final GameView view;
@@ -48,26 +49,29 @@
         private final Scoreboard scoreboard;
         private Client client;
         private Server server;
-        private GameModel model;
         private MusicManager musicManager;
+        private GameModel gameModel;
+        private MenuModel menuModel;
 
 
-        public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Server server) {
+        public InGameMenuView(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, MenuModel mainMenuModel, Server server) {
             this.game = game;
             this.accountService = accountService;
             this.scoreboard = scoreboard;
             this.view = view;
             this.server = server;
             this.musicManager = game.getMusicManager();
+            this.menuModel = mainMenuModel;
         }
 
-        public InGameMenuScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Client client, GameModel model) {
+        public InGameMenuView(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, GameView view, Client client, MenuModel mainMenuModel, GameModel model) {
             this.game = game;
             this.accountService = accountService;
             this.scoreboard = scoreboard;
             this.view = view;
             this.client = client;
-            this.model = model;
+            this.menuModel = mainMenuModel;
+            this.gameModel = model;
             this.musicManager = game.getMusicManager();
         }
 
@@ -175,12 +179,12 @@
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (client != null) {
-                        model.playerDisconnected(accountService.getCurrentUser().getPlayer().getPlayerName());
+                        gameModel.playerDisconnected(accountService.getCurrentUser().getPlayer().getPlayerName());
                         client.close();
                     } else if (server != null) {
                         server.close();
                     }
-                    game.setScreen(new MainMenuScreen(game, accountService));
+                    ApplicationController.getInstance(game, accountService).switchToMainMenu();
                 }
             });
         }

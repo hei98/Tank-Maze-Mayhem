@@ -1,4 +1,4 @@
-package com.mygdx.tank;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.Color;
@@ -25,18 +25,19 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.mygdx.tank.AccountService;
+import com.mygdx.tank.Constants;
+import com.mygdx.tank.TankMazeMayhem;
 import com.mygdx.tank.controllers.GameController;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
+import com.mygdx.tank.model.MenuModel;
 import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpriteComponent;
 import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;
 import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
-import com.mygdx.tank.screens.GameCrashedScreen;
-import com.mygdx.tank.screens.GameOverScreen;
-import com.mygdx.tank.screens.InGameMenuScreen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,33 +59,36 @@ public class GameView{
     private Label countdownLabel;
     private final TankMazeMayhem game;
     private final Scoreboard scoreboard;
+    private MenuModel menuModel;
     private final AccountService accountService;
     private Label scoreLabel;
     private Server server;
     private Client client;
-    private InGameMenuScreen inGameMenuScreen;
-    private GameCrashedScreen gameCrashedScreen;
+    private InGameMenuView inGameMenuScreen;
+    private GameCrashedView gameCrashedScreen;
     private boolean isMenuVisible;
     private boolean gameCrashed = false;
     private String currentTime;
     private boolean renderedCrashedScreen = false;
 
-    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Client client) {
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Client client, MenuModel menuModel) {
         this.model = model;
         this.controller = controller;
         this.game = game;
         this.scoreboard = scoreboard;
         this.accountService = accountService;
         this.client = client;
+        this.menuModel = menuModel;
     }
 
-    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Server server) {
+    public GameView(GameModel model, GameController controller, TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard, Server server, MenuModel menuModel) {
         this.model = model;
         this.controller = controller;
         this.game = game;
         this.scoreboard = scoreboard;
         this.accountService = accountService;
         this.server = server;
+        this.menuModel = menuModel;
     }
 
     public void create() {
@@ -114,11 +118,11 @@ public class GameView{
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         scoreLabel = new Label("Score: 0", labelStyle);
 
-        gameCrashedScreen = new GameCrashedScreen(game, accountService);
+        gameCrashedScreen = new GameCrashedView(game, accountService);
 
         // Initiate in game menu screen and ensure it is hidden
         if (client != null) {
-            inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this, client, model);
+            inGameMenuScreen = new InGameMenuView(game, accountService, scoreboard, this, client, menuModel, model);
             client.addListener(new Listener() {
                 @Override
                 public void disconnected(Connection connection) {
@@ -128,7 +132,7 @@ public class GameView{
                 }
             });
         } else {
-            inGameMenuScreen = new InGameMenuScreen(game, accountService, scoreboard, this, server);
+            inGameMenuScreen = new InGameMenuView(game, accountService, scoreboard, this, menuModel, server);
         }
 
         isMenuVisible = false;
@@ -305,7 +309,7 @@ public class GameView{
             if (server != null) {
                 server.close();
             }
-            game.setScreen(new GameOverScreen(game, accountService, scoreboard));
+            game.setScreen(new GameOverView(game, accountService, scoreboard));
         }
 
         // Start batch processing

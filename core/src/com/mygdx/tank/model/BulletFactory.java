@@ -3,7 +3,6 @@ package com.mygdx.tank.model;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.Player;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.bullet.BounceComponent;
 import com.mygdx.tank.model.components.bullet.CollisionSide;

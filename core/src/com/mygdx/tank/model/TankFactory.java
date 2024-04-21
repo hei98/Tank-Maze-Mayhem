@@ -3,7 +3,6 @@ package com.mygdx.tank.model;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.Player;
 import com.mygdx.tank.model.components.*;
 import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.tank.ShootingCooldownComponent;

@@ -13,8 +13,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.FirebaseInterface;
-import com.mygdx.tank.Player;
-import com.mygdx.tank.User;
+import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.controllers.ApplicationController;
 import com.mygdx.tank.model.components.PlayerComponent;
 import com.mygdx.tank.model.components.PositionComponent;
 import com.mygdx.tank.model.components.SpeedComponent;
@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class GameModel {
+    private static GameModel instance;
     private final List<Entity> entities;
     private final PlayerScoreSystem playerScoreSystem;
     private final MovementSystem movementSystem;

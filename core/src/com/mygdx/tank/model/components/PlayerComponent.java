@@ -1,6 +1,6 @@
 package com.mygdx.tank.model.components;
 
-import com.mygdx.tank.Player;
+import com.mygdx.tank.model.Player;
 
 public class PlayerComponent implements Component {
 

@@ -1,15 +1,32 @@
 package com.mygdx.tank.controllers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.tank.AccountService;
+import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.Views.MainMenuView;
+import com.mygdx.tank.Views.SettingsView;
+import com.mygdx.tank.Views.SignInView;
+import com.mygdx.tank.Views.SignUpView;
+import com.mygdx.tank.model.MenuModel;
 
-public class SignInController{
+import java.util.ArrayList;
+
+public class SignInController implements IController{
+    private final MenuModel model;
+    private final SignInView view;
+    private final TankMazeMayhem game;
     private final AccountService accountService;
     private String email = "";
     private String password = "";
 
 
-    public SignInController(AccountService accountService) {
+    public SignInController(MenuModel model, SignInView view, TankMazeMayhem game, AccountService accountService) {
+        this.model = model;
+        this.view = view;
+        this.game = game;
         this.accountService = accountService;
     }
 
@@ -48,4 +65,50 @@ public class SignInController{
         }
     }
 
+    @Override
+    public void updateModelView() {
+        view.updateView(model);
+    }
+
+    @Override
+    public void addListeners() {
+        view.getSignInButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ArrayList<String> emailAndPass = view.getEmailPass();
+                updateEmail(emailAndPass.get(0));
+                updatePassword(emailAndPass.get(1));
+                updateModelView();
+                model.updateErrorLabel("");
+                try {
+                    onSignInClick();
+                    game.setShowTutorial(false);
+                    ApplicationController.getInstance(game, accountService).switchToMainMenu();
+                } catch (Exception e) {
+                    // Update the model errorlabel with the error
+                    model.updateErrorLabel("Login failed: " + e.getLocalizedMessage());
+                    updateModelView();
+                }
+
+            }
+        });
+        view.getSignUpButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("SignUp", "Sign Up button clicked");
+                ApplicationController.getInstance(game, accountService).switchToSignUp();
+            }
+        });
+        view.getBackButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ApplicationController.getInstance(game, accountService).switchToMainMenu();
+            }
+        });
+    }
+
+    @Override
+    public Screen getView() {
+        return view;
+    }
 }

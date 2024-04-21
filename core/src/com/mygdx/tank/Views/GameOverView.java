@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -24,14 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.mygdx.tank.AccountService;
-import com.mygdx.tank.FirebaseDataListener;
-import com.mygdx.tank.FirebaseInterface;
-import com.mygdx.tank.LeaderboardEntry;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.controllers.ApplicationController;
 import com.mygdx.tank.model.Scoreboard;
 
-public class GameOverScreen implements Screen {
+public class GameOverView implements Screen {
     private final Constants con;
     private final TankMazeMayhem game;
     private final AccountService accountService;
@@ -40,21 +37,19 @@ public class GameOverScreen implements Screen {
     private final TextButton backButton;
     private final ImageButton settingsButton;
     private SpriteBatch batch;
-    private final Skin skin;
     private Table scoreboardTable;
     private ScrollPane scrollPane;
     private final Scoreboard scoreboard;
 
-    public GameOverScreen(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
+    public GameOverView(TankMazeMayhem game, AccountService accountService, Scoreboard scoreboard) {
         this.game = game;
         this.accountService = accountService;
         this.scoreboard = scoreboard;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
-        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
-        settingsButton = new ImageButton(skin, "settings");
-        backButton = new TextButton("Back", skin, "default");
+        settingsButton = new ImageButton(con.getSkin(), "settings");
+        backButton = new TextButton("Back", con.getSkin(), "default");
     }
 
     @Override
@@ -111,7 +106,6 @@ public class GameOverScreen implements Screen {
         stage.dispose();
         background.dispose();
         batch.dispose();
-        skin.dispose();
     }
 
     private void setButtonLayout() {
@@ -126,7 +120,7 @@ public class GameOverScreen implements Screen {
     }
 
     private void createHeadline() {
-        Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(con.getSkin().getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Scoreboard", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF());
         headlineLabel.setAlignment(Align.center);
@@ -139,13 +133,13 @@ public class GameOverScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
+                ApplicationController.getInstance(game, accountService).switchToMainMenu();
             }
         });
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game, accountService));
+                ApplicationController.getInstance(game, accountService).switchToSettings();
             }
         });
     }
@@ -164,7 +158,7 @@ public class GameOverScreen implements Screen {
         scoreboardTable.setPosition((con.getSWidth() - orangeBoxWidth) / 2, tableStartY);
 
         // Create a scroll pane for the leaderboardTable
-        scrollPane = new ScrollPane(scoreboardTable, skin);
+        scrollPane = new ScrollPane(scoreboardTable, con.getSkin());
         scrollPane.setSize(orangeBoxWidth, orangeBoxHeight);
         scrollPane.setPosition(scoreboardTable.getX(), con.getSHeight() - orangeBoxStartY - orangeBoxHeight);
 
@@ -195,8 +189,8 @@ public class GameOverScreen implements Screen {
         for (Map.Entry<String, Integer> entry : scoreboard) {
             String userName = entry.getKey();
             Integer score = entry.getValue();
-            Label nameLabel = new Label(userName, new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
-            Label scoreLabel = new Label(String.valueOf(score), new Label.LabelStyle(skin.getFont("font"), Color.BLACK));
+            Label nameLabel = new Label(userName, new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK));
+            Label scoreLabel = new Label(String.valueOf(score), new Label.LabelStyle(con.getSkin().getFont("font"), Color.BLACK));
 
             nameLabel.setFontScale(con.getTScaleF());
             scoreLabel.setFontScale(con.getTScaleF());

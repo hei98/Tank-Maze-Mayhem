@@ -1,6 +1,6 @@
 package com.mygdx.tank.model.systems;
 
-import com.mygdx.tank.Player;
+import com.mygdx.tank.model.Player;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.Scoreboard;
 import com.mygdx.tank.model.components.PlayerComponent;

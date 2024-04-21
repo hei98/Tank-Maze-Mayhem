@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.tank.Player;
+import com.mygdx.tank.model.Player;
 import com.mygdx.tank.model.Entity;
 import com.mygdx.tank.model.GameModel;
 import java.util.Map;

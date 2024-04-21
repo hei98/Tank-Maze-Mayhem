@@ -1,4 +1,6 @@
-package com.mygdx.tank;
+package com.mygdx.tank.model;
+
+import com.mygdx.tank.model.Player;
 
 public class User {
     private final String userMail;

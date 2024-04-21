@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -6,59 +6,38 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.esotericsoftware.kryonet.Client;
-import com.mygdx.tank.AccountService;
-import com.mygdx.tank.FirebaseInterface;
 import com.mygdx.tank.Constants;
-import com.mygdx.tank.Player;
 import com.mygdx.tank.TankMazeMayhem;
-import com.mygdx.tank.model.components.PlayerScoreComponent;
-import com.mygdx.tank.model.components.PositionComponent;
-import com.mygdx.tank.model.components.powerup.PowerUpTypeComponent;
-import com.mygdx.tank.model.components.tank.SpriteDirectionComponent;
+import com.mygdx.tank.model.MenuModel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-
-import java.io.IOException;
-
-public class LobbyScreen implements Screen {
-    private final FirebaseInterface firebaseInterface;
+public class LobbyView implements Screen, IView {
     private final Constants con;
     private final TankMazeMayhem game;
-    private final AccountService accountService;
+    private MenuModel model;
     private final Texture background;
     private SpriteBatch batch;
     private Stage stage;
-    private final Skin skin;
     private final TextButton backButton, createPartyButton, joinPartyButton;
     private final TextField IPaddressField, portField;
     private Label errorLabel;
 
-    public LobbyScreen(TankMazeMayhem game, FirebaseInterface firebaseInterface, AccountService accountService) {
+    public LobbyView(TankMazeMayhem game, MenuModel model) {
         this.game = game;
-        this.firebaseInterface = firebaseInterface;
-        this.accountService = accountService;
+        this.model = model;
         con = Constants.getInstance();
         background = new Texture("Backgrounds/Leaderboard.png");
-        skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
 
-        backButton = new TextButton("Back", skin, "default");
-        createPartyButton = new TextButton("Create party", skin,"default");
-        joinPartyButton = new TextButton("Join party", skin,"default");
+        backButton = new TextButton("Back", con.getSkin(), "default");
+        createPartyButton = new TextButton("Create party", con.getSkin(),"default");
+        joinPartyButton = new TextButton("Join party", con.getSkin(),"default");
 
-        IPaddressField = new TextField("", skin);
-        portField = new TextField("", skin);
-
+        IPaddressField = new TextField("", con.getSkin());
+        portField = new TextField("", con.getSkin());
     }
 
     @Override
@@ -69,7 +48,6 @@ public class LobbyScreen implements Screen {
         setButtons();
         setFields();
         createHeadline();
-        addListeners();
         setErrorLabel();
 
         Gdx.input.setInputProcessor(stage);
@@ -112,7 +90,23 @@ public class LobbyScreen implements Screen {
         stage.dispose();
         background.dispose();
         batch.dispose();
-        skin.dispose();
+    }
+
+    public TextButton getBackButton() {
+        return this.backButton;
+    }
+    public TextButton getCreatePartyButton() {
+        return this.createPartyButton;
+    }
+    public TextButton getJoinPartyButton() {
+        return this.joinPartyButton;
+    }
+    public String getIPAddress() {
+        return IPaddressField.getText();
+    }
+
+    public String getPort() {
+        return portField.getText();
     }
 
     private void setButtons() {
@@ -134,6 +128,7 @@ public class LobbyScreen implements Screen {
         IPaddressField.setBounds(con.getCenterTB() - con.getTBWidth() * 0.2f, con.getSHeight() * 0.5f, con.getTBWidth() * 0.8f, con.getTBHeight());
         IPaddressField.setText("10.0.2.2");
 
+
         portField.setBounds(con.getCenterTB() + con.getTBWidth() * 0.75f, con.getSHeight() * 0.5f, con.getTBWidth() * 0.4f, con.getTBHeight());
         portField.setText("5000");
 
@@ -147,50 +142,8 @@ public class LobbyScreen implements Screen {
         stage.addActor(portField);
     }
 
-    private void addListeners() {
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, accountService));
-            }
-        });
-        createPartyButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new CreateGameScreen(game, firebaseInterface, accountService));
-            }
-        });
-        joinPartyButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Client client = new Client();
-                client.start();
-
-                client.getKryo().register(String.class);
-                client.getKryo().register(ArrayList.class);
-                client.getKryo().register(HashMap.class);
-                client.getKryo().register(PositionComponent.class);
-                client.getKryo().register(SpriteDirectionComponent.class);
-                client.getKryo().register(Float.class);
-                client.getKryo().register(Player.class);
-                client.getKryo().register(PowerUpTypeComponent.class);
-                client.getKryo().register(PowerUpTypeComponent.PowerupType.class);
-                client.getKryo().register(PlayerScoreComponent.class);
-
-                String IPaddress = IPaddressField.getText();
-                int port = Integer.parseInt(portField.getText());
-                try {
-                    client.connect(2500, IPaddress, port);
-                    game.setScreen(new InPartyScreen(game, firebaseInterface, accountService, client));
-                } catch (IOException e) {
-                    errorLabel.setText("Unable to connect to: /" + IPaddress + ":" + port); // Display the error message
-                }
-            }
-        });
-    }
-
     private void createHeadline() {
-        Label.LabelStyle headlineStyle = new Label.LabelStyle(skin.getFont("font"), Color.WHITE);
+        Label.LabelStyle headlineStyle = new Label.LabelStyle(con.getSkin().getFont("font"), Color.WHITE);
         Label headlineLabel = new Label("Multiplayer", headlineStyle);
         headlineLabel.setFontScale(con.getTScaleF()*2f);
         headlineLabel.setAlignment(Align.center);
@@ -202,7 +155,7 @@ public class LobbyScreen implements Screen {
     private void setErrorLabel() {
         Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.BLACK);
 
-        errorLabel = new Label("", labelStyle);
+        errorLabel = new Label(model.getErrorLabel(), labelStyle);
 
         errorLabel.setWrap(true);
         errorLabel.setAlignment(Align.center);
@@ -210,5 +163,10 @@ public class LobbyScreen implements Screen {
         errorLabel.setFontScale(con.getTScaleF());
 
         stage.addActor(errorLabel);
+    }
+
+    @Override
+    public void updateView(MenuModel model) {
+        errorLabel.setText(model.getErrorLabel());
     }
 }

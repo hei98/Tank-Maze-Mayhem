@@ -7,6 +7,7 @@ import com.esotericsoftware.kryonet.Server;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mygdx.tank.model.User;
 
 
 public class AccountServiceImpl implements AccountService {

@@ -1,4 +1,4 @@
-package com.mygdx.tank;
+package com.mygdx.tank.model;
 
 import com.mygdx.tank.model.components.PlayerScoreComponent;
 

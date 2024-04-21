@@ -1,4 +1,4 @@
-package com.mygdx.tank.screens;
+package com.mygdx.tank.Views;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -6,25 +6,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.mygdx.tank.AccountService;
 import com.mygdx.tank.Constants;
 import com.mygdx.tank.TankMazeMayhem;
+import com.mygdx.tank.model.MenuModel;
 
-public class TutorialScreen implements Screen {
+public class TutorialView implements Screen, IView {
     private final TankMazeMayhem game;
-    private final AccountService accountService;
+    private final MenuModel model;
     private final Constants con;
     private Stage stage;
     private final Image tutorialImage;
     private final TextButton skipButton, nextButton, backButton;
-    private int currentPageIndex = 0;
     private final Texture[] pages = new Texture[]{
             new Texture(Gdx.files.internal("Backgrounds/tutorial_1.JPG")),
             new Texture(Gdx.files.internal("Backgrounds/tutorial_2.JPG")),
@@ -33,24 +29,18 @@ public class TutorialScreen implements Screen {
             new Texture(Gdx.files.internal("Backgrounds/tutorial_5.JPG")),
             new Texture(Gdx.files.internal("Backgrounds/tutorial_6.png")),
     };
-    private final Screen returnScreen;
 
-    public TutorialScreen(TankMazeMayhem game, Screen returnScreen, AccountService accountService) {
+    public TutorialView(TankMazeMayhem game, MenuModel model) {
         this.game = game;
-        this.returnScreen = returnScreen;
-        this.accountService = accountService;
+        this.model = model;
 
-        Skin skin = new Skin(Gdx.files.internal("skins/orange/skin/uiskin.json"));
         con = Constants.getInstance();
-        tutorialImage = new Image(pages[currentPageIndex]);
+        model.setTutorialPageIndex(0);
+        tutorialImage = new Image(pages[model.getTutorialPageIndex()]);
 
-        skipButton = new TextButton("Skip Tutorial", skin);
-        nextButton = new TextButton("Next", skin);
-        backButton = new TextButton("Back", skin);
-    }
-
-    private void endTutorial() {
-        game.setScreen(returnScreen);
+        skipButton = new TextButton("Skip Tutorial", con.getSkin());
+        nextButton = new TextButton("Next", con.getSkin());
+        backButton = new TextButton("Back", con.getSkin());
     }
 
     @Override
@@ -61,7 +51,6 @@ public class TutorialScreen implements Screen {
         stage.addActor(tutorialImage);
 
         setupButtons();
-        addListeners();
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -105,6 +94,20 @@ public class TutorialScreen implements Screen {
         stage.dispose();
     }
 
+    public TextButton getBackButton() {
+        return this.backButton;
+    }
+    public TextButton getSkipButton() {
+        return this.skipButton;
+    }
+    public TextButton getNextButton() {
+        return this.nextButton;
+    }
+
+    public int getPagesLength() {
+        return pages.length;
+    }
+
     private void setupButtons() {
         skipButton.setBounds(con.getSWidth() * 0.02f, con.getSHeight() * 0.87f, con.getTBWidth() / 2, con.getTBHeight());
         skipButton.getLabel().setFontScale(con.getTScaleF());
@@ -123,35 +126,8 @@ public class TutorialScreen implements Screen {
         stage.addActor(backButton);
     }
 
-    private void addListeners() {
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (currentPageIndex > 0) {
-                    currentPageIndex--;
-                    tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
-                } else {
-                    game.setScreen(new MainMenuScreen(game, accountService));
-                }
-            }
-        });
-        nextButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                currentPageIndex++;
-                if (currentPageIndex >= pages.length) {
-                    endTutorial(); // No more pages, end tutorial
-                } else {
-                    tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[currentPageIndex])));
-                }
-            }
-        });
-        skipButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                endTutorial();
-            }
-        });
-        stage.addActor(skipButton);
+    @Override
+    public void updateView(MenuModel model) {
+        tutorialImage.setDrawable(new TextureRegionDrawable(new TextureRegion(pages[model.getTutorialPageIndex()])));
     }
 }
